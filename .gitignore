@@ -27,6 +27,9 @@ build/
 logs
 *.log
 
+# testing
+/coverage
+
 # Editor directories and files
 .idea/
 .vscode/
@@ -35,3 +38,7 @@ logs
 *.njsproj
 *.sln
 *.sw?
+
+# local env files
+.env*.local
+.env
