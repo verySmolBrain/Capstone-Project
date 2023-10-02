@@ -1,3 +1,15 @@
+*.*
+!*.css
+!*.js
+!*.json
+!*.jsx
+!*.less
+!*.md
+!*.mdx
+!*.ts
+!*.tsx
+!*.yml
+
 # VSCode
 .vscode/*
 !.vscode/settings.json
@@ -27,9 +39,6 @@ build/
 logs
 *.log
 
-# testing
-/coverage
-
 # Editor directories and files
 .idea/
 .vscode/
@@ -38,7 +47,3 @@ logs
 *.njsproj
 *.sln
 *.sw?
-
-# local env files
-.env*.local
-.env
