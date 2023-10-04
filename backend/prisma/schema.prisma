@@ -43,7 +43,7 @@ model Profile {
   reputation   Int
 
   // reviews the user has received from other users
-  reviews       Review[]      @relation("reviewee")
+  reviews Review[] @relation("reviewee")
 }
 
 model Collectable {
@@ -82,10 +82,31 @@ model Trade {
   collectable   Collectable @relation(fields: [collectableId], references: [id])
   collectableId String
   status        Status      @default(PENDING)
+  price         Int
 }
 
 enum Status {
   PENDING
   ACCEPTED
   DECLINED
+}
+
+model Chat {
+  senderId   String
+  receiverId String
+  content    String
+  Message    Message[]
+
+  // note: not sure if order matters
+  @@id(fields: [senderId, receiverId])
+}
+
+model Message {
+  id         String   @id
+  chat       Chat     @relation(fields: [senderId, receiverId], references: [senderId, receiverId])
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
