@@ -34,6 +34,7 @@ model Profile {
   user         User          @relation(fields: [id], references: [id])
   collection   Collectable[] @relation("collection")
   wishlist     Collectable[] @relation("wishlist")
+  wares        Collectable[] @relation("wares")
   description  String
   image        String
   achievements Achievement[]
@@ -50,6 +51,7 @@ model Collectable {
   name       String
   collection Profile[] @relation("collection")
   wishlist   Profile[] @relation("wishlist")
+  wares      Profile[] @relation("wares")
   Trade      Trade[]
 }
 
