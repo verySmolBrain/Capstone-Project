@@ -16,6 +16,7 @@ datasource db {
 model User {
   id      String    @id
   name    String    @unique
+  role    Role      @default(USER)
   profile Profile?
 }
 
@@ -24,6 +25,8 @@ model Profile {
   user          User          @relation(fields: [id], references: [id])
   collection    Collectable[] @relation("collection")
   wishlist      Collectable[] @relation("wishlist")
+  description   String
+  image         String
 }
 
 model Collectable {
@@ -31,4 +34,18 @@ model Collectable {
   name        String
   collection  Profile[] @relation("collection")
   wishlist    Profile[] @relation("wishlist")
+}
+
+model Review {
+  id          String    @id
+  user        User      @relation(fields: [id], references: [id])
+  collectable Collectable
+  rating      Int
+  comment     String
+}
+
+enum Role {
+  USER
+  MANAGER
+  ADMIN
 }
