@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 import { SupabaseClient } from '@supabase/supabase-js'
 import SupabaseService from './utils/Supabase.service'
+import { prisma } from './prisma'
 
 const fastify = Fastify({
   logger: true,
@@ -28,6 +29,26 @@ fastify.get('/collectible', async (req, reply) => {
     }
 
     reply.send(data)
+  } catch (error) {
+    reply.status(500).send({ error: error })
+  }
+})
+
+// API endpoint for retrieving chats of a user from the database
+fastify.get('/chats', async (req, reply) => {
+  try {
+    const token = req.headers['authorization']
+    const {
+      data: { user },
+    } = await supabase().auth.getUser(token)
+
+    const chats = await prisma.chat.findMany({
+      where:{
+        senderId: user?.id
+      }
+    })
+
+    reply.send(chats)
   } catch (error) {
     reply.status(500).send({ error: error })
   }
