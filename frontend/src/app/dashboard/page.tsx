@@ -44,30 +44,7 @@ export default function Dashboard() {
 
       <section className="space-y-8 pt-6 md:pt-10">
         <div className="container flex flex-col gap-4">
-          <TypographyH2 text="Popular Collections" />
-          <Carousel>
-            {images.map((src, i) => {
-              return (
-                <div
-                  className="relative aspect-63/88 mt-6 mb-6 h-96 mr-3 ml-4 w-auto"
-                  key={i}
-                >
-                  <Image
-                    src={src}
-                    layout="fill"
-                    className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3"
-                    alt="alt"
-                  />
-                </div>
-              )
-            })}
-          </Carousel>
-        </div>
-      </section>
-
-      <section className="space-y-8 md:pt-10">
-        <div className="container flex flex-col gap-4">
-          <TypographyH2 text="Recommended For You" />
+          <TypographyH2 text="Popular Collectibles" />
           <Carousel>
             {images.map((src, i) => {
               return (
@@ -88,9 +65,9 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className="space-y-8 pb-4 pt-6 md:pb-12 md:pt-10">
+      <section className="space-y-8 md:pt-10 pb-4 md:pb-12">
         <div className="container flex flex-col gap-4">
-          <TypographyH2 text="Popular Collectibles" />
+          <TypographyH2 text="Recommended For You" />
           <Carousel>
             {images.map((src, i) => {
               return (
