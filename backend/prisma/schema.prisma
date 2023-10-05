@@ -30,17 +30,17 @@ enum Status {
 /// @@allow('all', auth().role == 'ADMIN')
 model User {
     id String @id()
-    name String @unique()
     role Role @default(USER)
     profile Profile?
     reviews Review[] @relation("reviewer")
 }
 
-/// @@allow('create,read', auth() == user)
+/// @@allow('create,read', true)
 /// @@allow('update,delete', auth() == user)
 /// @@allow('all', auth().role == 'ADMIN')
 model Profile {
     id String @id()
+    name String @unique()
     user User @relation(fields: [id], references: [id])
     collection Collectable[] @relation("collection")
     wishlist Collectable[] @relation("wishlist")
