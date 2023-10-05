@@ -75,6 +75,7 @@ fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiver
         }]
       }
     })
+
     reply.send(chat)
   } catch (error) {
     reply.status(500).send({error: error})
