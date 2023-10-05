@@ -64,8 +64,15 @@ fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiver
 
     const chat = await prisma.chat.findFirst({
       where:{
-        senderId: user?.id,
-        receiverId: req.params.receiverId
+        OR:[
+          {
+          senderId: user?.id,
+          receiverId: req.params.receiverId
+          },
+        {
+          senderId: req.params.receiverId,
+          receiverId: user?.id
+        }]
       }
     })
     reply.send(chat)
