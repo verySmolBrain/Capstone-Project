@@ -12,10 +12,10 @@ async function main() {
           achievements: {},
           sales: {},
           purchases: {},
-          reputation: 0
+          reputation: 0,
         },
       },
-    }
+    },
   })
   const goomba = await prisma.user.create({
     data: {
@@ -28,10 +28,10 @@ async function main() {
           achievements: {},
           sales: {},
           purchases: {},
-          reputation: 69
+          reputation: 69,
         },
       },
-    }
+    },
   })
   console.log({ brain, goomba })
 }

@@ -7,6 +7,9 @@ export default class SupabaseService {
     supabaseUrl = process.env.SUPABASE_URL,
     supabaseKey = process.env.SUPABASE_SECRET_KEY
   ) {
+    console.log('TRying to get process env')
+    console.log(process.env.SUPABASE_URL)
+    console.log(process.env.SUPABASE_SECRET_KEY)
     if (!supabaseUrl)
       throw new Error(
         `${SupabaseService.getClassName()} => supabaseUrl is required.`
