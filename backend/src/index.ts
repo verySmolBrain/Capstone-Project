@@ -1,41 +1,33 @@
 import Fastify from 'fastify'
-import { SupabaseClient } from '@supabase/supabase-js'
-import SupabaseService from './utils/Supabase.service'
+import 'dotenv/config'
+import { requestHandler } from '@Source/utils/PrismaHandler'
 
 const fastify = Fastify({
   logger: true,
 })
 
-const supabase = (): SupabaseClient => {
-  return SupabaseService.getInstance()
-}
-
-fastify.get('/collectible', async (req, reply) => {
+fastify.get('/profile', async (req, reply) => {
   try {
     const token = req.headers['authorization']
-    const {
-      data: { user },
-    } = await supabase().auth.getUser(token)
 
-    const { data, error } = await supabase()
-      .from('collectibles')
-      .select()
-      .eq('user_id', user?.id)
-      .limit(1)
-
-    if (error) {
-      throw new Error('Failed to fetch collectible')
+    if (!token) {
+      reply.status(401).send({ error: 'Unauthorized' })
+      return
     }
 
-    reply.send(data)
+    const prisma = await requestHandler(token)
+
+    const post = await prisma.profile.findMany({})
+    reply.send(post)
   } catch (error) {
+    console.log(error)
     reply.status(500).send({ error: error })
   }
 })
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 })
+    await fastify.listen({ port: 3001 })
     console.log('Server started')
   } catch (error) {
     console.error('Error starting server:', error)
