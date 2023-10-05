@@ -2,6 +2,8 @@ import Fastify from 'fastify'
 import { SupabaseClient } from '@supabase/supabase-js'
 import SupabaseService from './utils/Supabase.service'
 import { prisma } from './prisma'
+import { FastifyRequest } from 'fastify';
+
 
 const fastify = Fastify({
   logger: true,
@@ -47,10 +49,28 @@ fastify.get('/chats', async (req, reply) => {
         senderId: user?.id
       }
     })
-
     reply.send(chats)
   } catch (error) {
     reply.status(500).send({ error: error })
+  }
+})
+
+fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
+  try {
+    const token = req.headers['authorization']
+    const {
+      data: {user}, 
+    } = await supabase().auth.getUser(token)
+
+    const chat = await prisma.chat.findFirst({
+      where:{
+        senderId: user?.id,
+        receiverId: req.params.receiverId
+      }
+    })
+    reply.send(chat)
+  } catch (error) {
+    reply.status(500).send({error: error})
   }
 })
 
