@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import SupabaseService from './utils/Supabase.service'
 import { prisma } from './prisma'
 import { FastifyRequest } from 'fastify';
+import { Message } from '@prisma/client';
 
 
 const fastify = Fastify({
@@ -77,6 +78,54 @@ fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiver
     })
 
     reply.send(chat)
+  } catch (error) {
+    reply.status(500).send({error: error})
+  }
+})
+
+// API endpoint for updating chat
+fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
+  try {
+    const token = req.headers['authorization']
+    const {
+      data: {user}, 
+    } = await supabase().auth.getUser(token)
+
+    const newMsg = req.body as Message
+    const chat = await prisma.chat.findFirst({
+      where:{
+        OR:[
+          {
+          senderId: user?.id,
+          receiverId: req.params.receiverId
+          },
+        {
+          senderId: req.params.receiverId,
+          receiverId: user?.id
+        }]
+      }
+    })
+
+    const updatedChat = await prisma.chat.update({
+      where: {
+        OR:[
+          {
+          senderId: user?.id,
+          receiverId: req.params.receiverId
+          },
+        {
+          senderId: req.params.receiverId,
+          receiverId: user?.id
+        }]
+      },
+      data: {
+        Message: {
+          connect: {
+            id: newMsg.id
+          }
+        }
+      }
+    })
   } catch (error) {
     reply.status(500).send({error: error})
   }
