@@ -21,8 +21,8 @@ export default function Dashboard() {
     <div className="flex flex-col min-h-screen">
       <DashboardNavBar />
       <section className="space-y-8 pt-6 md:pt-10">
-        <div className="container flex flex-col gap-4">
-          <TypographyH2 text="Active Campaigns" />
+        <div className="container flex flex-col gap-4 border-4 border-primary rounded-2xl">
+          <TypographyH2 text="Active Campaigns pt-6" />
           <Carousel>
             {images.map((src, i) => {
               return (
@@ -31,7 +31,7 @@ export default function Dashboard() {
                     <Image
                       src={src}
                       layout="fill"
-                      className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3"
+                      className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-4 border-primary rounded-2xl"
                       alt="alt"
                     />
                   </div>
