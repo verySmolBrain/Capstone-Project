@@ -8,6 +8,7 @@ const prisma = new PrismaClient()
 
 async function main() {
 
+  // linked to brains token
   const brain = await prisma.user.create({
     data: {
       id: '4be5aa5e-4245-46e6-84ed-ed2c410e7c83',
@@ -44,6 +45,7 @@ async function main() {
       },
     },
   })
+  // linked to rums token
   const goomba = await prisma.user.create({
     data: {
       id: '50f678ab-e4a2-4066-83ee-f87d2156adbf',
@@ -72,6 +74,7 @@ async function main() {
       },
     },
   })
+  // linked to teewins token
   const jin = await prisma.user.create({
     data: {
       id: '6e4fbc17-c6f5-431b-8a97-565d671cfb88',
