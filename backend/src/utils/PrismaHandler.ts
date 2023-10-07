@@ -33,3 +33,6 @@ export async function requestHandler(token: string) {
 
   return enhance(prisma, { user: { id: user?.user?.id } })
 }
+
+// TODO: must have user ID error -> token is wrong
+// someone can fix this
