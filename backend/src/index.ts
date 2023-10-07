@@ -317,7 +317,7 @@ fastify.get('/chats', async (req, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 })
+    await fastify.listen({ port: 3001 })
     console.log('Server started')
   } catch (error) {
     console.error('Error starting server:', error)
