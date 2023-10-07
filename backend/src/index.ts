@@ -259,13 +259,13 @@ fastify.delete('/removeFromWares', async (req: FastifyRequest<{ Body: { collecta
 })
 
 fastify.put(
-  '/chat',
-  async (req: FastifyRequest<{ Body: { receiverId: string } }>, reply) => {
+  '/chat/:receiverId',
+  async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
     try {
       const token = req.headers['authorization']
 
       const { data: user } = await supabase().auth.getUser(token)
-      const { receiverId } = req.body
+      const { receiverId } = req.params
 
       if (!token || !user?.user?.id) {
         console.log(token)
@@ -298,9 +298,12 @@ fastify.put(
   }
 )
 
-fastify.get('/chat', async (req, reply) => {
+// API endpoint for retrieving a specific chat with a user
+fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
   try {
     const token = req.headers['authorization']
+    const { receiverId } = req.params
+    const { data: user } = await supabase().auth.getUser(token)
 
     if (!token) {
       reply.status(401).send({ error: 'Unauthorized' })
@@ -308,9 +311,18 @@ fastify.get('/chat', async (req, reply) => {
     }
 
     const prisma = await requestHandler(token)
-
-    const post = await prisma.chat.findMany({})
-    reply.send(post)
+    const chat = await prisma.chat.findFirst({
+      where: {
+        users: {
+          every: {
+            id: {
+              in: [user.user?.id, receiverId]
+            }
+          }
+        }
+      }
+    })
+    reply.send(chat)
   } catch (error) {
     reply.status(500).send({ error: error })
   }
@@ -320,10 +332,15 @@ fastify.get('/chat', async (req, reply) => {
 fastify.get('/chats', async (req, reply) => {
   try {
     const token = req.headers['authorization']
+
+    if (!token) {
+      reply.status(401).send({ error: 'Unauthorized' })
+      return
+    }
+
     const {
       data: { user },
     } = await supabase().auth.getUser(token)
-
     const chats = await prisma.chat.findMany({
       where:{
         senderId: user?.id
@@ -332,33 +349,6 @@ fastify.get('/chats', async (req, reply) => {
     reply.send(chats)
   } catch (error) {
     reply.status(500).send({ error: error })
-  }
-})
-
-fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
-  try {
-    const token = req.headers['authorization']
-    const {
-      data: {user}, 
-    } = await supabase().auth.getUser(token)
-
-    const chat = await prisma.chat.findFirst({
-      where:{
-        OR:[
-          {
-          senderId: user?.id,
-          receiverId: req.params.receiverId
-          },
-        {
-          senderId: req.params.receiverId,
-          receiverId: user?.id
-        }]
-      }
-    })
-
-    reply.send(chat)
-  } catch (error) {
-    reply.status(500).send({error: error})
   }
 })
 
