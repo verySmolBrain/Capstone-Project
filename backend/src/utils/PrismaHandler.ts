@@ -4,7 +4,7 @@ import { enhance } from '@zenstackhq/runtime'
 import { SupabaseClient } from '@supabase/supabase-js'
 import SupabaseService from '@Source/utils/Supabase.service'
 
-const supabase = (): SupabaseClient => {
+export const supabase = (): SupabaseClient => {
   return SupabaseService.getInstance()
 }
 
@@ -31,5 +31,12 @@ export async function requestHandler(token: string) {
    *  applied to your query!
    */
 
+  if (!user?.user?.id) {
+    throw new Error('Unauthorized')
+  }
+
   return enhance(prisma, { user: { id: user?.user?.id } })
 }
+
+// TODO: must have user ID error -> token is wrong
+// someone can fix this

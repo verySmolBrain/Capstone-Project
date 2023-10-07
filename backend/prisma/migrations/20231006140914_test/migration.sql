@@ -7,7 +7,6 @@ CREATE TYPE "Status" AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -16,6 +15,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Profile" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "reputation" INTEGER NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE "_AchievementToProfile" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
+CREATE UNIQUE INDEX "Profile_name_key" ON "Profile"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_collection_AB_unique" ON "_collection"("A", "B");

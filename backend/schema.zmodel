@@ -21,11 +21,9 @@ enum Role {
 
 model User {
   id      String   @id
-  name    String   @unique
   role    Role     @default(USER)
   profile Profile?
 
-  // reviews the user has written for other users
   reviews Review[] @relation("reviewer")
 
   @@allow('create,read', true)
@@ -35,6 +33,7 @@ model User {
 
 model Profile {
   id           String        @id
+  name         String        @unique
   user         User          @relation(fields: [id], references: [id])
   collection   Collectable[] @relation("collection")
   wishlist     Collectable[] @relation("wishlist")
@@ -46,8 +45,8 @@ model Profile {
   purchases    Trade[]       @relation("buyer")
   reputation   Int
 
-  // reviews the user has received from other users
   reviews Review[] @relation("reviewee")
+  chats   Chat[]   @relation("ChatsUsers")
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)
@@ -112,21 +111,19 @@ enum Status {
 }
 
 model Chat {
-  senderId   String
-  receiverId String
-  content    String
+  id         Int                  @id @default(autoincrement())
+
   Message    Message[]
+  users      Profile[]            @relation("ChatsUsers")
 
-  // note: not sure if order matters
-  @@id(fields: [senderId, receiverId])
-
-  @@allow('create,read,update', senderId == auth().id || receiverId == auth().id)
-  @@allow('all', auth().role == "ADMIN")
+  @@allow('create', true)
+  @@allow('read, delete, delete', users?[user.id == auth().id])
 }
 
 model Message {
   id         String   @id
-  chat       Chat     @relation(fields: [senderId, receiverId], references: [senderId, receiverId])
+  chatId     Int   
+  chat       Chat     @relation(fields: [chatId], references: [id])
   senderId   String
   receiverId String
   content    String
@@ -134,6 +131,6 @@ model Message {
   updatedAt  DateTime @updatedAt
 
   @@allow('all', senderId == auth().id)
-  @@allow('read', receiverId == auth().id)
+  @@allow('all', receiverId == auth().id)
   @@allow('all', auth().role == "ADMIN")
 }

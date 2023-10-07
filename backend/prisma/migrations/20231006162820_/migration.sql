@@ -1,112 +1,8 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Achievement` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Chat` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Collectable` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Message` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Profile` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Review` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Trade` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `_AchievementToProfile` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `_collection` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `_wares` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `_wishlist` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'MANAGER', 'ADMIN');
 
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
-
--- DropForeignKey
-ALTER TABLE "public"."Message" DROP CONSTRAINT "Message_senderId_receiverId_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."Profile" DROP CONSTRAINT "Profile_id_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."Review" DROP CONSTRAINT "Review_revieweeId_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."Review" DROP CONSTRAINT "Review_reviewerId_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."Trade" DROP CONSTRAINT "Trade_buyerId_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."Trade" DROP CONSTRAINT "Trade_collectableId_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."Trade" DROP CONSTRAINT "Trade_sellerId_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_AchievementToProfile" DROP CONSTRAINT "_AchievementToProfile_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_AchievementToProfile" DROP CONSTRAINT "_AchievementToProfile_B_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_collection" DROP CONSTRAINT "_collection_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_collection" DROP CONSTRAINT "_collection_B_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_wares" DROP CONSTRAINT "_wares_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_wares" DROP CONSTRAINT "_wares_B_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_wishlist" DROP CONSTRAINT "_wishlist_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."_wishlist" DROP CONSTRAINT "_wishlist_B_fkey";
-
--- DropTable
-DROP TABLE "public"."Achievement";
-
--- DropTable
-DROP TABLE "public"."Chat";
-
--- DropTable
-DROP TABLE "public"."Collectable";
-
--- DropTable
-DROP TABLE "public"."Message";
-
--- DropTable
-DROP TABLE "public"."Profile";
-
--- DropTable
-DROP TABLE "public"."Review";
-
--- DropTable
-DROP TABLE "public"."Trade";
-
--- DropTable
-DROP TABLE "public"."User";
-
--- DropTable
-DROP TABLE "public"."_AchievementToProfile";
-
--- DropTable
-DROP TABLE "public"."_collection";
-
--- DropTable
-DROP TABLE "public"."_wares";
-
--- DropTable
-DROP TABLE "public"."_wishlist";
-
--- DropEnum
-DROP TYPE "public"."Role";
-
--- DropEnum
-DROP TYPE "public"."Status";
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -170,16 +66,15 @@ CREATE TABLE "Trade" (
 
 -- CreateTable
 CREATE TABLE "Chat" (
-    "senderId" TEXT NOT NULL,
-    "receiverId" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
 
-    CONSTRAINT "Chat_pkey" PRIMARY KEY ("senderId","receiverId")
+    CONSTRAINT "Chat_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Message" (
     "id" TEXT NOT NULL,
+    "chatId" INTEGER NOT NULL,
     "senderId" TEXT NOT NULL,
     "receiverId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
@@ -213,6 +108,12 @@ CREATE TABLE "_AchievementToProfile" (
     "B" TEXT NOT NULL
 );
 
+-- CreateTable
+CREATE TABLE "_ChatsUsers" (
+    "A" INTEGER NOT NULL,
+    "B" TEXT NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
 
@@ -240,6 +141,12 @@ CREATE UNIQUE INDEX "_AchievementToProfile_AB_unique" ON "_AchievementToProfile"
 -- CreateIndex
 CREATE INDEX "_AchievementToProfile_B_index" ON "_AchievementToProfile"("B");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "_ChatsUsers_AB_unique" ON "_ChatsUsers"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_ChatsUsers_B_index" ON "_ChatsUsers"("B");
+
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_id_fkey" FOREIGN KEY ("id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -259,7 +166,7 @@ ALTER TABLE "Trade" ADD CONSTRAINT "Trade_buyerId_fkey" FOREIGN KEY ("buyerId") 
 ALTER TABLE "Trade" ADD CONSTRAINT "Trade_collectableId_fkey" FOREIGN KEY ("collectableId") REFERENCES "Collectable"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "Message_senderId_receiverId_fkey" FOREIGN KEY ("senderId", "receiverId") REFERENCES "Chat"("senderId", "receiverId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Message" ADD CONSTRAINT "Message_chatId_fkey" FOREIGN KEY ("chatId") REFERENCES "Chat"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_collection" ADD CONSTRAINT "_collection_A_fkey" FOREIGN KEY ("A") REFERENCES "Collectable"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -284,3 +191,9 @@ ALTER TABLE "_AchievementToProfile" ADD CONSTRAINT "_AchievementToProfile_A_fkey
 
 -- AddForeignKey
 ALTER TABLE "_AchievementToProfile" ADD CONSTRAINT "_AchievementToProfile_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ChatsUsers" ADD CONSTRAINT "_ChatsUsers_A_fkey" FOREIGN KEY ("A") REFERENCES "Chat"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ChatsUsers" ADD CONSTRAINT "_ChatsUsers_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
