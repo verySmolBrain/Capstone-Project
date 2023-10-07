@@ -113,10 +113,11 @@ fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { r
           senderId: user?.id,
           receiverId: req.params.receiverId
           },
-        {
-          senderId: req.params.receiverId,
-          receiverId: user?.id
-        }]
+          {
+            senderId: req.params.receiverId,
+            receiverId: user?.id
+          }
+        ]
       },
       data: {
         Message: {
@@ -126,9 +127,7 @@ fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { r
         }
       }
     })
-  } catch (error) {
-    reply.status(500).send({error: error})
-  }
+  } catch (error) {}
 })
 
 const start = async () => {
