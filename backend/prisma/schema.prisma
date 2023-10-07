@@ -52,6 +52,7 @@ model Profile {
     purchases Trade[] @relation("buyer")
     reputation Int
     reviews Review[] @relation("reviewee")
+    chats Chat[] @relation("ChatsUsers")
 }
 
 /// @@allow('read', true)
@@ -102,23 +103,21 @@ model Trade {
     price Int
 }
 
-/// @@allow('create,read,update', senderId == auth().id || receiverId == auth().id)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('create', true)
+/// @@allow('read, delete, delete', users ? [user.id == auth().id])
 model Chat {
-    senderId String
-    receiverId String
-    content String
+    id Int @id() @default(autoincrement())
     Message Message[]
-
-    @@id(fields: [senderId, receiverId])
+    users Profile[] @relation("ChatsUsers")
 }
 
 /// @@allow('all', senderId == auth().id)
-/// @@allow('read', receiverId == auth().id)
+/// @@allow('all', receiverId == auth().id)
 /// @@allow('all', auth().role == 'ADMIN')
 model Message {
     id String @id()
-    chat Chat @relation(fields: [senderId, receiverId], references: [senderId, receiverId])
+    chatId Int
+    chat Chat @relation(fields: [chatId], references: [id])
     senderId String
     receiverId String
     content String
