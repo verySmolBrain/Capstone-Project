@@ -1,7 +1,7 @@
-import { prisma } from './prisma'
 import Fastify, { FastifyRequest } from 'fastify'
 import 'dotenv/config'
 import { requestHandler, supabase } from '@Source/utils/PrismaHandler'
+import { getChat, getChats, updateChat } from './chat'
 
 const fastify = Fastify({
   logger: true,
@@ -264,33 +264,16 @@ fastify.put(
     try {
       const token = req.headers['authorization']
 
-      const { data: user } = await supabase().auth.getUser(token)
+      const { data: { user } } = await supabase().auth.getUser(token)
       const { receiverId } = req.params
 
-      if (!token || !user?.user?.id) {
+      if (!token || !user?.id) {
         console.log(token)
-        console.log(user?.user?.id)
+        console.log(user?.id)
         reply.status(401).send({ error: 'Unauthorized' })
         return
       }
-
-      const prisma = await requestHandler(token)
-
-      const post = await prisma.chat.create({
-        data: {
-          users: {
-            connect: [
-              {
-                id: user?.user?.id,
-              },
-              {
-                id: receiverId,
-              },
-            ],
-          },
-        },
-      })
-      reply.send(post)
+      reply.send(updateChat(token, user?.id, receiverId))
     } catch (error) {
       console.log(error)
       reply.status(500).send({ error: error })
@@ -303,26 +286,13 @@ fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiver
   try {
     const token = req.headers['authorization']
     const { receiverId } = req.params
-    const { data: user } = await supabase().auth.getUser(token)
+    const { data: { user } } = await supabase().auth.getUser(token)
 
     if (!token) {
       reply.status(401).send({ error: 'Unauthorized' })
       return
     }
-
-    const prisma = await requestHandler(token)
-    const chat = await prisma.chat.findFirst({
-      where: {
-        users: {
-          every: {
-            id: {
-              in: [user.user?.id, receiverId]
-            }
-          }
-        }
-      }
-    })
-    reply.send(chat)
+    reply.send(getChat(token, user?.id, receiverId))
   } catch (error) {
     reply.status(500).send({ error: error })
   }
@@ -338,15 +308,8 @@ fastify.get('/chats', async (req, reply) => {
       return
     }
 
-    const {
-      data: { user },
-    } = await supabase().auth.getUser(token)
-    const chats = await prisma.chat.findMany({
-      where:{
-        senderId: user?.id
-      }
-    })
-    reply.send(chats)
+    const { data: { user } } = await supabase().auth.getUser(token)
+    reply.send(getChats(token, user?.id))
   } catch (error) {
     reply.status(500).send({ error: error })
   }
