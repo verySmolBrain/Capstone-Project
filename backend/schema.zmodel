@@ -26,8 +26,8 @@ model User {
 
   reviews Review[] @relation("reviewer")
 
-  @@allow('create,read', true)
-  @@allow('update,delete', auth() == this)
+  @@allow('create', true)
+  @@allow('update,delete,read', auth() == this)
   @@allow('all', auth().role == "ADMIN")
 }
 
