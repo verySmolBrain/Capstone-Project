@@ -44,7 +44,7 @@ fastify.put('/changeName', async (req: FastifyRequest<{ Body: { name: string } }
     const nameExists = await prisma.profile.findFirst({
       where: { name: name },
     })
-    if (nameExists != null) {
+    if (nameExists) {
       reply.status(403).send({ error: 'Name is already taken' })
       return
     }
@@ -130,7 +130,7 @@ fastify.put('/addToWishlist', async (req: FastifyRequest<{ Body: { collectableId
     const collectableExists = await prisma.collectable.findFirst({
       where: { id: collectableId },
     })
-    if (collectableExists == null) {
+    if (!collectableExists) {
       reply.status(404).send({ error: 'Collectable does not exist' })
       return
     }
@@ -166,7 +166,7 @@ fastify.delete('/removeFromWishlist', async (req: FastifyRequest<{ Body: { colle
     const collectableExists = await prisma.collectable.findFirst({
       where: { id: collectableId },
     })
-    if (collectableExists == null) {
+    if (!collectableExists) {
       reply.status(404).send({ error: 'Collectable does not exist' })
       return
     }
@@ -202,7 +202,7 @@ fastify.put('/addToWares', async (req: FastifyRequest<{ Body: { collectableId: s
     const collectableExists = await prisma.collectable.findFirst({
       where: { id: collectableId },
     })
-    if (collectableExists == null) {
+    if (!collectableExists) {
       reply.status(404).send({ error: 'Collectable does not exist' })
       return
     }
@@ -238,7 +238,7 @@ fastify.delete('/removeFromWares', async (req: FastifyRequest<{ Body: { collecta
     const collectableExists = await prisma.collectable.findFirst({
       where: { id: collectableId },
     })
-    if (collectableExists == null) {
+    if (!collectableExists) {
       reply.status(404).send({ error: 'Collectable does not exist' })
       return
     }
