@@ -24,9 +24,7 @@ model User {
   role    Role     @default(USER)
   profile Profile?
 
-  reviews Review[] @relation("reviewer")
-
-  @@allow('create,read', true)
+  @@allow('create, read', true)
   @@allow('update,delete', auth() == this)
   @@allow('all', auth().role == "ADMIN")
 }
@@ -45,7 +43,8 @@ model Profile {
   purchases    Trade[]       @relation("buyer")
   reputation   Int
 
-  reviews Review[] @relation("reviewee")
+  givenReviews Review[] @relation("reviewer")
+  receivedReviews Review[] @relation("reviewee")
   chats   Chat[]   @relation("ChatsUsers")
 
   @@allow('create,read', true)
@@ -70,12 +69,12 @@ model Review {
   rating     Int
   comment    String
   reviewee   Profile @relation("reviewee", fields: [reviewerId], references: [id])
-  reviewerId String
-  reviewer   User    @relation("reviewer", fields: [revieweeId], references: [id])
   revieweeId String
+  reviewer   Profile @relation("reviewer", fields: [revieweeId], references: [id])
+  reviewerId String
 
   @@allow('read', true)
-  @@allow('all', auth().role == "ADMIN" || auth() == reviewer)
+  @@allow('all', auth().role == "ADMIN" || auth().id == reviewer.id)
 }
 
 model Achievement {
@@ -111,9 +110,9 @@ enum Status {
 }
 
 model Chat {
-  id         Int                  @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
 
-  Message    Message[]
+  messages   Message[]            
   users      Profile[]            @relation("ChatsUsers")
 
   @@allow('create', true)
@@ -121,7 +120,7 @@ model Chat {
 }
 
 model Message {
-  id         String   @id
+  id         Int      @id @default(autoincrement())
   chatId     Int   
   chat       Chat     @relation(fields: [chatId], references: [id])
   senderId   String

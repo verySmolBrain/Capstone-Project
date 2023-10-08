@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     password,
   })
 
-  console.log('user', await supabase.auth.getSession())
+  console.log(supabase_response)
 
   return supabase_response.error
     ? new NextResponse(supabase_response.error.message, {

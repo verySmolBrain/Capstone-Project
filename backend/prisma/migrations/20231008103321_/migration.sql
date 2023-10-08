@@ -7,7 +7,6 @@ CREATE TYPE "Status" AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -16,6 +15,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Profile" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "reputation" INTEGER NOT NULL,
@@ -36,8 +36,8 @@ CREATE TABLE "Review" (
     "id" TEXT NOT NULL,
     "rating" INTEGER NOT NULL,
     "comment" TEXT NOT NULL,
-    "reviewerId" TEXT NOT NULL,
     "revieweeId" TEXT NOT NULL,
+    "reviewerId" TEXT NOT NULL,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
@@ -73,7 +73,7 @@ CREATE TABLE "Chat" (
 
 -- CreateTable
 CREATE TABLE "Message" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "chatId" INTEGER NOT NULL,
     "senderId" TEXT NOT NULL,
     "receiverId" TEXT NOT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE "_ChatsUsers" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
+CREATE UNIQUE INDEX "Profile_name_key" ON "Profile"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_collection_AB_unique" ON "_collection"("A", "B");
@@ -154,7 +154,7 @@ ALTER TABLE "Profile" ADD CONSTRAINT "Profile_id_fkey" FOREIGN KEY ("id") REFERE
 ALTER TABLE "Review" ADD CONSTRAINT "Review_reviewerId_fkey" FOREIGN KEY ("reviewerId") REFERENCES "Profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Review" ADD CONSTRAINT "Review_revieweeId_fkey" FOREIGN KEY ("revieweeId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Review" ADD CONSTRAINT "Review_revieweeId_fkey" FOREIGN KEY ("revieweeId") REFERENCES "Profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Trade" ADD CONSTRAINT "Trade_sellerId_fkey" FOREIGN KEY ("sellerId") REFERENCES "Profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

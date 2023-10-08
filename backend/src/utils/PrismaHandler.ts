@@ -38,5 +38,13 @@ export async function requestHandler(token: string) {
   return enhance(prisma, { user: { id: user?.user?.id } })
 }
 
+export const getUserId = async (token: string): Promise<string> => {
+  const { data: user } = await supabase().auth.getUser(token)
+  if (!user?.user?.id) {
+    throw new Error('Unauthorized')
+  }
+  return user?.user?.id
+}
+
 // TODO: must have user ID error -> token is wrong
 // someone can fix this
