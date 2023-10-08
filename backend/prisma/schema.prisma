@@ -10,7 +10,7 @@ datasource db {
 
 generator client {
     provider = "prisma-client-js"
-    previewFeatures = ["multiSchema"]
+    previewFeatures = ["multiSchema","fullTextSearch"]
 }
 
 enum Role {
@@ -108,7 +108,7 @@ model Trade {
 model Chat {
     id Int @id() @default(autoincrement())
     messages Message[]
-    users    Profile[] @relation("ChatsUsers")
+    users Profile[] @relation("ChatsUsers")
 }
 
 /// @@allow('all', senderId == auth().id)
