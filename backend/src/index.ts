@@ -1,6 +1,6 @@
 import Fastify, { FastifyRequest } from 'fastify'
 import 'dotenv/config'
-import { getChat, getChats, updateChat } from './chat'
+import { getChat, getChats, sendMessage, updateChat } from './chat'
 import { isStringObject } from 'util/types'
 import { requestHandler, supabase, getUserId } from '@Source/utils/PrismaHandler'
 
@@ -509,6 +509,41 @@ fastify.get('/chats', async (req, reply) => {
     reply.send(getChats(token, user?.id))
   } catch (error) {
     reply.status(500).send({ error: error })
+  }
+})
+
+// API endpoint for updating chat
+fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
+  try {
+    const token = req.headers['authorization']
+    const { receiverId } = req.params
+
+    const {
+      data: {user}, 
+    } = await supabase().auth.getUser(token)
+
+    const messageContents = req.body as string
+    reply.send(sendMessage(token, user?.id, receiverId, messageContents))
+  } catch (error) {
+    reply.status(500).send({error: error})
+  }
+})
+
+
+// API endpoint for sending a chat message
+fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
+  try {
+    const token = req.headers['authorization']
+    const { receiverId } = req.params
+
+    const {
+      data: {user}, 
+    } = await supabase().auth.getUser(token)
+
+    const messageContents = req.body as string
+    reply.send(sendMessage(token, user?.id, receiverId, messageContents))
+  } catch (error) {
+    reply.status(500).send({error: error})
   }
 })
 
