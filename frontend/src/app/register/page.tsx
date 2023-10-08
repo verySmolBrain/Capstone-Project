@@ -9,16 +9,15 @@ import Image from 'next/image'
 
 export default function SignupPage() {
   return (
-    <div className="container relative h-screen flex-col items-center justify-center grid max-w-none lg:grid-cols-2 lg:px-0">
-      <BackButton />
+    <div className="container relative h-screen flex-col items-center justify-center grid max-w-none lg:grid-cols-2 grid-rows-1 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 dark:border-r lg:flex items-center justify-center">
         <Image
-          className="object-contain"
+          className="object-contain w-auto"
           src="/images/logic.svg"
           alt="Logic"
           width={500}
           height={500}
-          priority={true}
+          priority
         />
         <BackButton />
       </div>
