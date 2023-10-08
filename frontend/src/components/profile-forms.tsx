@@ -9,7 +9,13 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { usernameUpdateSchema, profilePictureUpdateSchema, emailUpdateSchema, passwordUpdateSchema, descriptionUpdateSchema } from '@/lib/validation/update-details'
+import {
+  usernameUpdateSchema,
+  profilePictureUpdateSchema,
+  emailUpdateSchema,
+  passwordUpdateSchema,
+  descriptionUpdateSchema,
+} from '@/lib/validation/update-details'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
@@ -21,10 +27,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Textarea } from "@/components/ui/textarea"
+} from '@/components/ui/form'
+import { Textarea } from '@/components/ui/textarea'
 
-type FormData = z.infer<typeof usernameUpdateSchema> | z.infer<typeof profilePictureUpdateSchema> | z.infer<typeof descriptionUpdateSchema> | z.infer<typeof emailUpdateSchema> | z.infer<typeof passwordUpdateSchema>
+type FormData =
+  | z.infer<typeof usernameUpdateSchema>
+  | z.infer<typeof profilePictureUpdateSchema>
+  | z.infer<typeof descriptionUpdateSchema>
+  | z.infer<typeof emailUpdateSchema>
+  | z.infer<typeof passwordUpdateSchema>
 
 export function UpdateUsernameForm() {
   const [isLoading, setIsLoading] = React.useState(false)
@@ -36,16 +47,17 @@ export function UpdateUsernameForm() {
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const updateResult = await fetch('/api/auth/profile/update/username', {
+    const updateResult = await fetch('/api/profile/update', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'update-type': 'name',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-  
+
     setIsLoading(false)
-  
+
     if (!updateResult?.ok) {
       return toast({
         title: 'Uh Oh! Something went wrong!',
@@ -59,7 +71,7 @@ export function UpdateUsernameForm() {
     <div className="grid gap-4 w-fill">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-3">
-          <Label >Change Display Name</Label>
+          <Label>Change Display Name</Label>
 
           <div className="flex w-full items-center space-x-2">
             <Input
@@ -70,13 +82,16 @@ export function UpdateUsernameForm() {
               autoCorrect="off"
               required
               disabled={isLoading}
-              {...register('username')} />
+              {...register('name')}
+            />
             <Button
               type="submit"
               disabled={isLoading}
               className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
             >
-              {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Update
             </Button>
           </div>
@@ -86,8 +101,7 @@ export function UpdateUsernameForm() {
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-        </div>
+        <div className="relative flex justify-center text-xs uppercase"></div>
       </div>
     </div>
   )
@@ -103,16 +117,17 @@ export function UpdateProfilePictureForm() {
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const updateResult = await fetch('/api/auth/profile/update/picture', {
+    const updateResult = await fetch('/api/profile/update', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'update-type': 'picture',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-  
+
     setIsLoading(false)
-  
+
     if (!updateResult?.ok) {
       return toast({
         title: 'Uh Oh! Something went wrong!',
@@ -121,23 +136,22 @@ export function UpdateProfilePictureForm() {
       })
     }
   }
-  
+
   return (
     <div className="w-fill">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="picture">Change Display Picture</Label>
           <div className="grid gap-2.5 flex grid-flow-col">
-            <Input
-              id="picture"
-              type="file"
-              {...register('picture')} />
+            <Input id="picture" type="file" {...register('picture')} />
             <Button
               type="submit"
               disabled={isLoading}
               className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
-              >
-              {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            >
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Upload
             </Button>
           </div>
@@ -157,16 +171,17 @@ export function UpdateDescriptionForm() {
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const updateResult = await fetch('/api/auth/profile/update/picture', {
+    const updateResult = await fetch('/api/profile/update', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'update-type': 'description',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-  
+
     setIsLoading(false)
-  
+
     if (!updateResult?.ok) {
       return toast({
         title: 'Uh Oh! Something went wrong!',
@@ -176,7 +191,7 @@ export function UpdateDescriptionForm() {
     }
 
     toast({
-      title: "You submitted the following values:",
+      title: 'You submitted the following values:',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
@@ -190,7 +205,7 @@ export function UpdateDescriptionForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <FormField
           control={form.control}
-          name="bio"
+          name="description"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Bio</FormLabel>
@@ -199,20 +214,18 @@ export function UpdateDescriptionForm() {
                   placeholder="Tell us a little bit about yourself!"
                   className="resize-y w-full h-32"
                   {...field}
-                  {...form.register('bio')}
+                  {...form.register('description')}
                 />
               </FormControl>
               <FormDescription>
-                This is your public description. It will be visible to anyone who views your profile.
+                This is your public description. It will be visible to anyone
+                who views your profile.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button 
-          type="submit"
-          disabled={isLoading}
-        >
+        <Button type="submit" disabled={isLoading}>
           Update
         </Button>
       </form>
@@ -230,16 +243,17 @@ export function UpdateEmailForm() {
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const updateResult = await fetch('/api/auth/profile/update/email', {
+    const updateResult = await fetch('/api/profile/update', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'update-type': 'email',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-  
+
     setIsLoading(false)
-  
+
     if (!updateResult?.ok) {
       return toast({
         title: 'Uh Oh! Something went wrong!',
@@ -253,24 +267,27 @@ export function UpdateEmailForm() {
     <div className="grid gap-4 w-fill">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-3">
-          <Label >Change Email Address</Label>
+          <Label>Change Email Address</Label>
 
           <div className="flex w-full items-center space-x-2">
             <Input
               className="w-full justify-self-start"
-              type="username"
+              type="email"
               placeholder="goombas@gmail.com"
               autoCapitalize="none"
               autoCorrect="off"
               required
               disabled={isLoading}
-              {...register('username')} />
+              {...register('email')}
+            />
             <Button
               type="submit"
               disabled={isLoading}
               className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
             >
-              {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Update
             </Button>
           </div>
@@ -290,16 +307,17 @@ export function UpdatePasswordForm() {
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const updateResult = await fetch('/api/auth/profile/update/password', {
+    const updateResult = await fetch('/api/profile/update', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'update-type': 'password',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-  
+
     setIsLoading(false)
-  
+
     if (!updateResult?.ok) {
       return toast({
         title: 'Uh Oh! Something went wrong!',
@@ -313,7 +331,7 @@ export function UpdatePasswordForm() {
     <div className="grid gap-4 w-fill">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-3">
-          <Label >Change Password</Label>
+          <Label>Change Password</Label>
 
           <div className="flex w-full items-center space-x-2">
             <Input
@@ -324,13 +342,16 @@ export function UpdatePasswordForm() {
               autoCorrect="off"
               required
               disabled={isLoading}
-              {...register('username')} />
+              {...register('password')}
+            />
             <Button
               type="submit"
               disabled={isLoading}
               className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
             >
-              {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Update
             </Button>
           </div>

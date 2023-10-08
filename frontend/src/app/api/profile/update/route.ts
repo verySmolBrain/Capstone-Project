@@ -6,33 +6,93 @@ import type { Database } from '@/lib/database.types'
 
 export const dynamic = 'force-dynamic'
 
-// export async function PUT(request: Request) {
-//   const requestUrl = new URL(request.url)
-//   const formData = await request.json()
-//   const username = String(formData.username)
-
-// }
-
 export async function PUT(request: Request) {
   const requestUrl = new URL(request.url)
   const formData = await request.json()
+  const updateType = request.headers.get('update-type')
 
   let error
-    
-  if (requestUrl.pathname === '/api/auth/profile/update/username') {}
-  else if (requestUrl.pathname === '/api/auth/profile/update/picture') {}
-  else if (requestUrl.pathname === '/api/auth/profile/update/description') {}
-  else if (requestUrl.pathname === '/api/auth/profile/update/email') {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+  const supabase = createRouteHandlerClient<Database>({ cookies })
+  const token = (await supabase.auth.getSession()).data.session?.access_token
 
-    const supabase_response = await supabase.auth.updateUser({email: String(formData.email)})
-    error = supabase_response.error
-
+  if (!token) {
+    NextResponse.redirect(requestUrl.origin, {
+      status: 301,
+    })
   }
-  else if (requestUrl.pathname === '/api/auth/profile/update/password') {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
-    
-    const supabase_response = await supabase.auth.updateUser({password: 'new password'})
+
+  if (updateType === 'name') {
+    const backendResponse = await fetch(
+      process.env.BACKEND_HOSTNAME + '/changeName',
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: token!,
+        },
+        body: JSON.stringify(formData),
+      }
+    )
+
+    return backendResponse.ok
+      ? new NextResponse(JSON.stringify({}), {
+          status: 200,
+        })
+      : new NextResponse(JSON.stringify({}), {
+          status: backendResponse.status,
+          statusText: backendResponse.statusText,
+        })
+  } else if (updateType === 'picture') {
+    const backendResponse = await fetch(
+      process.env.BACKEND_HOSTNAME + '/changeImage',
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: token!,
+        },
+        body: JSON.stringify(formData),
+      }
+    )
+
+    return backendResponse.ok
+      ? new NextResponse(JSON.stringify({}), {
+          status: 200,
+        })
+      : new NextResponse(JSON.stringify({}), {
+          status: backendResponse.status,
+          statusText: backendResponse.statusText,
+        })
+  } else if (updateType === 'description') {
+    const backendResponse = await fetch(
+      process.env.BACKEND_HOSTNAME + '/changeDescription',
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: token!,
+        },
+        body: JSON.stringify(formData),
+      }
+    )
+
+    return backendResponse.ok
+      ? new NextResponse(JSON.stringify({}), {
+          status: 200,
+        })
+      : new NextResponse(JSON.stringify({}), {
+          status: backendResponse.status,
+          statusText: backendResponse.statusText,
+        })
+  } else if (updateType === 'email') {
+    const supabase_response = await supabase.auth.updateUser({
+      email: String(formData.email),
+    })
+    error = supabase_response.error
+  } else if (requestUrl.pathname === '/api/profile/update/password') {
+    const supabase_response = await supabase.auth.updateUser({
+      password: 'new password',
+    })
     error = supabase_response.error
   }
   return error
@@ -41,5 +101,5 @@ export async function PUT(request: Request) {
       })
     : NextResponse.redirect(requestUrl.origin, {
         status: 301,
-      })   
+      })
 }

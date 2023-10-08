@@ -107,7 +107,7 @@ model Trade {
 /// @@allow('read, delete, delete', users ? [user.id == auth().id])
 model Chat {
     id Int @id() @default(autoincrement())
-    Message Message[]
+    messages Message[]
     users Profile[] @relation("ChatsUsers")
 }
 
@@ -115,7 +115,7 @@ model Chat {
 /// @@allow('all', receiverId == auth().id)
 /// @@allow('all', auth().role == 'ADMIN')
 model Message {
-    id String @id()
+    id Int @id() @default(autoincrement())
     chatId Int
     chat Chat @relation(fields: [chatId], references: [id])
     senderId String
