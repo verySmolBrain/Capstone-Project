@@ -5,6 +5,11 @@ import { cn } from '@/lib/utils'
 import { Input } from './ui/input'
 import { SendMessageButton } from './ui/button/send-message-button'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { messageSchema } from '@/lib/validation/chat'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+
 enum MessageType {
   USER,
   RECEIVER,
@@ -16,8 +21,13 @@ type Message = {
   timestamp: Date
 }
 
+type FormData = z.infer<typeof messageSchema>
+
 export function ChatList() {
   const [messages, setMessages] = React.useState<Message[]>([])
+  const { register, reset, handleSubmit } = useForm<FormData>({
+    resolver: zodResolver(messageSchema),
+  })
 
   React.useEffect(() => {
     const chats = async () => {
@@ -42,6 +52,18 @@ export function ChatList() {
     chats()
   }, [])
 
+  async function onSubmit(data: FormData) {
+    setMessages([
+      ...messages,
+      {
+        type: MessageType.USER,
+        content: data.message,
+        timestamp: new Date(),
+      },
+    ])
+    reset()
+  }
+
   return (
     <div className="container flex w-screen flex-col items-center pt-4">
       <div className="space-y-4 min-w-full flex-grow">
@@ -59,15 +81,18 @@ export function ChatList() {
           </div>
         ))}
       </div>
-      <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4">
-        <Input
-          id="message"
-          placeholder="Type your message..."
-          className="w-full"
-          autoComplete="off"
-        />
-        <SendMessageButton />
-      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4">
+          <Input
+            id="message"
+            placeholder="Type your message..."
+            className="w-full"
+            autoComplete="off"
+            {...register('message')}
+          />
+          <SendMessageButton />
+        </div>
+      </form>
     </div>
   )
 }
