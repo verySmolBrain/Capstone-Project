@@ -110,17 +110,17 @@ enum Status {
 }
 
 model Chat {
-  id         Int                  @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
 
-  Message    Message[]
-  users      Profile[]            @relation("ChatsUsers")
+  messages    Message[]
+  users       Profile[]            @relation("ChatsUsers")
 
   @@allow('create', true)
   @@allow('read, delete, delete', users?[user.id == auth().id])
 }
 
 model Message {
-  id         String   @id
+  id         Int      @id @default(autoincrement())
   chatId     Int   
   chat       Chat     @relation(fields: [chatId], references: [id])
   senderId   String
