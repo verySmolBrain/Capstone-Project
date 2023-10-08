@@ -10,6 +10,7 @@ export default function ConfirmationPage() {
         <div className="flex flex-col text-center">
           <IconLogo className="w-16 h-16 mx-auto" />
           <h1 className="text-2xl font-semibold tracking-tight">
+            <br></br>
             Thank you for signing up!
           </h1>
           <p className="text-sm text-muted-foreground">
