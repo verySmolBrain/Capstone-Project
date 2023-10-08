@@ -108,7 +108,11 @@ model Trade {
 model Chat {
     id Int @id() @default(autoincrement())
     messages Message[]
+<<<<<<< HEAD
     users Profile[] @relation("ChatsUsers")
+=======
+    users    Profile[] @relation("ChatsUsers")
+>>>>>>> 479d867 (more work)
 }
 
 /// @@allow('all', senderId == auth().id)

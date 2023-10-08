@@ -1,39 +1,44 @@
-import { requestHandler } from "./utils/PrismaHandler"
+import { requestHandler } from './utils/PrismaHandler'
+import { getUserIdGivenName } from './utils/utils'
 
 async function getChats(token: string | undefined, userId: string | undefined) {
-  const prisma = await requestHandler(token as string)
+  const prisma = await requestHandler(token as string) // fix this
   const chats = await prisma.chat.findMany({
-    where:{
+    where: {
       users: {
         some: {
-          id: userId
-        }
-      }
-    }
+          id: userId,
+        },
+      },
+    },
   })
   return chats
 }
 
-async function getChat(token: string | undefined, userId: string, receiverId: string) {
-  const prisma = await requestHandler(token as string)
+async function getChat(token: string, userId: string, receiverName: string) {
+  const prisma = await requestHandler(token as string) // fix this
+  const receiverId = await getUserIdGivenName(receiverName, prisma)
+
   const chat = await prisma.chat.findFirst({
     where: {
       users: {
         every: {
           id: {
-            in: [userId, receiverId]
-          }
-        }
-      }
-    }
+            in: [userId, receiverId],
+          },
+        },
+      },
+    },
   })
 
   return chat
 }
 
 // Creates a new chat between 2 users that have no existing DM between them
-async function updateChat(token: string | undefined, userId: string | undefined, receiverId: string | undefined) {
-  const prisma = await requestHandler(token as string)
+async function updateChat(token: string, userId: string, receiverName: string) {
+  const prisma = await requestHandler(token as string) // fix this
+  const receiverId = await getUserIdGivenName(receiverName, prisma)
+
   const newChat = await prisma.chat.create({
     data: {
       users: {
@@ -50,49 +55,48 @@ async function updateChat(token: string | undefined, userId: string | undefined,
   })
   return newChat
 }
- 
-async function sendMessage(token: string | undefined, userId: string, receiverId: string, message: string) {
-  const prisma = await requestHandler(token as string)
+
+async function sendMessage(
+  token: string,
+  userId: string,
+  receiverName: string,
+  message: string
+) {
+  const prisma = await requestHandler(token as string) // fix this
+  const receiverId = await getUserIdGivenName(receiverName, prisma)
 
   const currChat = await prisma.chat.findFirst({
     where: {
       users: {
         every: {
           id: {
-            in: [userId, receiverId]
-          }
-        }
-      }
-    }
+            in: [userId, receiverId],
+          },
+        },
+      },
+    },
   })
 
   if (!currChat) {
-    throw new Error("Chat not found")
+    throw new Error('No chat found')
   }
-  
-  const newMessage = await prisma.message.create({
-    data: {
-      chatId: currChat.id,
-      senderId: userId,
-      receiverId: receiverId,
-      content: message
-    }
-  })
-  
-  await prisma.chat.update({
-    where: {      
-      id: currChat.id
+
+  const updateResult = await prisma.chat.update({
+    where: {
+      id: currChat.id,
     },
     data: {
       messages: {
-        connect: { id: newMessage.id}
-      }
-    }
-
+        create: {
+          content: message,
+          senderId: userId,
+          receiverId: receiverId,
+        },
+      },
+    },
   })
 
-
-  return currChat
+  return updateResult
 }
 
-export {getChats, getChat, updateChat, sendMessage}
+export { getChats, getChat, updateChat, sendMessage }

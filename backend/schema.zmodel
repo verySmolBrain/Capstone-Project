@@ -112,8 +112,8 @@ enum Status {
 model Chat {
   id          Int                  @id @default(autoincrement())
 
-  messages    Message[]
-  users       Profile[]            @relation("ChatsUsers")
+  messages   Message[]            
+  users      Profile[]            @relation("ChatsUsers")
 
   @@allow('create', true)
   @@allow('read, delete, delete', users?[user.id == auth().id])
