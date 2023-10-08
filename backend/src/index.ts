@@ -76,7 +76,6 @@ fastify.put(
       const { description } = req.body
       const prisma = await requestHandler(token)
 
-      const user = await prisma.user.findFirst()
       const changedDescription = await prisma.profile.updateMany({
         data: {
           description: description,
