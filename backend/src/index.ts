@@ -529,6 +529,24 @@ fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { r
   }
 })
 
+
+// API endpoint for sending a chat message
+fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
+  try {
+    const token = req.headers['authorization']
+    const { receiverId } = req.params
+
+    const {
+      data: {user}, 
+    } = await supabase().auth.getUser(token)
+
+    const messageContents = req.body as string
+    reply.send(sendMessage(token, user?.id, receiverId, messageContents))
+  } catch (error) {
+    reply.status(500).send({error: error})
+  }
+})
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3001 })
