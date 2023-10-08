@@ -24,8 +24,8 @@ model User {
   role    Role     @default(USER)
   profile Profile?
 
-  @@allow('create', true)
-  @@allow('update,delete,read', auth() == this)
+  @@allow('create, read', true)
+  @@allow('update,delete', auth() == this)
   @@allow('all', auth().role == "ADMIN")
 }
 

@@ -25,8 +25,8 @@ enum Status {
     DECLINED
 }
 
-/// @@allow('create', true)
-/// @@allow('update,delete,read', auth() == this)
+/// @@allow('create, read', true)
+/// @@allow('update,delete', auth() == this)
 /// @@allow('all', auth().role == 'ADMIN')
 model User {
     id String @id()
@@ -108,11 +108,7 @@ model Trade {
 model Chat {
     id Int @id() @default(autoincrement())
     messages Message[]
-<<<<<<< HEAD
-    users Profile[] @relation("ChatsUsers")
-=======
     users    Profile[] @relation("ChatsUsers")
->>>>>>> 479d867 (more work)
 }
 
 /// @@allow('all', senderId == auth().id)
