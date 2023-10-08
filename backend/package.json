@@ -16,12 +16,6 @@
     "@prisma/client": "^5.4.1",
     "@supabase/supabase-js": "^2.38.0",
     "fastify": "^4.23.2",
-    "nodemon": "^3.0.1",
-    "@prisma/client": "^5.4.1",
-    "@supabase/supabase-js": "^2.38.0",
-    "@zenstackhq/runtime": "1.0.2",
-    "dotenv": "^16.3.1",
-    "fastify": "^4.23.2",
     "nodemon": "^3.0.1"
   },
   "devDependencies": {

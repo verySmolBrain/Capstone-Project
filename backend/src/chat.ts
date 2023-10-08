@@ -14,7 +14,7 @@ async function getChats(token: string | undefined, userId: string | undefined) {
   return chats
 }
 
-async function getChat(token: string | undefined, userId: string | undefined, receiverId: string | undefined) {
+async function getChat(token: string | undefined, userId: string, receiverId: string) {
   const prisma = await requestHandler(token as string)
   const chat = await prisma.chat.findFirst({
     where: {
@@ -31,6 +31,7 @@ async function getChat(token: string | undefined, userId: string | undefined, re
   return chat
 }
 
+// Creates a new chat between 2 users that have no existing DM between them
 async function updateChat(token: string | undefined, userId: string | undefined, receiverId: string | undefined) {
   const prisma = await requestHandler(token as string)
   const newChat = await prisma.chat.create({
@@ -49,11 +50,11 @@ async function updateChat(token: string | undefined, userId: string | undefined,
   })
   return newChat
 }
-
-async function sendMessage(token: string | undefined, userId: string | undefined, receiverId: string | undefined, message: string) {
+ 
+async function sendMessage(token: string | undefined, userId: string, receiverId: string, message: string) {
   const prisma = await requestHandler(token as string)
 
-  const currChat = await prisma.chat.update({
+  const currChat = await prisma.chat.findFirst({
     where: {
       users: {
         every: {
@@ -65,6 +66,10 @@ async function sendMessage(token: string | undefined, userId: string | undefined
     }
   })
 
+  if (!currChat) {
+    throw new Error("Chat not found")
+  }
+  
   const newMessage = await prisma.message.create({
     data: {
       chatId: currChat.id,
@@ -73,7 +78,19 @@ async function sendMessage(token: string | undefined, userId: string | undefined
       content: message
     }
   })
-  currChat.messages.push(newMessage)
+  
+  await prisma.chat.update({
+    where: {      
+      id: currChat.id
+    },
+    data: {
+      messages: {
+        connect: { id: newMessage.id}
+      }
+    }
+
+  })
+
 
   return currChat
 }

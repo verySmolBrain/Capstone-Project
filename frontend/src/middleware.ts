@@ -11,22 +11,14 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // Add settings
-  // Don't hardcode. Have an array. Then check all in /dashboard instead of just /dashboard
+  const protectedRoutes = ['/dashboard', '/dashboard/settings']
+  const blockedRoutesAfterLogin = ['/', '/login', '/register']
 
-  if (session && req.nextUrl.pathname === '/login') {
+  if (session && blockedRoutesAfterLogin.includes(req.nextUrl.pathname)) {
     return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
-  if (session && req.nextUrl.pathname === '/register') {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
-
-  if (session && req.nextUrl.pathname === '/') {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
-
-  if (!session && req.nextUrl.pathname === '/dashboard') {
+  if (!session && protectedRoutes.includes(req.nextUrl.pathname)) {
     return NextResponse.redirect(new URL('/', req.url))
   }
 

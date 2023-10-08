@@ -1,7 +1,6 @@
 import Fastify, { FastifyRequest } from 'fastify'
 import 'dotenv/config'
 import { getChat, getChats, sendMessage, updateChat } from './chat'
-import { isStringObject } from 'util/types'
 import { requestHandler, supabase, getUserId } from '@Source/utils/PrismaHandler'
 
 const fastify = Fastify({
@@ -70,15 +69,17 @@ fastify.put(
   async (req: FastifyRequest<{ Body: { name: string } }>, reply) => {
     try {
       const token = req.headers['authorization']
-
+      
       if (!token) {
         reply.status(401).send({ error: 'Unauthorized' })
         return
       }
 
+      console.log(token)
+      
       const { name } = req.body
       const prisma = await requestHandler(token)
-
+      console.log('goomasds')
       const nameExists = await prisma.profile.findFirst({
         where: { name: name },
       })
@@ -105,12 +106,11 @@ fastify.put(
   async (req: FastifyRequest<{ Body: { description: string } }>, reply) => {
     try {
       const token = req.headers['authorization']
-
       if (!token) {
         reply.status(401).send({ error: 'Unauthorized' })
         return
       }
-
+      
       const { description } = req.body
       const prisma = await requestHandler(token)
 
@@ -485,11 +485,11 @@ fastify.get('/chat/:receiverId', async (req: FastifyRequest<{ Params: { receiver
     const { receiverId } = req.params
     const { data: { user } } = await supabase().auth.getUser(token)
 
-    if (!token) {
+    if (!token || !user?.id) {
       reply.status(401).send({ error: 'Unauthorized' })
       return
     }
-    reply.send(getChat(token, user?.id, receiverId))
+    reply.send(getChat(token, user.id, receiverId))
   } catch (error) {
     reply.status(500).send({ error: error })
   }
@@ -522,8 +522,13 @@ fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { r
       data: {user}, 
     } = await supabase().auth.getUser(token)
 
+    if (!token || !user?.id) {
+      reply.status(401).send({ error: 'Unauthorized' })
+      return
+    }
+
     const messageContents = req.body as string
-    reply.send(sendMessage(token, user?.id, receiverId, messageContents))
+    reply.send(sendMessage(token, user.id, receiverId, messageContents))
   } catch (error) {
     reply.status(500).send({error: error})
   }
@@ -531,7 +536,7 @@ fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { r
 
 
 // API endpoint for sending a chat message
-fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
+fastify.put('/chat/send/:receiverId', async (req: FastifyRequest<{ Params: { receiverId: string } }>, reply) => {
   try {
     const token = req.headers['authorization']
     const { receiverId } = req.params
@@ -540,8 +545,13 @@ fastify.put('/chat/update/:receiverId', async (req: FastifyRequest<{ Params: { r
       data: {user}, 
     } = await supabase().auth.getUser(token)
 
+    if (!token || !user?.id) {
+      reply.status(401).send({ error: 'Unauthorized' })
+      return
+    }
+
     const messageContents = req.body as string
-    reply.send(sendMessage(token, user?.id, receiverId, messageContents))
+    reply.send(sendMessage(token, user.id, receiverId, messageContents))
   } catch (error) {
     reply.status(500).send({error: error})
   }
