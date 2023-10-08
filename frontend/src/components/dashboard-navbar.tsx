@@ -2,6 +2,7 @@ import { LogoutButton } from './ui/button/logout-button'
 import { SettingsButton } from './ui/button/settings-button'
 import { ToggleDarkMode } from './ui/button/theme-toggle-button'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
+import Link from 'next/link'
 
 export function DashboardNavBar() {
   return (
@@ -11,6 +12,9 @@ export function DashboardNavBar() {
         Goomba Market
       </p>
       <div className="container flex h-16 mr-0 items-center space-x-4 sm:justify-between sm:space-x-0">
+        <Link href="/dashboard">
+          <IconLogo className="w-8 h-8 mx-auto" />
+        </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <ToggleDarkMode />
           <SettingsButton />

@@ -8,7 +8,7 @@ import { PropsWithChildren } from 'react'
 type Props = PropsWithChildren & EmblaOptionsType
 
 export const Carousel = ({ children, ...options }: Props) => {
-  const [emblaRef] = useEmblaCarousel(options)
+  const [emblaRef] = useEmblaCarousel({...options, containScroll: 'trimSnaps'})
 
   return (
     <div className="overflow-hidden" ref={emblaRef}>
