@@ -4,6 +4,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from './ui/input'
 import { SendMessageButton } from './ui/button/send-message-button'
+import _ from 'lodash'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { messageSchema } from '@/lib/validation/chat'
@@ -21,36 +22,55 @@ type Message = {
   timestamp: Date
 }
 
+type Props = {
+  receiver: string
+}
+
 type FormData = z.infer<typeof messageSchema>
 
-export function ChatList() {
+export function ChatList({ receiver }: Props) {
   const [messages, setMessages] = React.useState<Message[]>([])
   const { register, reset, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(messageSchema),
   })
+  const messagesEndRef = React.useRef<null | HTMLDivElement>(null)
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   React.useEffect(() => {
-    const chats = async () => {
-      setMessages([
-        {
-          type: MessageType.USER,
-          content: 'Hello',
-          timestamp: new Date(),
+    const fetchMessages = async () => {
+      const response = await fetch(`/api/chat/${receiver}`, {
+        // Add a check later and raise toast
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          type: MessageType.RECEIVER,
-          content: 'Hi',
-          timestamp: new Date(),
-        },
-        {
-          type: MessageType.USER,
-          content: 'How are you?',
-          timestamp: new Date(),
-        },
-      ])
+      })
+
+      const data = await response.json()
+
+      const newMessagesOmittedTimestamp = _.omit(data.messages, 'prop2')
+      const messagesOmittedTimestamp = _.omit(messages, 'prop2')
+
+      console.log('newMessagesOmittedTimestamp', newMessagesOmittedTimestamp)
+      console.log('messagesOmittedTimestamp', messagesOmittedTimestamp)
+      console.log(
+        _.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp)
+      )
+
+      if (
+        !_.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp) &&
+        data.messages.length >= messages.length
+      ) {
+        setMessages(data.messages) // Fix this sometime
+      }
     }
-    chats()
-  }, [])
+
+    fetchMessages()
+    const timeout = setTimeout(fetchMessages, 5000)
+    return () => clearTimeout(timeout)
+  }, [messages, receiver])
 
   async function onSubmit(data: FormData) {
     setMessages([
@@ -61,11 +81,26 @@ export function ChatList() {
         timestamp: new Date(),
       },
     ])
+
+    await fetch('/api/chat/send', {
+      // Add a check later and raise toast
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'update-type': 'name',
+      },
+      body: JSON.stringify({
+        messageContents: data.message,
+        receiver: receiver,
+      }),
+    })
+
     reset()
+    scrollToBottom()
   }
 
   return (
-    <div className="container flex w-screen flex-col items-center pt-4">
+    <div className="container flex w-screen flex-col items-center pt-4 pb-24">
       <div className="space-y-4 min-w-full flex-grow">
         {messages.map((message, index) => (
           <div
@@ -81,8 +116,9 @@ export function ChatList() {
           </div>
         ))}
       </div>
+      <div ref={messagesEndRef} />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4">
+        <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4 z-10">
           <Input
             id="message"
             placeholder="Type your message..."
@@ -93,6 +129,7 @@ export function ChatList() {
           <SendMessageButton />
         </div>
       </form>
+      <div className="bg-primary-foreground fixed inset-x-1 bottom-0 h-20 z-0"></div>
     </div>
   )
 }
