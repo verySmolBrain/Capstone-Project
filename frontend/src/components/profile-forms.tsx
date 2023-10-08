@@ -205,7 +205,7 @@ export function UpdateDescriptionForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <FormField
           control={form.control}
-          name="bio"
+          name="description"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Bio</FormLabel>
