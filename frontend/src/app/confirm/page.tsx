@@ -7,10 +7,9 @@ export default function ConfirmationPage() {
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <BackButton />
       <div className="mx-auto flex w-full flex-col justify-center space-y-3 sm:w-[350px]">
-        <div className="flex flex-col text-center">
+        <div className="flex flex-col gap-2 text-center">
           <IconLogo className="w-16 h-16 mx-auto" />
           <h1 className="text-2xl font-semibold tracking-tight">
-            <br></br>
             Thank you for signing up!
           </h1>
           <p className="text-sm text-muted-foreground">

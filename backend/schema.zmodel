@@ -24,8 +24,8 @@ model User {
   role    Role     @default(USER)
   profile Profile?
 
-  @@allow('create', true)
-  @@allow('update,delete,read', auth() == this)
+  @@allow('create, read', true)
+  @@allow('update,delete', auth() == this)
   @@allow('all', auth().role == "ADMIN")
 }
 
@@ -112,8 +112,8 @@ enum Status {
 model Chat {
   id          Int                  @id @default(autoincrement())
 
-  messages    Message[]
-  users       Profile[]            @relation("ChatsUsers")
+  messages   Message[]            
+  users      Profile[]            @relation("ChatsUsers")
 
   @@allow('create', true)
   @@allow('read, delete, delete', users?[user.id == auth().id])
