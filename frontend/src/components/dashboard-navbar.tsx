@@ -7,14 +7,14 @@ import Link from 'next/link'
 export function DashboardNavBar() {
   return (
     <header className="w-full border-b bg-background">
-      <IconLogo className="w-10 h-10 mx-auto absolute left-4 top-4 md:left-36 md:top-4"/>
-      <p className="text-2xl font-semibold tracking-tight absolute left-4 top-4 md:left-52 md:top-4">
+      <Link href="/dashboard">
+        <IconLogo className="w-10 h-10 mx-auto absolute left-4 top-4 2xl:left-36 md:top-4" />
+      </Link>
+
+      <p className="text-2xl font-semibold tracking-tight absolute left-4 top-4 md:left-20 2xl:left-52 md:top-4 invisible md:visible">
         Goomba Market
       </p>
       <div className="container flex h-16 mr-0 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <Link href="/dashboard">
-          <IconLogo className="w-8 h-8 mx-auto" />
-        </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <ToggleDarkMode />
           <SettingsButton />

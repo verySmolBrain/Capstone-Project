@@ -3,7 +3,6 @@ import * as React from 'react'
 import { DashboardNavBar } from '@/components/dashboard-navbar'
 import { TypographyH2 } from '@/components/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
-import { MoveLeftIcon } from 'lucide-react'
 import Image from 'next/image'
 
 export default function Dashboard() {
@@ -29,22 +28,17 @@ export default function Dashboard() {
       <DashboardNavBar />
 
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
-        <div className="container flex flex-col gap-4 border-4 border-primary rounded-2xl pt-6">
+        <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <TypographyH2 text="Active Campaigns" />
-          <div className="container flex flex-row justify-between">
-            <div className="flex flex-col align-middle justify-center">
-            <MoveLeftIcon className="w-6 h-6" />
-            </div>
-            
-            <Carousel>
+          <Carousel>
             {collections.map((src, i) => {
               return (
                 <div key={i} className="">
-                  <div className="relative aspect-10/50 mt-6 mb-6 h-24 w-auto">
+                  <div className="relative aspect-10/50 mt-6 mb-6 h-24 w-auto mr-3 ml-3">
                     <Image
                       src={src}
                       layout="fill"
-                      className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-4 border-primary rounded-2xl"
+                      className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                       alt="alt"
                     />
                   </div>
@@ -52,15 +46,11 @@ export default function Dashboard() {
               )
             })}
           </Carousel>
-          <div className="flex flex-col align-middle justify-center">
-            <MoveLeftIcon className="w-6 h-6" />
-            </div>
-          </div>
         </div>
       </section>
 
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
-        <div className="container flex flex-col gap-4 border-4 border-primary rounded-2xl pt-6">
+        <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <TypographyH2 text="Popular Collectibles" />
           <Carousel>
             {images.map((src, i) => {
@@ -72,7 +62,7 @@ export default function Dashboard() {
                   <Image
                     src={src}
                     layout="fill"
-                    className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-4 border-primary rounded-2xl"
+                    className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 rounded-2xl"
                     alt="alt"
                   />
                 </div>
@@ -83,7 +73,7 @@ export default function Dashboard() {
       </section>
 
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0pb-4 md:pb-12">
-        <div className="container flex flex-col gap-4 border-4 border-primary rounded-2xl pt-6">
+        <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <TypographyH2 text="Recommended For You" />
           <Carousel>
             {images.map((src, i) => {
@@ -95,7 +85,7 @@ export default function Dashboard() {
                   <Image
                     src={src}
                     layout="fill"
-                    className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-4 border-primary rounded-2xl"
+                    className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 rounded-2xl"
                     alt="alt"
                   />
                 </div>
