@@ -43,7 +43,7 @@ export function UserAuthForm() {
     if (!signInResult?.ok) {
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: signInResult?.statusText,
+        description: 'Have you made sure to confirm your account?',
         variant: 'destructive',
       })
     }

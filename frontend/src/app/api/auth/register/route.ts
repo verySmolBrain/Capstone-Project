@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     ? new NextResponse(supabase_response.error.message, {
         status: supabase_response.error.status,
       })
-    : NextResponse.redirect(requestUrl.origin, {
+    : NextResponse.redirect(`${requestUrl.origin}/confirm`, {
         status: 301,
       })
 }
