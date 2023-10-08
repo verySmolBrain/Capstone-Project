@@ -31,6 +31,7 @@ async function getChat(token: string | undefined, userId: string | undefined, re
   return chat
 }
 
+// Creates a new chat between 2 users that have no existing DM between them
 async function updateChat(token: string | undefined, userId: string | undefined, receiverId: string | undefined) {
   const prisma = await requestHandler(token as string)
   const post = await prisma.chat.create({
