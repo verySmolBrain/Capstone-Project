@@ -31,8 +31,11 @@ export default function Dashboard() {
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
         <div className="container flex flex-col gap-4 border-4 border-primary rounded-2xl pt-6">
           <TypographyH2 text="Active Campaigns" />
-          <div className="container flex flex-row">
+          <div className="container flex flex-row justify-between">
+            <div className="flex flex-col align-middle justify-center">
             <MoveLeftIcon className="w-6 h-6" />
+            </div>
+            
             <Carousel>
             {collections.map((src, i) => {
               return (
@@ -49,8 +52,10 @@ export default function Dashboard() {
               )
             })}
           </Carousel>
+          <div className="flex flex-col align-middle justify-center">
+            <MoveLeftIcon className="w-6 h-6" />
+            </div>
           </div>
-
         </div>
       </section>
 

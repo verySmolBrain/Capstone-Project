@@ -11,7 +11,7 @@ export const Carousel = ({ children, ...options }: Props) => {
   const [emblaRef] = useEmblaCarousel({...options, containScroll: 'trimSnaps'})
 
   return (
-    <div className="overflow-hidden" ref={emblaRef}>
+    <div className="overflow-hidden flex-grow" ref={emblaRef}>
       <div className="flex">{children}</div>
     </div>
   )
