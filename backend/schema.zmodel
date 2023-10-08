@@ -24,8 +24,15 @@ model User {
   role    Role     @default(USER)
   profile Profile?
 
+<<<<<<< HEAD
   @@allow('create,read', true)
   @@allow('update,delete', auth() == this)
+=======
+  reviews Review[] @relation("reviewer")
+
+  @@allow('create', true)
+  @@allow('update,delete,read', auth() == this)
+>>>>>>> f71f22150c1eac6ac7f3a37319abd587506e4e1c
   @@allow('all', auth().role == "ADMIN")
 }
 

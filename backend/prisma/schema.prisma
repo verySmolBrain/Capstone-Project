@@ -25,8 +25,8 @@ enum Status {
     DECLINED
 }
 
-/// @@allow('create,read', true)
-/// @@allow('update,delete', auth() == this)
+/// @@allow('create', true)
+/// @@allow('update,delete,read', auth() == this)
 /// @@allow('all', auth().role == 'ADMIN')
 model User {
     id String @id()
