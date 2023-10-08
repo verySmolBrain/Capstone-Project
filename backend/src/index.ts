@@ -1,11 +1,49 @@
 import Fastify, { FastifyRequest } from 'fastify'
 import 'dotenv/config'
-import { requestHandler, supabase } from '@Source/utils/PrismaHandler'
 import { getChat, getChats, updateChat } from './chat'
 import { isStringObject } from 'util/types'
+import { requestHandler, supabase, getUserId } from '@Source/utils/PrismaHandler'
 
 const fastify = Fastify({
   logger: true,
+})
+
+// create user AND profile
+fastify.post('/createUser', async (req: FastifyRequest<{ Body: { name: string } }>, reply) => {
+  try {
+    const token = req.headers['authorization']
+
+    if (!token) {
+      reply.status(401).send({ error: 'Unauthorized' })
+      return
+    }
+
+    const userId = await getUserId(token)
+
+    const { name } = req.body
+    const prisma = await requestHandler(token)
+
+    const user = await prisma.user.create({
+      data: {
+        id: userId,
+        profile: {
+          create: {
+            name: name,
+            description: 'im such a goomba',
+            image: 'thisisaurl',
+            collection: {},
+            achievements: {},
+            sales: {},
+            purchases: {},
+            reputation: 69,
+          },
+        },
+      },
+    })
+    reply.send(user)
+  } catch (error) {
+    reply.status(500).send({ error: error })
+  }
 })
 
 // get user profile
@@ -116,7 +154,7 @@ fastify.put(
 )
 
 // get wishlist
-fastify.get('/getWishlist', async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
+fastify.get('/wishlist', async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
   try {
     const token = req.headers['authorization']
 
@@ -219,7 +257,7 @@ fastify.delete(
 )
 
 // get wares
-fastify.get('/getWares', async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
+fastify.get('/wares', async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
   try {
     const token = req.headers['authorization']
 
@@ -321,7 +359,7 @@ fastify.delete(
 )
 
 // get collection
-fastify.get('/getCollection', async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
+fastify.get('/collection', async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
   try {
     const token = req.headers['authorization']
 
