@@ -142,7 +142,7 @@ export function UpdateProfilePictureForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="picture">Change Display Picture</Label>
-          <div className="grid gap-2.5 flex grid-flow-col">
+          <div className="grid gap-2.5">
             <Input id="picture" type="file" {...register('picture')} />
             <Button
               type="submit"

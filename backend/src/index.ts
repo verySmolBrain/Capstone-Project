@@ -1,6 +1,6 @@
 import Fastify, { FastifyRequest } from 'fastify'
 import 'dotenv/config'
-import { getChat, getChats, sendMessage, updateChat } from './chat'
+import { getMessages, sendMessage, updateChat } from './chat'
 import {
   requestHandler,
   supabase,
@@ -56,19 +56,81 @@ fastify.post(
 fastify.get('/profile', async (req, reply) => {
   try {
     const token = req.headers['authorization']
+
     if (!token) {
       reply.status(401).send({ error: 'Unauthorized' })
       return
     }
 
     const prisma = await requestHandler(token)
-
-    const profile = await prisma.profile.findFirst({})
+    const userId = await getUserId(token)
+    const profile = await prisma.profile.findFirst({
+      where: {
+        id: userId,
+      },
+    })
     reply.send(profile)
   } catch (error) {
     reply.status(500).send({ error: error })
   }
 })
+
+// get user profile by name
+fastify.get(
+  '/getUser/:name',
+  async (req: FastifyRequest<{ Params: { name: string } }>, reply) => {
+    try {
+      const token = req.headers['authorization']
+      const { name } = req.params
+
+      if (!token) {
+        reply.status(401).send({ error: 'Unauthorized' })
+        return
+      }
+
+      const prisma = await requestHandler(token)
+      const profile = await prisma.profile.findMany({
+        where: {
+          name: {
+            search: name,
+          },
+        },
+      })
+      reply.send(profile)
+    } catch (error) {
+      reply.status(500).send({ error: error })
+    }
+  }
+)
+
+// get collectable by name
+fastify.get(
+  '/getCollectable/:name',
+  async (req: FastifyRequest<{ Params: { name: string } }>, reply) => {
+    try {
+      const token = req.headers['authorization']
+      const { name } = req.params
+      console.log('AAAAAAAAAAAAAAA')
+      console.log(name)
+
+      if (!token) {
+        reply.status(401).send({ error: 'Unauthorized' })
+        return
+      }
+      const prisma = await requestHandler(token)
+      const collectable = await prisma.collectable.findMany({
+        where: {
+          name: {
+            search: name,
+          },
+        },
+      })
+      reply.send(collectable)
+    } catch (error) {
+      reply.status(500).send({ error: error })
+    }
+  }
+)
 
 // change name of user
 fastify.put(
@@ -82,11 +144,9 @@ fastify.put(
         return
       }
 
-      console.log(token)
-
       const { name } = req.body
       const prisma = await requestHandler(token)
-      console.log('goomasds')
+
       const nameExists = await prisma.profile.findFirst({
         where: { name: name },
       })
@@ -161,32 +221,29 @@ fastify.put(
 )
 
 // get wishlist
-fastify.get(
-  '/wishlist',
-  async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-    try {
-      const token = req.headers['authorization']
+fastify.get('/wishlist', async (req, reply) => {
+  try {
+    const token = req.headers['authorization']
 
-      if (!token) {
-        reply.status(401).send({ error: 'Unauthorized' })
-        return
-      }
-
-      const prisma = await requestHandler(token)
-
-      const user = await prisma.user.findFirst()
-
-      const collectables = await prisma.collectable.findMany({
-        where: {
-          wishlist: { some: { id: user?.id } },
-        },
-      })
-      reply.send(collectables)
-    } catch (error) {
-      reply.status(500).send({ error: error })
+    if (!token) {
+      reply.status(401).send({ error: 'Unauthorized' })
+      return
     }
+
+    const prisma = await requestHandler(token)
+
+    const user = await prisma.user.findFirst()
+
+    const collectables = await prisma.collectable.findMany({
+      where: {
+        wishlist: { some: { id: user?.id } },
+      },
+    })
+    reply.send(collectables)
+  } catch (error) {
+    reply.status(500).send({ error: error })
   }
-)
+})
 
 // add collectable to wishilist
 fastify.put(
@@ -489,20 +546,18 @@ fastify.put(
       const { receiverName } = req.params
 
       if (!token || !user?.id) {
-        console.log(token)
-        console.log(user?.id)
         reply.status(401).send({ error: 'Unauthorized' })
         return
       }
       reply.send(updateChat(token, user?.id, receiverName))
     } catch (error) {
       console.log(error)
-      reply.status(500).send({ error: error })
+      reply.code(500).send({ error: error })
     }
   }
 )
 
-// API endpoint for retrieving a specific chat with a user
+// API endpoint for retrieving messages with a user
 fastify.get(
   '/chat/:receiverName',
   async (req: FastifyRequest<{ Params: { receiverName: string } }>, reply) => {
@@ -518,31 +573,33 @@ fastify.get(
         return
       }
 
-      reply.send(getChat(token, user?.id, receiverName))
+      const messages = getMessages(token, user?.id, receiverName)
+      reply.send(await messages)
     } catch (error) {
+      console.log(error)
       reply.status(500).send({ error: error })
     }
   }
 )
 
 // API endpoint for retrieving chats of a user from the database
-fastify.get('/chats', async (req, reply) => {
-  try {
-    const token = req.headers['authorization']
+// fastify.get('/chats', async (req, reply) => {
+//   try {
+//     const token = req.headers['authorization']
 
-    if (!token) {
-      reply.status(401).send({ error: 'Unauthorized' })
-      return
-    }
+//     if (!token) {
+//       reply.status(401).send({ error: 'Unauthorized' })
+//       return
+//     }
 
-    const {
-      data: { user },
-    } = await supabase().auth.getUser(token)
-    reply.send(getChats(token, user?.id))
-  } catch (error) {
-    reply.status(500).send({ error: error })
-  }
-})
+//     const {
+//       data: { user },
+//     } = await supabase().auth.getUser(token)
+//     reply.send(getChats(token, user?.id))
+//   } catch (error) {
+//     reply.status(500).send({ error: error })
+//   }
+// })
 
 // API endpoint for updating chat
 fastify.put(
