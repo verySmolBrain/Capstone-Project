@@ -16,7 +16,7 @@ export default function ChatList() {
   React.useEffect(() => {
     // Fetching chat list by making call to api route
     const fetchChats = async () => {
-      const response = await fetch('/api/chat/retrieve', {
+      const response = await fetch('/api/chat', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -35,22 +35,23 @@ export default function ChatList() {
     <div>
       <section className="space-y-16 pb-8 pt-6 md:pb-12 md:pt-10">
         {chats.map((chat, index) => (
-          <div
-            key={index}
-            className="container flex items-center gap-4"
-          >
-            <div className="relative w-20 h-20 rounded-full overflow-hidden">
-              <Image
-                src={chat.image}
-                layout="fill"
-                className="object-cover w-full h-full"
-                alt="profile picture"
-              />
+          <div key={index}>
+            <a href = {`/chat/${chat.receiver}`}>
+            <div className="container flex items-center gap-4">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden">
+                <Image
+                  src={chat.image}
+                  layout="fill"
+                  className="object-cover w-full h-full"
+                  alt="profile picture"
+                />
+              </div>
+              <div className="flex flex-col gap-3.5">
+                <p className="text-2xl font-semibold">{chat.receiver}</p>
+                <p className="text-500">{chat.latestMessage}</p>
+              </div>
             </div>
-            <div className="flex flex-col gap-3.5">
-              <p className="text-2xl font-semibold">{chat.receiver}</p>
-              <p className="text-500">{chat.latestMessage}</p>
-            </div>
+            </a>
           </div>
         ))
         }
