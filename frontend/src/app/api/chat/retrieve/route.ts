@@ -25,11 +25,12 @@ export async function GET(request: Request) {
         }
       }
     )
+    const data = await response.json()
 
     if (!response.ok || response.status === 500) {
       throw new Error('Cannot find chat list')
     }
-    return new NextResponse(JSON.stringify(response))
+    return new NextResponse(JSON.stringify(data), { status: 200 })
   } catch {
     return NextResponse.redirect(requestUrl.origin)
   }

@@ -9,7 +9,7 @@ export default function ChatListPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <GeneralNavBar />
-      <section className="space-y-8 pb-8 pt-6 md:pb-12 md:pt-10">
+      <section className="space pb-8 pt-6 md:pb-12 md:pt-10">
         <div className="container flex flex-col gap-4">
           <TypographyH2 text="Active chats" />
         </div>

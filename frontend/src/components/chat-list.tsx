@@ -1,11 +1,13 @@
 'use client'
 
+import Image from 'next/image'
 import * as React from 'react'
 
 type FormattedChat = {
   id: number,
   latestMessage: string,
-  users: string[]
+  receiver: string,
+  image: string
 }
 
 export default function ChatList() {
@@ -27,17 +29,32 @@ export default function ChatList() {
     fetchChats()
     const timeout = setTimeout(fetchChats, 5000)
     return () => clearTimeout(timeout)
-  }, [chats])
+  }, [])
 
   return (
-    <div className="space-y-4 min-w-full flex-grow">
-      {chats.map((chat, index) => (
-        <div
-          key={index}
-        >
-          {chat.toString()}
-        </div>
-      ))}
-    </div>
+    <div>
+      <section className="space-y-16 pb-8 pt-6 md:pb-12 md:pt-10">
+        {chats.map((chat, index) => (
+          <div
+            key={index}
+            className="container flex items-center gap-4"
+          >
+            <div className="relative w-20 h-20 rounded-full overflow-hidden">
+              <Image
+                src={chat.image}
+                layout="fill"
+                className="object-cover w-full h-full"
+                alt="profile picture"
+              />
+            </div>
+            <div className="flex flex-col gap-3.5">
+              <p className="text-2xl font-semibold">{chat.receiver}</p>
+              <p className="text-500">{chat.latestMessage}</p>
+            </div>
+          </div>
+        ))
+        }
+      </section >
+    </div >
   )
 }
