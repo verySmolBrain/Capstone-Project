@@ -12,7 +12,7 @@ export default function ChatOverviewPage() {
                     <TypographyH2 text="Active chats" />
                 </div>
                 <div>
-                    <ChatList/>
+                    <ChatList />
                 </div>
             </section>
         </div>
