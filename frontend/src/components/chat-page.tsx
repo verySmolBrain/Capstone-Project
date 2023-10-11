@@ -9,6 +9,7 @@ import _ from 'lodash'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { messageSchema } from '@/lib/validation/chat'
 import { useForm } from 'react-hook-form'
+import LinkParser from "react-link-parser";
 import * as z from 'zod'
 
 enum MessageType {
@@ -99,6 +100,17 @@ export function ChatPage({ receiver }: Props) {
     scrollToBottom()
   }
 
+  const linkWatcher = [
+    {
+      watchFor: "link",
+      render: (url: string) => (
+        <u><a href={url} target="_blank" rel="noreferrer noopener nofollow">
+          {url}
+        </a></u>
+      ),
+    },
+  ];
+
   return (
     <div className="container flex w-screen flex-col items-center pt-4 pb-24">
       <div className="space-y-4 min-w-full flex-grow">
@@ -112,7 +124,7 @@ export function ChatPage({ receiver }: Props) {
                 : 'bg-muted'
             )}
           >
-            {message.content}
+            <LinkParser watchers={linkWatcher}>{message.content}</LinkParser>
           </div>
         ))}
       </div>
