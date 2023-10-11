@@ -28,7 +28,7 @@ type Props = {
 
 type FormData = z.infer<typeof messageSchema>
 
-export function ChatList({ receiver }: Props) {
+export function ChatPage({ receiver }: Props) {
   const [messages, setMessages] = React.useState<Message[]>([])
   const { register, reset, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(messageSchema),

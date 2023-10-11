@@ -1,7 +1,6 @@
 import React from 'react'
 import { GeneralNavBar } from '@/components/general-navbar'
 import { TypographyH2 } from '@/components/typography-h2'
-import { ChatList } from '@/components/chat-list'
 
 export default function ChatOverviewPage() {
     return (
@@ -12,7 +11,6 @@ export default function ChatOverviewPage() {
                     <TypographyH2 text="Active chats" />
                 </div>
                 <div>
-                    <ChatList />
                 </div>
             </section>
         </div>
