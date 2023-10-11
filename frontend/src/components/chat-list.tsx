@@ -50,7 +50,7 @@ export default function ChatList() {
               <div className="flex flex-col gap-4">
                 <p className="text-2xl font-semibold">{chat.receiver}</p>
                 <div className="text-xs text-gray-400	 -mt-3">
-                  {format(new Date(chat.latestMessage.updatedAt), 'hh:mm a')}
+                  {format(new Date(chat.latestMessage.updatedAt), 'h:mm a') + ' on ' + format(new Date(chat.latestMessage.updatedAt), 'd/M/y')}
                 </div>
                 <p className="text-500">{chat.latestMessage.content}</p>
               </div>
