@@ -100,11 +100,20 @@ export function ChatPage({ receiver }: Props) {
     scrollToBottom()
   }
 
+  // Array of watchers which specify how to render certain string types (i.e links)
   const linkWatcher = [
     {
-      watchFor: "link",
+      watchFor: "http",
       render: (url: string) => (
         <u><a href={url} target="_blank" rel="noreferrer noopener nofollow">
+          {url}
+        </a></u>
+      ),
+    },
+    {
+      watchFor: "www.",
+      render: (url: string) => (
+        <u><a href={"http://" + url.slice(url.lastIndexOf('w') + 2)} target="_blank" rel="noreferrer noopener nofollow">
           {url}
         </a></u>
       ),
