@@ -2,10 +2,11 @@
 
 import Image from 'next/image'
 import * as React from 'react'
+import {format} from 'date-fns'
 
 type FormattedChat = {
   id: number,
-  latestMessage: string,
+  latestMessage: Message,
   receiver: string,
   image: string
 }
@@ -33,12 +34,12 @@ export default function ChatList() {
 
   return (
     <div>
-      <section className="space-y-16 pb-8 pt-6 md:pb-12 md:pt-10">
+      <section className="space-y-10 pb-8 pt-6 md:pb-12 md:pt-10">
         {chats.map((chat, index) => (
           <div key={index}>
             <a href = {`/chat/${chat.receiver}`}>
-            <div className="container flex items-center gap-4">
-              <div className="relative w-20 h-20 rounded-full overflow-hidden">
+            <div className="container flex items-center gap-4 border rounded-2xl pt-6 pb-6">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden ">
                 <Image
                   src={chat.image}
                   layout="fill"
@@ -46,9 +47,12 @@ export default function ChatList() {
                   alt="profile picture"
                 />
               </div>
-              <div className="flex flex-col gap-3.5">
+              <div className="flex flex-col gap-4">
                 <p className="text-2xl font-semibold">{chat.receiver}</p>
-                <p className="text-500">{chat.latestMessage}</p>
+                <div className="text-xs text-gray-400	 -mt-3">
+                  {format(new Date(chat.latestMessage.updatedAt), 'hh:mm a')}
+                </div>
+                <p className="text-500">{chat.latestMessage.content}</p>
               </div>
             </div>
             </a>

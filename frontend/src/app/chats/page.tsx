@@ -12,8 +12,8 @@ export default function ChatListPage() {
       <section className="space pb-8 pt-6 md:pb-12 md:pt-10">
         <div className="container flex flex-col gap-4">
           <TypographyH2 text="Active chats" />
+          <ChatList />
         </div>
-        <ChatList />
       </section>
     </div>
   )
