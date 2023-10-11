@@ -4,14 +4,7 @@ import { NextResponse } from 'next/server'
 
 import type { Database } from '@/lib/database.types'
 
-export const dynamic = 'force-dynamic'
-
-export async function GET(
-  request: Request,
-  params: {
-    params: { slug: string }
-  }
-) {
+export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const supabase = createRouteHandlerClient<Database>({ cookies })
   const token = (await supabase.auth.getSession()).data.session?.access_token
@@ -23,32 +16,22 @@ export async function GET(
   }
 
   try {
-    const response = await fetch(
-      `${process.env.BACKEND_HOSTNAME}/chat/${params.params.slug}`,
+    const response = await fetch(`${process.env.BACKEND_HOSTNAME}/chats`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           authorization: token!,
-        },
+        }
       }
     )
-
     const data = await response.json()
-    // console.log(data.messages)
 
-    if (!response.ok) {
-      throw new Error('Cannot retrieve messages!')
+    if (!response.ok || response.status === 500) {
+      throw new Error('Cannot find chat list')
     }
-
-    return new NextResponse(JSON.stringify(data), {
-        status: 200,
-        })
+    return new NextResponse(JSON.stringify(data), { status: 200 })
   } catch {
     return NextResponse.redirect(requestUrl.origin)
   }
-
-  return new NextResponse(JSON.stringify({}), {
-    status: 200,
-  })
 }

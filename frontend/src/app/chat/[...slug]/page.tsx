@@ -3,7 +3,7 @@
 import React from 'react'
 import useSWR from 'swr'
 import { GeneralNavBar } from '@/components/general-navbar'
-import { ChatList } from '@/components/chat-list'
+import { ChatPage } from '@/components/chat-page'
 import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -35,7 +35,7 @@ export default function ChatOverviewPage({
   return (
     <>
       <GeneralNavBar />
-      <ChatList receiver={receiver} />
+      <ChatPage receiver={receiver} />
     </>
   )
 }

@@ -1,47 +1,23 @@
 'use client'
 
+import Image from 'next/image'
 import * as React from 'react'
-import { cn } from '@/lib/utils'
-import { Input } from './ui/input'
-import { SendMessageButton } from './ui/button/send-message-button'
-import _ from 'lodash'
+import {format} from 'date-fns'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { messageSchema } from '@/lib/validation/chat'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-
-enum MessageType {
-  USER,
-  RECEIVER,
+type FormattedChat = {
+  id: number,
+  latestMessage: Message,
+  receiver: string,
+  image: string
 }
 
-type Message = {
-  type: MessageType
-  content: string
-  timestamp: Date
-}
-
-type Props = {
-  receiver: string
-}
-
-type FormData = z.infer<typeof messageSchema>
-
-export function ChatList({ receiver }: Props) {
-  const [messages, setMessages] = React.useState<Message[]>([])
-  const { register, reset, handleSubmit } = useForm<FormData>({
-    resolver: zodResolver(messageSchema),
-  })
-  const messagesEndRef = React.useRef<null | HTMLDivElement>(null)
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+export default function ChatList() {
+  const [chats, setChats] = React.useState<FormattedChat[]>([])
 
   React.useEffect(() => {
-    const fetchMessages = async () => {
-      const response = await fetch(`/api/chat/${receiver}`, {
-        // Add a check later and raise toast
+    // Fetching chat list by making call to api route
+    const fetchChats = async () => {
+      const response = await fetch('/api/chat', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -49,87 +25,41 @@ export function ChatList({ receiver }: Props) {
       })
 
       const data = await response.json()
-
-      const newMessagesOmittedTimestamp = _.omit(data.messages, 'prop2')
-      const messagesOmittedTimestamp = _.omit(messages, 'prop2')
-
-      console.log('newMessagesOmittedTimestamp', newMessagesOmittedTimestamp)
-      console.log('messagesOmittedTimestamp', messagesOmittedTimestamp)
-      console.log(
-        _.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp)
-      )
-
-      if (
-        !_.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp) &&
-        data.messages.length >= messages.length
-      ) {
-        setMessages(data.messages) // Fix this sometime
-      }
+      setChats(data.chats)
     }
-
-    fetchMessages()
-    const timeout = setTimeout(fetchMessages, 5000)
+    fetchChats()
+    const timeout = setTimeout(fetchChats, 5000)
     return () => clearTimeout(timeout)
-  }, [messages, receiver])
-
-  async function onSubmit(data: FormData) {
-    setMessages([
-      ...messages,
-      {
-        type: MessageType.USER,
-        content: data.message,
-        timestamp: new Date(),
-      },
-    ])
-
-    await fetch('/api/chat/send', {
-      // Add a check later and raise toast
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'update-type': 'name',
-      },
-      body: JSON.stringify({
-        messageContents: data.message,
-        receiver: receiver,
-      }),
-    })
-
-    reset()
-    scrollToBottom()
-  }
+  }, [])
 
   return (
-    <div className="container flex w-screen flex-col items-center pt-4 pb-24">
-      <div className="space-y-4 min-w-full flex-grow">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={cn(
-              'flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm',
-              message.type === MessageType.USER
-                ? 'ml-auto bg-primary text-primary-foreground'
-                : 'bg-muted'
-            )}
-          >
-            {message.content}
+    <div>
+      <section className="space-y-10 pb-8 pt-6 md:pb-12 md:pt-10">
+        {chats.map((chat, index) => (
+          <div key={index}>
+            <a href = {`/chat/${chat.receiver}`}>
+            <div className="container flex items-center gap-4 border rounded-2xl pt-6 pb-6">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden ">
+                <Image
+                  src={chat.image}
+                  layout="fill"
+                  className="object-cover w-full h-full"
+                  alt="profile picture"
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <p className="text-2xl font-semibold">{chat.receiver}</p>
+                <div className="text-xs text-gray-400	 -mt-3">
+                  {format(new Date(chat.latestMessage.updatedAt), 'h:mm a') + ' on ' + format(new Date(chat.latestMessage.updatedAt), 'd/M/y')}
+                </div>
+                <p className="text-500">{chat.latestMessage.content}</p>
+              </div>
+            </div>
+            </a>
           </div>
-        ))}
-      </div>
-      <div ref={messagesEndRef} />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4 z-10">
-          <Input
-            id="message"
-            placeholder="Type your message..."
-            className="w-full"
-            autoComplete="off"
-            {...register('message')}
-          />
-          <SendMessageButton />
-        </div>
-      </form>
-      <div className="bg-primary-foreground fixed inset-x-1 bottom-0 h-20 z-0"></div>
-    </div>
+        ))
+        }
+      </section >
+    </div >
   )
 }
