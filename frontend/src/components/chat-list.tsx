@@ -28,8 +28,8 @@ export default function ChatList() {
       setChats(data.chats)
     }
     fetchChats()
-    const timeout = setTimeout(fetchChats, 5000)
-    return () => clearTimeout(timeout)
+    const timeout = setInterval(fetchChats, 2500)
+    return () => clearInterval(timeout)
   }, [])
 
   return (

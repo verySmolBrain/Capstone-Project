@@ -60,6 +60,7 @@ export function ChatPage({ receiver }: Props) {
         _.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp)
       )
 
+      console.log("test")
       if (
         !_.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp) &&
         data.messages.length >= messages.length
@@ -69,8 +70,9 @@ export function ChatPage({ receiver }: Props) {
     }
 
     fetchMessages()
-    const timeout = setTimeout(fetchMessages, 5000)
-    return () => clearTimeout(timeout)
+    const timeout = setInterval(fetchMessages, 2500)
+    console.log(timeout)
+    return () => clearInterval(timeout)
   }, [messages, receiver])
 
   async function onSubmit(data: FormData) {
@@ -136,8 +138,8 @@ export function ChatPage({ receiver }: Props) {
             <LinkParser watchers={linkWatcher}>{message.content}</LinkParser>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
-      <div ref={messagesEndRef} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4 z-10">
           <Input
