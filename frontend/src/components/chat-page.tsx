@@ -121,7 +121,7 @@ export function ChatPage({ receiver }: Props) {
   ];
 
   return (
-    <div className="container flex w-screen flex-col items-center pt-4 pb-24">
+    <div className="container flex w-screen pt-4 pb-24 min-w-full flex-grow overflow-x-hidden">
       <div className="space-y-4 min-w-full flex-grow">
         {messages.map((message, index) => (
           <div

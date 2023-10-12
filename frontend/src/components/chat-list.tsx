@@ -52,7 +52,18 @@ export default function ChatList() {
                 <div className="text-xs text-gray-400	 -mt-3">
                   {format(new Date(chat.latestMessage.updatedAt), 'h:mm a') + ' on ' + format(new Date(chat.latestMessage.updatedAt), 'd/M/y')}
                 </div>
-                <p className="text-500">{chat.latestMessage.content}</p>
+                <div
+                  className="text-500 overflow-hidden"
+                  style={{
+                    maxHeight: '3em',
+                    maxWidth: '69em',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {chat.latestMessage.content}
+                </div>
               </div>
             </div>
             </a>
