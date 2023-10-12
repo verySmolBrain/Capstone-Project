@@ -1,21 +1,6 @@
 import { requestHandler } from './utils/PrismaHandler'
 import { getUserIdGivenName } from './utils/utils'
 
-// Rewrite this later
-async function getChats(token: string | undefined, userId: string | undefined) {
-  const prisma = await requestHandler(token as string) // fix this
-  const chats = await prisma.chat.findMany({
-    where: {
-      users: {
-        some: {
-          id: userId,
-        },
-      },
-    },
-  })
-  return chats
-}
-
 enum MessageType {
   USER,
   RECEIVER,
@@ -27,12 +12,61 @@ type Message = {
   timestamp: Date
 }
 
+async function getChats(token: string, userId: string) {
+  const prisma = await requestHandler(token) // fix this
+  const chats = await prisma.chat.findMany({
+    where: {
+      users: {
+        some: {
+          id: userId,
+        },
+      },
+    },
+    include: {
+      users: true
+    }
+  })
+
+  const latestMessages = []
+  for (const chat of chats) {
+    const chatMessages = await prisma.message.findMany({
+      where: {
+        chatId: chat.id
+      }
+    })
+    if (chatMessages.length === 0) {
+      latestMessages.push(null)
+    } else {
+      latestMessages.push(chatMessages[chatMessages.length - 1])
+    }
+  }
+
+  const formattedChats = []
+  for (const chat of chats) {
+    formattedChats.push(
+      {
+        id: chat.id,
+        latestMessage: latestMessages[chats.indexOf(chat)],
+        receiver: chat.users.filter((user) => user.id !== userId)[0].name,
+        image: chat.users.filter((user) => user.id !== userId)[0].image
+      }
+    )
+  }
+  formattedChats.sort((a, b) => {
+    if (a.latestMessage == null) return 1;
+    if (b.latestMessage == null) return -1;
+    return new Date(b.latestMessage.updatedAt).getTime() - new Date(a.latestMessage.updatedAt).getTime()
+  })
+
+  return { chats: formattedChats }
+}
+
 async function getMessages(
   token: string,
   userId: string,
   receiverName: string
 ) {
-  const prisma = await requestHandler(token as string) // fix this
+  const prisma = await requestHandler(token) // fix this
   let receiverId // Fix up this code later
   try {
     receiverId = await getUserIdGivenName(receiverName, prisma)
@@ -82,13 +116,17 @@ async function getMessages(
 
 // Creates a new chat between 2 users that have no existing DM between them
 async function updateChat(token: string, userId: string, receiverName: string) {
-  const prisma = await requestHandler(token as string) // fix this
+  const prisma = await requestHandler(token) // fix this
 
   let receiverId // Fix up this code later
   try {
     receiverId = await getUserIdGivenName(receiverName, prisma)
   } catch (e) {
     throw new Error("Username doesn't exist")
+  }
+
+  if (userId === receiverId) {
+    throw new Error("Cannot message oneself")
   }
 
   const chatParticipants = [
