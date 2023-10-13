@@ -1,6 +1,6 @@
 import Fastify, { FastifyRequest } from 'fastify'
 import 'dotenv/config'
-import { getMessages, sendMessage, updateChat } from './chat'
+import { getChats, getMessages, sendMessage, updateChat } from './chat'
 import {
   requestHandler,
   supabase,
@@ -583,23 +583,25 @@ fastify.get(
 )
 
 // API endpoint for retrieving chats of a user from the database
-// fastify.get('/chats', async (req, reply) => {
-//   try {
-//     const token = req.headers['authorization']
+fastify.get('/chats', async (req, reply) => {
+  try {
+    const token = req.headers['authorization']
+    const {
+      data: { user },
+    } = await supabase().auth.getUser(token)
 
-//     if (!token) {
-//       reply.status(401).send({ error: 'Unauthorized' })
-//       return
-//     }
+    if (!token || !user?.id) {
+      reply.status(401).send({ error: 'Unauthorized' })
+      return
+    }
 
-//     const {
-//       data: { user },
-//     } = await supabase().auth.getUser(token)
-//     reply.send(getChats(token, user?.id))
-//   } catch (error) {
-//     reply.status(500).send({ error: error })
-//   }
-// })
+    const chats = await getChats(token, user?.id)
+    reply.send(chats)
+  } catch (error) {
+    console.log(error)
+    reply.status(500).send({ error: error })
+  }
+})
 
 // API endpoint for updating chat
 fastify.put(
