@@ -3,7 +3,7 @@ name: Backend and Frontend Tests
 on:
   pull_request:
     branches:
-      - [main]
+      - master
   push:
     branches:
       - '**'
