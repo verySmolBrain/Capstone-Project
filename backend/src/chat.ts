@@ -23,16 +23,16 @@ async function getChats(token: string, userId: string) {
       },
     },
     include: {
-      users: true
-    }
+      users: true,
+    },
   })
 
   const latestMessages = []
   for (const chat of chats) {
     const chatMessages = await prisma.message.findMany({
       where: {
-        chatId: chat.id
-      }
+        chatId: chat.id,
+      },
     })
     if (chatMessages.length === 0) {
       latestMessages.push(null)
@@ -41,21 +41,22 @@ async function getChats(token: string, userId: string) {
     }
   }
 
-  const formattedChats = []
+  const formattedChats = [] // refactor this later im pretty sure there's an easier way of doing this
   for (const chat of chats) {
-    formattedChats.push(
-      {
-        id: chat.id,
-        latestMessage: latestMessages[chats.indexOf(chat)],
-        receiver: chat.users.filter((user) => user.id !== userId)[0].name,
-        image: chat.users.filter((user) => user.id !== userId)[0].image
-      }
-    )
+    formattedChats.push({
+      id: chat.id,
+      latestMessage: latestMessages[chats.indexOf(chat)],
+      receiver: chat.users.filter((user) => user.id !== userId)[0].name, // Not a fan of index at 0 even if its ok
+      image: chat.users.filter((user) => user.id !== userId)[0].image,
+    })
   }
   formattedChats.sort((a, b) => {
-    if (a.latestMessage == null) return 1;
-    if (b.latestMessage == null) return -1;
-    return new Date(b.latestMessage.updatedAt).getTime() - new Date(a.latestMessage.updatedAt).getTime()
+    if (a.latestMessage == null) return 1
+    if (b.latestMessage == null) return -1
+    return (
+      new Date(b.latestMessage.updatedAt).getTime() -
+      new Date(a.latestMessage.updatedAt).getTime()
+    )
   })
 
   return { chats: formattedChats }
@@ -126,7 +127,7 @@ async function updateChat(token: string, userId: string, receiverName: string) {
   }
 
   if (userId === receiverId) {
-    throw new Error("Cannot message oneself")
+    throw new Error('Cannot message oneself')
   }
 
   const chatParticipants = [

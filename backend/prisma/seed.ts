@@ -7,7 +7,6 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-
   // linked to brains token
   const brain = await prisma.user.create({
     data: {
@@ -34,8 +33,8 @@ async function main() {
               {
                 id: '4',
                 name: 'Left Leg Of The Forbidden One',
-              }
-            ]
+              },
+            ],
           },
           achievements: {},
           sales: {},
@@ -64,7 +63,7 @@ async function main() {
                 id: '69',
                 name: 'Bellsprout',
               },
-            ]
+            ],
           },
           achievements: {},
           sales: {},
@@ -89,7 +88,7 @@ async function main() {
                 id: '5',
                 name: 'Exodia The Forbidden One',
               },
-            ]
+            ],
           },
           achievements: {},
           sales: {},
@@ -99,7 +98,6 @@ async function main() {
       },
     },
   })
-
   console.log(brain, goomba, jin)
 }
 main()
