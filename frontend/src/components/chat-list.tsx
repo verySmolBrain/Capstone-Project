@@ -3,6 +3,9 @@
 import Image from 'next/image'
 import * as React from 'react'
 import { format } from 'date-fns'
+import useSWR from 'swr'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Database } from '@/lib/database.types'
 
 type FormattedChat = {
   id: number
@@ -22,23 +25,35 @@ type Receiver = {
 export default function ChatList() {
   const [chats, setChats] = React.useState<FormattedChat[]>([])
 
-  React.useEffect(() => {
-    // Fetching chat list by making call to api route
-    const fetchChats = async () => {
-      const response = await fetch('/api/chat', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
 
-      const data = await response.json()
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+
+    if (res?.ok) {
+      return await res.json()
+    }
+  }
+
+  const { data } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/chats`,
+    fetcher,
+    { refreshInterval: 2500 }
+  )
+
+  React.useEffect(() => {
+    if (data) {
+      console.log(data)
       setChats(data.chats)
     }
-    fetchChats()
-    const timeout = setInterval(fetchChats, 2500)
-    return () => clearInterval(timeout)
-  }, [])
+  }, [data])
 
   if (chats.length === 0) {
     return (

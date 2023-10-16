@@ -10,8 +10,8 @@ export function GeneralNavBar() {
     <header className="w-full border-b bg-background">
       <div className="container flex items-center space-x-4 sm:justify-left sm:space-x-0">
         <BackButton />
-        <IconLogo className="w-10 h-10 mx-auto absolute left-4 top-4 md:left-36 md:top-4" />
-        <p className="text-2xl font-semibold tracking-tight absolute left-4 top-4 md:left-52 md:top-4">
+        <IconLogo className="w-10 h-10 mx-auto absolute left-4 top-4 hidden md:block md:left-36 md:top-4" />
+        <p className="text-2xl font-semibold tracking-tight absolute left-4 top-4 md:left-52 md:top-4 hidden md:block">
           Goomba Market
         </p>
       </div>

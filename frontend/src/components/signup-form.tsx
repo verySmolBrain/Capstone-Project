@@ -48,8 +48,6 @@ export function UserAuthForm() {
       })
     }
 
-    console.log(signUpResult)
-
     if (signUpResult?.redirected && signUpResult?.url) {
       // We need to redirect manually as we're using fetch instead of form
       // We aren't using native html forms due to issues with Nextjs Server Actions

@@ -18,8 +18,6 @@ export async function POST(request: Request) {
     password,
   })
 
-  console.log(supabase_response)
-
   return supabase_response.error
     ? new NextResponse(supabase_response.error.message, {
         status: supabase_response.error.status,
