@@ -27,7 +27,7 @@ enum Status {
 
 /// @@allow('create, read', true)
 /// @@allow('update,delete', auth() == this)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model User {
     id String @id()
     role Role @default(USER)
@@ -41,7 +41,7 @@ model Profile {
     id String @id()
     name String @unique()
     user User @relation(fields: [id], references: [id])
-    collection Collectable[] @relation("collection")
+    inventory Collectable[] @relation("inventory")
     wishlist Collectable[] @relation("wishlist")
     wares Collectable[] @relation("wares")
     description String
@@ -56,18 +56,18 @@ model Profile {
 }
 
 /// @@allow('read', true)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model Collectable {
     id String @id()
     name String
-    collection Profile[] @relation("collection")
+    collection Profile[] @relation("inventory")
     wishlist Profile[] @relation("wishlist")
     wares Profile[] @relation("wares")
     Trade Trade[]
 }
 
 /// @@allow('read', true)
-/// @@allow('all', auth().role == 'ADMIN' || auth().id == reviewer.id)
+/// @@allow('all', auth().role == ADMIN || auth().id == reviewer.id)
 model Review {
     id String @id()
     rating Int
@@ -79,7 +79,7 @@ model Review {
 }
 
 /// @@allow('read', true)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model Achievement {
     id String @id()
     name String
@@ -113,7 +113,7 @@ model Chat {
 
 /// @@allow('all', senderId == auth().id)
 /// @@allow('all', receiverId == auth().id)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model Message {
     id Int @id() @default(autoincrement())
     chatId Int

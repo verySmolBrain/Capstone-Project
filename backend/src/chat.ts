@@ -1,4 +1,4 @@
-import { requestHandler } from './utils/PrismaHandler'
+import { requestHandler } from './utils/supabaseUtils'
 import { getUserIdGivenName } from './utils/utils'
 
 enum MessageType {

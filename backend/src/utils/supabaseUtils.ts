@@ -1,8 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import { enhance } from '@zenstackhq/runtime'
+import jwtDecode from 'jwt-decode'
 
 import { SupabaseClient } from '@supabase/supabase-js'
 import SupabaseService from '@Source/utils/Supabase.service'
+import { JsonObject } from '@prisma/client/runtime/library'
 
 export const supabase = (): SupabaseClient => {
   return SupabaseService.getInstance()
@@ -31,20 +33,24 @@ export async function requestHandler(token: string) {
    *  applied to your query!
    */
 
-  if (!user?.user?.id) {
-    throw new Error('Unauthorized')
-  }
-
   return enhance(prisma, { user: { id: user?.user?.id } })
 }
 
 export const getUserId = async (token: string): Promise<string> => {
   const { data: user } = await supabase().auth.getUser(token)
-  if (!user?.user?.id) {
-    throw new Error('Unauthorized')
-  }
-  return user?.user?.id
+  return user!.user!.id
 }
 
-// TODO: must have user ID error -> token is wrong
-// someone can fix this
+export const validateUser = async (token: string): Promise<boolean> => {
+  const { data: user } = await supabase().auth.getUser(token)
+  if (!user?.user?.id) {
+    return false
+  }
+  return true
+}
+
+// extracts user id from JWT token
+export const extractId = (token: string): string => {
+  const decoded: JsonObject = jwtDecode(token)
+  return decoded.sub!.toString()
+}

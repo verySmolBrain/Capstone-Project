@@ -2,9 +2,9 @@ import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
-  // get wares
+  // get inventory
   fastify.get(
-    '/wares',
+    '/inventory',
     async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
       try {
         const token = req.headers['authorization']
@@ -17,9 +17,10 @@ export default async function (fastify: FastifyInstance) {
         const prisma = await requestHandler(token)
 
         const user = await prisma.user.findFirst()
-        const collectables = await prisma.collectable.findMany({
+
+        const collectables = await prisma.profile.findMany({
           where: {
-            wares: { some: { id: user?.id } },
+            inventory: { some: { id: user?.id } },
           },
         })
         reply.send(collectables)
@@ -29,9 +30,9 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  // add collectable to wares
+  // add collectable to inventory
   fastify.put(
-    '/addToWares',
+    '/inventory',
     async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
       try {
         const token = req.headers['authorization']
@@ -56,7 +57,7 @@ export default async function (fastify: FastifyInstance) {
         const collectable = await prisma.profile.update({
           where: { id: user?.id },
           data: {
-            wares: {
+            inventory: {
               connect: { id: collectableId },
             },
           },
@@ -68,9 +69,9 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  // remove collectable from wares
+  // remove collectable from inventory
   fastify.delete(
-    '/removeFromWares',
+    '/inventory',
     async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
       try {
         const token = req.headers['authorization']
@@ -95,7 +96,7 @@ export default async function (fastify: FastifyInstance) {
         const collectable = await prisma.profile.update({
           where: { id: user?.id },
           data: {
-            wares: {
+            inventory: {
               disconnect: { id: collectableId },
             },
           },

@@ -1,7 +1,5 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
-import {
-  requestHandler,
-} from '@Source/utils/PrismaHandler'
+import { FastifyInstance, FastifyRequest } from 'fastify'
+import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
   // get wishlist

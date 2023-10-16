@@ -26,14 +26,14 @@ model User {
 
   @@allow('create, read', true)
   @@allow('update,delete', auth() == this)
-  @@allow('all', auth().role == "ADMIN")
+  @@allow('all', auth().role == ADMIN)
 }
 
 model Profile {
   id           String        @id
   name         String        @unique
   user         User          @relation(fields: [id], references: [id])
-  collection   Collectable[] @relation("collection")
+  inventory   Collectable[] @relation("inventory")
   wishlist     Collectable[] @relation("wishlist")
   wares        Collectable[] @relation("wares")
   description  String
@@ -55,13 +55,13 @@ model Profile {
 model Collectable {
   id         String    @id
   name       String
-  collection Profile[] @relation("collection")
+  collection Profile[] @relation("inventory")
   wishlist   Profile[] @relation("wishlist")
   wares      Profile[] @relation("wares")
   Trade      Trade[]
 
   @@allow('read', true)
-  @@allow('all', auth().role == "ADMIN")
+  @@allow('all', auth().role == ADMIN)
 }
 
 model Review {
@@ -74,7 +74,7 @@ model Review {
   reviewerId String
 
   @@allow('read', true)
-  @@allow('all', auth().role == "ADMIN" || auth().id == reviewer.id)
+  @@allow('all', auth().role == ADMIN || auth().id == reviewer.id)
 }
 
 model Achievement {
@@ -85,7 +85,7 @@ model Achievement {
   users       Profile[]
 
   @@allow('read', true)
-  @@allow('all', auth().role == "ADMIN")
+  @@allow('all', auth().role == ADMIN)
 }
 
 model Trade {
@@ -131,5 +131,5 @@ model Message {
 
   @@allow('all', senderId == auth().id)
   @@allow('all', receiverId == auth().id)
-  @@allow('all', auth().role == "ADMIN")
+  @@allow('all', auth().role == ADMIN)
 }

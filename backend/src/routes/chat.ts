@@ -1,14 +1,15 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import 'dotenv/config'
 import { getChats, getMessages, sendMessage, updateChat } from '@Source/chat'
-import {
-  supabase,
-} from '@Source/utils/PrismaHandler'
+import { supabase } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
   fastify.put(
     '/chat/:receiverName',
-    async (req: FastifyRequest<{ Params: { receiverName: string } }>, reply) => {
+    async (
+      req: FastifyRequest<{ Params: { receiverName: string } }>,
+      reply
+    ) => {
       try {
         const token = req.headers['authorization']
 
@@ -32,7 +33,10 @@ export default async function (fastify: FastifyInstance) {
   // API endpoint for retrieving messages with a user
   fastify.get(
     '/chat/:receiverName',
-    async (req: FastifyRequest<{ Params: { receiverName: string } }>, reply) => {
+    async (
+      req: FastifyRequest<{ Params: { receiverName: string } }>,
+      reply
+    ) => {
       try {
         const token = req.headers['authorization']
         const { receiverName } = req.params
@@ -77,7 +81,10 @@ export default async function (fastify: FastifyInstance) {
   // API endpoint for updating chat
   fastify.put(
     '/chat/update/:receiverName',
-    async (req: FastifyRequest<{ Params: { receiverName: string } }>, reply) => {
+    async (
+      req: FastifyRequest<{ Params: { receiverName: string } }>,
+      reply
+    ) => {
       try {
         const token = req.headers['authorization']
         const { receiverName } = req.params

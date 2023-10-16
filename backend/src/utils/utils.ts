@@ -17,3 +17,6 @@ export async function getUserIdGivenName(
   }
   return user.id
 }
+
+export const defaultImage =
+  'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
