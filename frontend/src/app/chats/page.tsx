@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import { GeneralNavBar } from '@/components/general-navbar'
 import { TypographyH2 } from '@/components/typography-h2'

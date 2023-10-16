@@ -16,6 +16,18 @@ import managerRoute from '@Source/routes/manager'
 export const build = async (opt: FastifyServerOptions) => {
   const fastify = Fastify(opt)
 
+  fastify.register(cors, {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Update-Type',
+      'X-Requested-With',
+      'Accept',
+    ],
+  })
+
   fastify.register(chatRoute)
   fastify.register(inventoryRoute)
   fastify.register(profileRoute)
