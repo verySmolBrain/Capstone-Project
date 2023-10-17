@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/error": "^3.4.0",
     "@prisma/client": "^5.4.1",
     "@supabase/supabase-js": "^2.38.0",
     "fastify": "^4.23.2",
@@ -35,6 +36,6 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2",
-    "zenstack": "1.0.2"
+    "zenstack": "^1.1.0"
   }
 }

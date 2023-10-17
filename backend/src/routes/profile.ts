@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
-import { defaultImage } from '@Source/utils/utils'
+import { defaultDescription, defaultImage } from '@Source/utils/utils'
+import { NotUniqueError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -23,7 +24,7 @@ export default async function (fastify: FastifyInstance) {
           profile: {
             create: {
               name: name,
-              description: 'im such a goomba',
+              description: defaultDescription,
               image: defaultImage,
               reputation: 69,
             },
@@ -52,9 +53,9 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   *  GET /user/:name
-   *  Returns the user by name
-   *  @param {string} id
+   *  GET /profile/:name
+   *  Returns the user's profile by name
+   *  @param {string} name
    *  @returns {object} profile
    */
   fastify.get(
@@ -76,7 +77,7 @@ export default async function (fastify: FastifyInstance) {
   /*
    *  PUT /profile/name
    *  Updates the user's name
-   *  @param {string} id
+   *  @param {string} name
    *  @returns {object} profile
    */
   fastify.put(
@@ -91,7 +92,7 @@ export default async function (fastify: FastifyInstance) {
         where: { name: name },
       })
       if (nameExists) {
-        throw new Error('Name already exists')
+        throw NotUniqueError('name')
       }
 
       const profile = await prisma.profile.update({
@@ -108,8 +109,8 @@ export default async function (fastify: FastifyInstance) {
 
   /*
    *  PUT /profile/description
-   *  Updates the user by id
-   *  @param {string} id
+   *  Updates the user's description
+   *  @param {string} description
    *  @returns {object} profile
    */
   fastify.put(
@@ -128,7 +129,12 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  // change image of user profile
+  /*
+   *  PUT /profile/image
+   *  Updates the user's image url
+   *  @param {string} image url
+   *  @returns {object} profile
+   */
   fastify.put(
     '/profile/image',
     async (req: FastifyRequest<{ Body: { image: string } }>) => {
@@ -146,10 +152,5 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  fastify.setErrorHandler((error, request, reply) => {
-    if (error.message === 'Unauthorized') {
-      reply.status(401).send({ error: 'User ID is either invalid or missing' })
-      return
-    }
-  })
+  //fastify.setErrorHandler((error, request, reply) => {})
 }

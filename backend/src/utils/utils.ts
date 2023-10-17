@@ -20,3 +20,5 @@ export async function getUserIdGivenName(
 
 export const defaultImage =
   'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
+
+export const defaultDescription = 'im such a goomba'

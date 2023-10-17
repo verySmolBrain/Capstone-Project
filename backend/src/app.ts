@@ -5,6 +5,7 @@ import profileRoute from '@Source/routes/profile'
 import waresRoute from '@Source/routes/wares'
 import wishlistRoute from '@Source/routes/wishlist'
 import { validateUser } from './utils/supabaseUtils'
+import { InvalidIdError } from './utils/error'
 
 export const build = async (opt: FastifyServerOptions) => {
   const fastify = Fastify(opt)
@@ -21,14 +22,20 @@ export const build = async (opt: FastifyServerOptions) => {
     const token = request.headers['authorization']
 
     if (!token) {
-      throw new Error('Unauthorized')
+      throw new InvalidIdError()
     }
 
     const isValid = await validateUser(token)
 
     if (!isValid) {
-      throw new Error('Unauthorized')
+      throw new InvalidIdError()
     }
+  })
+
+  // see utils/error.ts for custom error handling
+  fastify.setErrorHandler(async (error, request, reply) => {
+    console.log(error)
+    reply.status(error.statusCode || 500).send({ error: error })
   })
 
   return fastify
