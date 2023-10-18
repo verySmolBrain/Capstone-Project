@@ -41,11 +41,11 @@ model Profile {
     id String @id()
     name String @unique()
     user User @relation(fields: [id], references: [id])
+    description String
+    image String
     inventory Collectable[] @relation("inventory")
     wishlist Collectable[] @relation("wishlist")
     wares Collectable[] @relation("wares")
-    description String
-    image String
     achievements Achievement[]
     sales Trade[] @relation("seller")
     purchases Trade[] @relation("buyer")
@@ -53,17 +53,6 @@ model Profile {
     givenReviews Review[] @relation("reviewer")
     receivedReviews Review[] @relation("reviewee")
     chats Chat[]
-}
-
-/// @@allow('read', true)
-/// @@allow('all', auth().role == ADMIN)
-model Collectable {
-    id String @id()
-    name String
-    collection Profile[] @relation("inventory")
-    wishlist Profile[] @relation("wishlist")
-    wares Profile[] @relation("wares")
-    Trade Trade[]
 }
 
 /// @@allow('read', true)
@@ -97,7 +86,7 @@ model Trade {
     buyer Profile @relation("buyer", fields: [buyerId], references: [id])
     buyerId String
     collectable Collectable @relation(fields: [collectableId], references: [id])
-    collectableId String
+    collectableId Int
     /// @allow('update', auth().id == sellerId)
     status Status @default(PENDING)
     price Int
@@ -121,4 +110,36 @@ model Message {
     content String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt()
+}
+
+/// @@allow('read', true)
+/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+model Collectable {
+    id Int @id() @default(autoincrement())
+    name String
+    image String?
+    collection Collection[]
+    Trade Trade[]
+    inventory Profile[] @relation("inventory")
+    wishlist Profile[] @relation("wishlist")
+    wares Profile[] @relation("wares")
+}
+
+/// @@allow('read', true)
+/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+model Collection {
+    id Int @id() @default(autoincrement())
+    name String
+    image String?
+    collectables Collectable[]
+    collections Campaign[]
+}
+
+model Campaign {
+    id Int @id() @default(autoincrement())
+    name String
+    image String?
+    start DateTime @default(now())
+    end DateTime
+    collections Collection[]
 }

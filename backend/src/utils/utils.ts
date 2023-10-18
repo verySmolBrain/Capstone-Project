@@ -1,5 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 
+export type Id = {
+  id: number
+}
+
 // get user id from name
 export async function getUserId(
   name: string,

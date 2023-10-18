@@ -11,7 +11,7 @@ datasource db {
   url      = env('DATABASE_URL')
 }
 
-// -----------------------------------------------------------------------------
+// User Schemas ----------------------------------------------------------------
 
 enum Role {
   USER
@@ -21,7 +21,7 @@ enum Role {
 
 model User {
   id      String   @id
-  role    Role     @default(USER)
+  role    Role     @default(USER) @@deny('update', true)
   profile Profile?
 
   @@allow('create, read', true)
@@ -30,14 +30,17 @@ model User {
 }
 
 model Profile {
-  id           String        @id
-  name         String        @unique
-  user         User          @relation(fields: [id], references: [id])
-  inventory   Collectable[] @relation('inventory')
-  wishlist     Collectable[] @relation('wishlist')
-  wares        Collectable[] @relation('wares')
+  id           String         @id
+  name         String         @unique
+  user         User           @relation(fields: [id], references: [id])
   description  String
   image        String
+
+  // TODO: implement owning multiple of a single collectable
+  inventory    Collectable[]  @relation('inventory')
+  wishlist     Collectable[]  @relation('wishlist')
+  wares        Collectable[]  @relation('wares')
+  
   achievements Achievement[]
   sales        Trade[]       @relation('seller')
   purchases    Trade[]       @relation('buyer')
@@ -49,18 +52,6 @@ model Profile {
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)
-  @@allow('all', auth().role == ADMIN)
-}
-
-model Collectable {
-  id         String    @id
-  name       String
-  collection Profile[] @relation('inventory')
-  wishlist   Profile[] @relation('wishlist')
-  wares      Profile[] @relation('wares')
-  Trade      Trade[]
-
-  @@allow('read', true)
   @@allow('all', auth().role == ADMIN)
 }
 
@@ -88,6 +79,8 @@ model Achievement {
   @@allow('all', auth().role == ADMIN)
 }
 
+// Trade Schemas ---------------------------------------------------------------
+
 model Trade {
   id            String      @id
   seller        Profile     @relation('seller', fields: [sellerId], references: [id])
@@ -95,7 +88,7 @@ model Trade {
   buyer         Profile     @relation('buyer', fields: [buyerId], references: [id])
   buyerId       String
   collectable   Collectable @relation(fields: [collectableId], references: [id])
-  collectableId String
+  collectableId Int
   status        Status      @default(PENDING) @allow('update', auth().id == sellerId)
   price         Int
 
@@ -108,6 +101,8 @@ enum Status {
   ACCEPTED
   DECLINED
 }
+
+// Chat Schemas ----------------------------------------------------------------
 
 model Chat {
   id          Int       @id @default(autoincrement())
@@ -130,4 +125,49 @@ model Message {
   @@allow('all', senderId == auth().id)
   @@allow('read', chat.users?[user.id == auth().id])
   @@allow('all', auth().role == ADMIN)
+}
+
+// Collectable Schemas ---------------------------------------------------------
+
+model Collectable {
+  id          Int         @id @default(autoincrement())
+  name        String
+  image       String?
+
+  collection  Collection[]
+  Trade       Trade[]
+
+  inventory   Profile[]   @relation('inventory')
+  wishlist    Profile[]   @relation('wishlist')
+  wares       Profile[]   @relation('wares')
+
+  @@allow('read', true)
+  @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+}
+
+model Collection {
+  id         Int    @id @default(autoincrement())
+  name       String
+  image      String?
+
+  collectables Collectable[] 
+  collections Campaign[]
+
+
+  @@allow('read', true)
+  @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+}
+
+model Campaign {
+  id         Int      @id @default(autoincrement())
+  name       String
+  image      String?
+  start      DateTime @default(now())
+  end        DateTime
+  isActive   Boolean  @default(false)
+
+  collections Collection[]
+
+  @@allow('read', true)
+  @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 }
