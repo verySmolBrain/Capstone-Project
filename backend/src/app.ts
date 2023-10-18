@@ -1,11 +1,17 @@
 import Fastify, { FastifyServerOptions } from 'fastify'
+import { validateUser } from '@Source/utils/supabaseUtils'
+import { InvalidIdError } from '@Source/utils/error'
+
 import chatRoute from '@Source/routes/chat'
 import inventoryRoute from '@Source/routes/inventory'
 import profileRoute from '@Source/routes/profile'
 import waresRoute from '@Source/routes/wares'
 import wishlistRoute from '@Source/routes/wishlist'
-import { validateUser } from './utils/supabaseUtils'
-import { InvalidIdError } from './utils/error'
+import tradeRoute from '@Source/routes/trade'
+import collectableRoute from '@Source/routes/collectable'
+import collectionRoute from '@Source/routes/collection'
+import campaignRoute from '@Source/routes/campaign'
+import managerRoute from '@Source/routes/manager'
 
 export const build = async (opt: FastifyServerOptions) => {
   const fastify = Fastify(opt)
@@ -15,6 +21,11 @@ export const build = async (opt: FastifyServerOptions) => {
   fastify.register(profileRoute)
   fastify.register(waresRoute)
   fastify.register(wishlistRoute)
+  fastify.register(tradeRoute)
+  fastify.register(collectableRoute)
+  fastify.register(collectionRoute)
+  fastify.register(campaignRoute)
+  fastify.register(managerRoute)
 
   // checks if user is authenticated before every request
   // handlers are guaranteed to be given a valid user

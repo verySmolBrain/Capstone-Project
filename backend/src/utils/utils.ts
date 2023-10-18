@@ -12,6 +12,10 @@ const customConfig: Config = {
   dictionaries: [adjectives, colors, animals],
 }
 
+export type Id = {
+  id: number
+}
+
 // get user id from name
 export async function getUserId(
   name: string,

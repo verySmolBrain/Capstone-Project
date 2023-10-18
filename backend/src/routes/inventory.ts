@@ -1,110 +1,51 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
-import { requestHandler } from '@Source/utils/supabaseUtils'
+import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
+import { Id } from '@Source/utils/utils'
 
 export default async function (fastify: FastifyInstance) {
-  // get inventory
+  /*
+   *  GET /inventory
+   *  Returns the user's inventory
+   *  @returns {object} inventory
+   */
   fastify.get(
     '/inventory',
-    async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
+    async (req: FastifyRequest<{ Body: { collectableId: string } }>) => {
+      const token = req.headers['authorization'] as string
 
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
+      const prisma = await requestHandler(token)
 
-        const prisma = await requestHandler(token)
-
-        const user = await prisma.user.findFirst()
-
-        const collectables = await prisma.profile.findMany({
-          where: {
-            inventory: { some: { id: user?.id } },
-          },
-        })
-        reply.send(collectables)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
+      const profile = await prisma.profile.findUniqueOrThrow({
+        where: {
+          id: extractId(token),
+        },
+        include: { inventory: true },
+      })
+      return profile.inventory
     }
   )
 
-  // add collectable to inventory
+  /*
+   *  PUT /inventory
+   *  Update the user's inventory
+   *  @param {Id[]} collectableIds
+   *  @returns {object} inventory
+   */
   fastify.put(
     '/inventory',
-    async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const { collectableId } = req.body
-        const prisma = await requestHandler(token)
-
-        const collectableExists = await prisma.collectable.findFirst({
-          where: { id: collectableId },
-        })
-        if (!collectableExists) {
-          reply.status(404).send({ error: 'Collectable does not exist' })
-          return
-        }
-
-        const user = await prisma.user.findFirst()
-        const collectable = await prisma.profile.update({
-          where: { id: user?.id },
-          data: {
-            inventory: {
-              connect: { id: collectableId },
-            },
+    async (req: FastifyRequest<{ Body: { collectableIds: Id[] } }>) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
+      const profile = await prisma.profile.update({
+        where: { id: extractId(token) },
+        data: {
+          inventory: {
+            set: req.body.collectableIds,
           },
-        })
-        reply.send(collectable)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
-
-  // remove collectable from inventory
-  fastify.delete(
-    '/inventory',
-    async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const { collectableId } = req.body
-        const prisma = await requestHandler(token)
-
-        const collectableExists = await prisma.collectable.findFirst({
-          where: { id: collectableId },
-        })
-        if (!collectableExists) {
-          reply.status(404).send({ error: 'Collectable does not exist' })
-          return
-        }
-
-        const user = await prisma.user.findFirst()
-        const collectable = await prisma.profile.update({
-          where: { id: user?.id },
-          data: {
-            inventory: {
-              disconnect: { id: collectableId },
-            },
-          },
-        })
-        reply.send(collectable)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
+        },
+        include: { inventory: true },
+      })
+      return profile.inventory
     }
   )
 }

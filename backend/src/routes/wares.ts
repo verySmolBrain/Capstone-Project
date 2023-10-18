@@ -1,109 +1,53 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
-import { requestHandler } from '@Source/utils/supabaseUtils'
+import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
+import { Id } from '@Source/utils/utils'
 
 export default async function (fastify: FastifyInstance) {
-  // get wares
+  /*
+   *  GET /wares
+   *  Returns the user's wares
+   *  @returns {object} wares
+   */
   fastify.get(
     '/wares',
-    async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
+    async (req: FastifyRequest<{ Body: { collectableId: string } }>) => {
+      const token = req.headers['authorization'] as string
 
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
+      const prisma = await requestHandler(token)
 
-        const prisma = await requestHandler(token)
-
-        const user = await prisma.user.findFirst()
-        const collectables = await prisma.collectable.findMany({
-          where: {
-            wares: { some: { id: user?.id } },
-          },
-        })
-        reply.send(collectables)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
+      const profile = await prisma.profile.findUniqueOrThrow({
+        where: {
+          id: extractId(token),
+        },
+        include: { wares: true },
+      })
+      return profile.wares
     }
   )
 
-  // add collectable to wares
+  /*
+   *  PUT /wares
+   *  Update the user's wares
+   *  @param {Id[]} collectableIds
+   *  @returns {object} wares
+   */
   fastify.put(
-    '/addToWares',
-    async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
+    '/wares',
+    async (req: FastifyRequest<{ Body: { collectableIds: Id[] } }>) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
 
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const { collectableId } = req.body
-        const prisma = await requestHandler(token)
-
-        const collectableExists = await prisma.collectable.findFirst({
-          where: { id: collectableId },
-        })
-        if (!collectableExists) {
-          reply.status(404).send({ error: 'Collectable does not exist' })
-          return
-        }
-
-        const user = await prisma.user.findFirst()
-        const collectable = await prisma.profile.update({
-          where: { id: user?.id },
-          data: {
-            wares: {
-              connect: { id: collectableId },
-            },
+      // TODO: enforce wares are a subset of inventory
+      const profile = await prisma.profile.update({
+        where: { id: extractId(token) },
+        data: {
+          wares: {
+            set: req.body.collectableIds,
           },
-        })
-        reply.send(collectable)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
-
-  // remove collectable from wares
-  fastify.delete(
-    '/removeFromWares',
-    async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const { collectableId } = req.body
-        const prisma = await requestHandler(token)
-
-        const collectableExists = await prisma.collectable.findFirst({
-          where: { id: collectableId },
-        })
-        if (!collectableExists) {
-          reply.status(404).send({ error: 'Collectable does not exist' })
-          return
-        }
-
-        const user = await prisma.user.findFirst()
-        const collectable = await prisma.profile.update({
-          where: { id: user?.id },
-          data: {
-            wares: {
-              disconnect: { id: collectableId },
-            },
-          },
-        })
-        reply.send(collectable)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
+        },
+        include: { wares: true },
+      })
+      return profile.wares
     }
   )
 }
