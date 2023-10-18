@@ -40,6 +40,16 @@ export default function ChatList() {
     return () => clearInterval(timeout)
   }, [])
 
+  if (chats.length === 0) {
+    return (
+      <div>
+        <h1 className="text-xl font-semibold tracking-tight">
+          You&apos;ve no one to talk to 😢
+        </h1>
+      </div>
+    )
+  }
+
   return (
     <div>
       <section className="space-y-10 pb-8 pt-6 md:pb-12 md:pt-10">
