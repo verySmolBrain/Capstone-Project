@@ -33,11 +33,11 @@ model Profile {
   id           String        @id
   name         String        @unique
   user         User          @relation(fields: [id], references: [id])
-  inventory   Collectable[] @relation('inventory')
+  inventory    Collectable[] @relation('inventory')
   wishlist     Collectable[] @relation('wishlist')
   wares        Collectable[] @relation('wares')
-  description  String
-  image        String
+  description  String?
+  image        String?
   achievements Achievement[]
   sales        Trade[]       @relation('seller')
   purchases    Trade[]       @relation('buyer')
@@ -45,7 +45,7 @@ model Profile {
 
   givenReviews Review[] @relation('reviewer')
   receivedReviews Review[] @relation('reviewee')
-  chats   Chat[]
+  chats   Chat[] @relation("ChatsUsers")
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)
@@ -113,9 +113,10 @@ model Chat {
   id          Int       @id @default(autoincrement())
 
   messages   Message[]            
-  users      Profile[]         
+  users      Profile[]   @relation("ChatsUsers")
   
-  @@allow('all', users?[user.id == auth().id])
+  @@allow('create', true)
+  @@allow('read, delete, update', users?[user.id == auth().id])
 }
 
 model Message {

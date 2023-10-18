@@ -6,7 +6,7 @@ import type { Database } from '@/lib/database.types'
 
 export const dynamic = 'force-dynamic'
 
-export async function PUT(request: Request) {
+export async function POST(request: Request) {
   const requestUrl = new URL(request.url)
   const formData = await request.json()
 
@@ -31,6 +31,8 @@ export async function PUT(request: Request) {
         body: JSON.stringify(formData),
       }
     )
+
+    console.log(response)
 
     if (!response.ok || response.status === 500) {
       throw new Error('Cannot create chat')

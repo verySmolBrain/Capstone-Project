@@ -23,7 +23,7 @@ export async function PUT(request: Request) {
 
   if (updateType === 'name') {
     const backendResponse = await fetch(
-      process.env.BACKEND_HOSTNAME + '/changeName',
+      process.env.BACKEND_HOSTNAME + '/profile/name',
       {
         method: 'PUT',
         headers: {
@@ -44,7 +44,7 @@ export async function PUT(request: Request) {
         })
   } else if (updateType === 'picture') {
     const backendResponse = await fetch(
-      process.env.BACKEND_HOSTNAME + '/changeImage',
+      process.env.BACKEND_HOSTNAME + '/profile/image',
       {
         method: 'PUT',
         headers: {
@@ -65,7 +65,7 @@ export async function PUT(request: Request) {
         })
   } else if (updateType === 'description') {
     const backendResponse = await fetch(
-      process.env.BACKEND_HOSTNAME + '/changeDescription',
+      process.env.BACKEND_HOSTNAME + '/profile/description',
       {
         method: 'PUT',
         headers: {
