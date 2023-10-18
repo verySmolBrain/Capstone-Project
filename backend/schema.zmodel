@@ -2,13 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema", "fullTextSearch"]
+  provider        = 'prisma-client-js'
+  previewFeatures = ['multiSchema', 'fullTextSearch']
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = 'postgresql'
+  url      = env('DATABASE_URL')
 }
 
 // -----------------------------------------------------------------------------
@@ -33,31 +33,31 @@ model Profile {
   id           String        @id
   name         String        @unique
   user         User          @relation(fields: [id], references: [id])
-  inventory   Collectable[] @relation("inventory")
-  wishlist     Collectable[] @relation("wishlist")
-  wares        Collectable[] @relation("wares")
+  inventory   Collectable[] @relation('inventory')
+  wishlist     Collectable[] @relation('wishlist')
+  wares        Collectable[] @relation('wares')
   description  String
   image        String
   achievements Achievement[]
-  sales        Trade[]       @relation("seller")
-  purchases    Trade[]       @relation("buyer")
+  sales        Trade[]       @relation('seller')
+  purchases    Trade[]       @relation('buyer')
   reputation   Int
 
-  givenReviews Review[] @relation("reviewer")
-  receivedReviews Review[] @relation("reviewee")
-  chats   Chat[]   @relation("ChatsUsers")
+  givenReviews Review[] @relation('reviewer')
+  receivedReviews Review[] @relation('reviewee')
+  chats   Chat[]
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)
-  @@allow('all', auth().role == "ADMIN")
+  @@allow('all', auth().role == ADMIN)
 }
 
 model Collectable {
   id         String    @id
   name       String
-  collection Profile[] @relation("inventory")
-  wishlist   Profile[] @relation("wishlist")
-  wares      Profile[] @relation("wares")
+  collection Profile[] @relation('inventory')
+  wishlist   Profile[] @relation('wishlist')
+  wares      Profile[] @relation('wares')
   Trade      Trade[]
 
   @@allow('read', true)
@@ -68,9 +68,9 @@ model Review {
   id         String  @id
   rating     Int
   comment    String
-  reviewee   Profile @relation("reviewee", fields: [reviewerId], references: [id])
+  reviewee   Profile @relation('reviewee', fields: [reviewerId], references: [id])
   revieweeId String
-  reviewer   Profile @relation("reviewer", fields: [revieweeId], references: [id])
+  reviewer   Profile @relation('reviewer', fields: [revieweeId], references: [id])
   reviewerId String
 
   @@allow('read', true)
@@ -90,9 +90,9 @@ model Achievement {
 
 model Trade {
   id            String      @id
-  seller        Profile     @relation("seller", fields: [sellerId], references: [id])
+  seller        Profile     @relation('seller', fields: [sellerId], references: [id])
   sellerId      String
-  buyer         Profile     @relation("buyer", fields: [buyerId], references: [id])
+  buyer         Profile     @relation('buyer', fields: [buyerId], references: [id])
   buyerId       String
   collectable   Collectable @relation(fields: [collectableId], references: [id])
   collectableId String
@@ -110,13 +110,12 @@ enum Status {
 }
 
 model Chat {
-  id          Int                  @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
 
   messages   Message[]            
-  users      Profile[]            @relation("ChatsUsers")
-
-  @@allow('create', true)
-  @@allow('read, delete, delete', users?[user.id == auth().id])
+  users      Profile[]         
+  
+  @@allow('all', users?[user.id == auth().id])
 }
 
 model Message {
@@ -124,12 +123,11 @@ model Message {
   chatId     Int   
   chat       Chat     @relation(fields: [chatId], references: [id])
   senderId   String
-  receiverId String
   content    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@allow('all', senderId == auth().id)
-  @@allow('all', receiverId == auth().id)
+  @@allow('read', chat.users?[user.id == auth().id])
   @@allow('all', auth().role == ADMIN)
 }

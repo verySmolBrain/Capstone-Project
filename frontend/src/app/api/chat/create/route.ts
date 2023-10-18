@@ -23,7 +23,7 @@ export async function PUT(request: Request) {
     const response = await fetch(
       `${process.env.BACKEND_HOSTNAME}/chat/${formData.name}`,
       {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           authorization: token!,

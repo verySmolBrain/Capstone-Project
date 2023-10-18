@@ -16,15 +16,13 @@ export async function GET(request: Request) {
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_HOSTNAME}/chats`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: token!,
-        }
-      }
-    )
+    const response = await fetch(`${process.env.BACKEND_HOSTNAME}/chat`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
     const data = await response.json()
 
     if (!response.ok || response.status === 404) {

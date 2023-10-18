@@ -36,11 +36,6 @@ export async function requestHandler(token: string) {
   return enhance(prisma, { user: { id: user?.user?.id } })
 }
 
-export const getUserId = async (token: string): Promise<string> => {
-  const { data: user } = await supabase().auth.getUser(token)
-  return user!.user!.id
-}
-
 export const validateUser = async (token: string): Promise<boolean> => {
   const { data: user } = await supabase().auth.getUser(token)
   if (!user?.user?.id) {

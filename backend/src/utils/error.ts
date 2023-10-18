@@ -37,3 +37,19 @@ export const NotUniqueError = (field: string) => {
     400
   )
 }
+
+export const MissingFieldError = (field: string) => {
+  return createError(
+    'MissingFieldError',
+    `${field} is missing: ${field} is required`,
+    400
+  )
+}
+
+export const InvalidFieldError = (field: string, message: string) => {
+  return createError(
+    'InvalidFieldError',
+    `${field} is invalid: ${message}`,
+    400
+  )
+}

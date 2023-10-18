@@ -36,7 +36,7 @@ model User {
 
 /// @@allow('create,read', true)
 /// @@allow('update,delete', auth() == user)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model Profile {
     id String @id()
     name String @unique()
@@ -52,7 +52,7 @@ model Profile {
     reputation Int
     givenReviews Review[] @relation("reviewer")
     receivedReviews Review[] @relation("reviewee")
-    chats Chat[] @relation("ChatsUsers")
+    chats Chat[]
 }
 
 /// @@allow('read', true)
@@ -103,23 +103,21 @@ model Trade {
     price Int
 }
 
-/// @@allow('create', true)
-/// @@allow('read, delete, delete', users ? [user.id == auth().id])
+/// @@allow('all', users ? [user.id == auth().id])
 model Chat {
     id Int @id() @default(autoincrement())
     messages Message[]
-    users Profile[] @relation("ChatsUsers")
+    users Profile[]
 }
 
 /// @@allow('all', senderId == auth().id)
-/// @@allow('all', receiverId == auth().id)
+/// @@allow('read', chat.users ? [user.id == auth().id])
 /// @@allow('all', auth().role == ADMIN)
 model Message {
     id Int @id() @default(autoincrement())
     chatId Int
     chat Chat @relation(fields: [chatId], references: [id])
     senderId String
-    receiverId String
     content String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt()

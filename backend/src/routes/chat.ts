@@ -1,11 +1,8 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import 'dotenv/config'
-import {
-  requestHandler,
-  getUserId,
-  supabase,
-} from '@Source/utils/supabaseUtils'
-import { getUserIdGivenName } from '@Source/utils/utils'
+import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
+import { getUserId } from '@Source/utils/utils'
+import { InvalidFieldError, MissingFieldError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -15,15 +12,10 @@ export default async function (fastify: FastifyInstance) {
    */
   fastify.post(
     '/chat/:receiverName',
-    async (
-      req: FastifyRequest<{ Params: { receiverName: string } }>,
-      reply
-    ) => {
+    async (req: FastifyRequest<{ Params: { receiverName: string } }>) => {
       const token = req.headers['authorization'] as string
-
       const { receiverName } = req.params
-
-      reply.send(createChat(token, await getUserId(token), receiverName))
+      return await createChat(token, extractId(token), receiverName)
     }
   )
 
@@ -34,23 +26,10 @@ export default async function (fastify: FastifyInstance) {
    */
   fastify.get(
     '/chat/:receiverName',
-    async (
-      req: FastifyRequest<{ Params: { receiverName: string } }>,
-      reply
-    ) => {
-      const token = req.headers['authorization']
+    async (req: FastifyRequest<{ Params: { receiverName: string } }>) => {
+      const token = req.headers['authorization'] as string
       const { receiverName } = req.params
-      const {
-        data: { user },
-      } = await supabase().auth.getUser(token)
-
-      if (!token || !user?.id) {
-        reply.status(401).send({ error: 'Unauthorized' })
-        return
-      }
-
-      const messages = getMessages(token, user?.id, receiverName)
-      reply.send(await messages)
+      return await getMessages(token, extractId(token), receiverName)
     }
   )
 
@@ -59,59 +38,33 @@ export default async function (fastify: FastifyInstance) {
    *  Returns all chats
    *  @returns {object} chats
    */
-  fastify.get('/chat', async (req, reply) => {
-    try {
-      const token = req.headers['authorization']
-      const {
-        data: { user },
-      } = await supabase().auth.getUser(token)
-
-      if (!token || !user?.id) {
-        reply.status(401).send({ error: 'Unauthorized' })
-        return
-      }
-
-      const chats = await getChats(token, user?.id)
-      reply.send(chats)
-    } catch (error) {
-      console.log(error)
-      reply.status(500).send({ error: error })
-    }
+  fastify.get('/chat', async (req) => {
+    const token = req.headers['authorization'] as string
+    return await getChats(token, extractId(token))
   })
 
-  // API endpoint for sending a chat message
+  /*
+   *  PUT /chat/send/:receiverName
+   *  Sends a message to user with receiverName
+   *  @returns {object} message
+   */
   fastify.put(
     '/chat/send/:receiverName',
     async (
       req: FastifyRequest<{
         Params: { receiverName: string }
         Body: { messageContents: string }
-      }>,
-      reply
+      }>
     ) => {
-      try {
-        const token = req.headers['authorization']
-        const { receiverName } = req.params
-        const { messageContents } = req.body
+      const token = req.headers['authorization'] as string
+      const { receiverName } = req.params
+      const { messageContents } = req.body
 
-        const {
-          data: { user },
-        } = await supabase().auth.getUser(token)
-
-        if (!token || !user?.id) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        if (!messageContents) {
-          reply.status(400).send({ error: 'Missing message in request' })
-          return
-        }
-
-        reply.send(sendMessage(token, user?.id, receiverName, messageContents))
-      } catch (error) {
-        reply.status(500).send({ error: error })
+      if (!messageContents) {
+        throw MissingFieldError('messageContents')
       }
+
+      return sendMessage(token, extractId(token), receiverName, messageContents)
     }
   )
 }
@@ -130,51 +83,31 @@ type Message = {
 }
 
 async function getChats(token: string, userId: string) {
-  const prisma = await requestHandler(token) // fix this
+  const prisma = await requestHandler(token)
   const chats = await prisma.chat.findMany({
-    where: {
-      users: {
-        some: {
-          id: userId,
-        },
-      },
-    },
     include: {
       users: true,
+      messages: true,
     },
   })
 
   const latestMessages = []
   for (const chat of chats) {
-    const chatMessages = await prisma.message.findMany({
-      where: {
-        chatId: chat.id,
-      },
-    })
-    if (chatMessages.length === 0) {
-      latestMessages.push(null)
-    } else {
-      latestMessages.push(chatMessages[chatMessages.length - 1])
-    }
+    const chatMessages = chat.messages
+    latestMessages.push(chatMessages[chatMessages.length - 1])
   }
 
   const formattedChats = [] // refactor this later im pretty sure there's an easier way of doing this
   for (const chat of chats) {
+    const receiver =
+      chat.users.at(0)?.id === userId ? chat.users.at(1) : chat.users.at(0)
     formattedChats.push({
       id: chat.id,
       latestMessage: latestMessages[chats.indexOf(chat)],
-      receiver: chat.users.filter((user) => user.id !== userId)[0].name, // Not a fan of index at 0 even if its ok
-      image: chat.users.filter((user) => user.id !== userId)[0].image,
+      receiver: receiver,
+      image: receiver?.image,
     })
   }
-  formattedChats.sort((a, b) => {
-    if (a.latestMessage == null) return 1
-    if (b.latestMessage == null) return -1
-    return (
-      new Date(b.latestMessage.updatedAt).getTime() -
-      new Date(a.latestMessage.updatedAt).getTime()
-    )
-  })
 
   return { chats: formattedChats }
 }
@@ -184,41 +117,22 @@ async function getMessages(
   userId: string,
   receiverName: string
 ) {
-  const prisma = await requestHandler(token) // fix this
-  let receiverId // Fix up this code later
-  try {
-    receiverId = await getUserIdGivenName(receiverName, prisma)
-  } catch (e) {
-    throw new Error("Username doesn't exist")
-  }
+  const prisma = await requestHandler(token)
 
-  const chatParticipants = [userId, receiverId].sort((a, b) =>
-    a.localeCompare(b)
-  )
+  const receiverId = await getUserId(receiverName, prisma)
 
-  const chat = await prisma.chat.findFirst({
+  const chat = await prisma.chat.findFirstOrThrow({
     where: {
       users: {
-        every: {
-          id: {
-            in: chatParticipants,
-          },
+        some: {
+          id: receiverId,
         },
       },
     },
+    include: { messages: true },
   })
 
-  if (!chat) {
-    throw new Error('No chat found')
-  }
-
-  const messages = await prisma.message.findMany({
-    where: {
-      chatId: chat.id,
-    },
-  })
-
-  const formattedMessages: Message[] = messages.map((message) => {
+  const formattedMessages: Message[] = chat.messages.map((message) => {
     const type =
       message.senderId === userId ? MessageType.USER : MessageType.RECEIVER
 
@@ -236,55 +150,21 @@ async function getMessages(
 async function createChat(token: string, userId: string, receiverName: string) {
   const prisma = await requestHandler(token) // fix this
 
-  let receiverId // Fix up this code later
-  try {
-    receiverId = await getUserIdGivenName(receiverName, prisma)
-  } catch (e) {
-    throw new Error("Username doesn't exist")
-  }
+  const receiverId = await getUserId(receiverName, prisma)
 
   if (userId === receiverId) {
-    throw new Error('Cannot message oneself')
+    throw InvalidFieldError('receiver', 'cannot message oneself')
   }
 
-  const chatParticipants = [
-    {
-      id: userId,
-    },
-    {
-      id: receiverId,
-    },
-  ]
-
-  chatParticipants.sort((a, b) => {
-    return a.id.localeCompare(b.id)
-  })
-
-  const currChat = await prisma.chat.findFirst({
-    where: {
+  const newChat = await prisma.chat.create({
+    data: {
       users: {
-        every: {
-          id: {
-            in: [userId, receiverId],
-          },
-        },
+        connect: [{ id: userId }, { id: receiverId }],
       },
     },
   })
 
-  if (!currChat) {
-    const newChat = await prisma.chat.create({
-      data: {
-        users: {
-          connect: chatParticipants,
-        },
-      },
-    })
-
-    return newChat
-  }
-
-  return currChat
+  return newChat
 }
 
 async function sendMessage(
@@ -293,48 +173,35 @@ async function sendMessage(
   receiverName: string,
   message: string
 ) {
-  const prisma = await requestHandler(token as string) // fix this
-  let receiverId // Fix up this code later
-  try {
-    receiverId = await getUserIdGivenName(receiverName, prisma)
-  } catch (e) {
-    throw new Error("Username doesn't exist")
-  }
-
-  const chatParticipants = [userId, receiverId].sort((a, b) =>
-    a.localeCompare(b)
-  )
-
-  const currChat = await prisma.chat.findFirst({
-    where: {
-      users: {
-        every: {
-          id: {
-            in: chatParticipants,
-          },
-        },
-      },
-    },
-  })
-
-  if (!currChat) {
-    throw new Error('No chat found')
-  }
+  const prisma = await requestHandler(token as string)
+  const receiverId = await getUserId(receiverName, prisma)
+  const id = await getChatId(token, receiverId)
 
   const updateResult = await prisma.chat.update({
-    where: {
-      id: currChat.id,
-    },
+    where: { id: id },
     data: {
       messages: {
         create: {
           content: message,
           senderId: userId,
-          receiverId: receiverId,
         },
+      },
+    },
+    include: { messages: true },
+  })
+
+  return updateResult
+}
+
+async function getChatId(token: string, receiverId: string) {
+  const prisma = await requestHandler(token)
+  const { id: id } = await prisma.chat.findFirstOrThrow({
+    where: {
+      users: {
+        some: { id: receiverId },
       },
     },
   })
 
-  return updateResult
+  return id
 }

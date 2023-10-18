@@ -44,7 +44,7 @@ export default async function (fastify: FastifyInstance) {
     const token = req.headers['authorization'] as string
 
     const prisma = await requestHandler(token)
-    const profile = await prisma.profile.findFirstOrThrow({
+    const profile = await prisma.profile.findUniqueOrThrow({
       where: {
         id: extractId(token),
       },
@@ -65,7 +65,7 @@ export default async function (fastify: FastifyInstance) {
       const { name } = req.params
 
       const prisma = await requestHandler(token)
-      const profile = await prisma.profile.findFirstOrThrow({
+      const profile = await prisma.profile.findUniqueOrThrow({
         where: {
           name: name,
         },

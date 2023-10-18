@@ -1,20 +1,15 @@
 import { PrismaClient } from '@prisma/client'
 
-export async function getUserIdGivenName(
+// get user id from name
+export async function getUserId(
   name: string,
   prisma: PrismaClient
 ): Promise<string> {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.profile.findUniqueOrThrow({
     where: {
-      profile: {
-        name: name,
-      },
+      name: name,
     },
   })
-
-  if (!user) {
-    throw new Error("Username doesn't exist")
-  }
   return user.id
 }
 
