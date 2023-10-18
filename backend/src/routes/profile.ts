@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
-import { defaultDescription, defaultImage } from '@Source/utils/utils'
 import { NotUniqueError } from '@Source/utils/error'
+import { generateUsername } from '@Source/utils/utils'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -10,30 +10,25 @@ export default async function (fastify: FastifyInstance) {
    *  @param {string} name
    *  @returns {object} user
    */
-  fastify.post(
-    '/user',
-    async (req: FastifyRequest<{ Body: { name: string } }>) => {
-      const token = req.headers['authorization'] as string
+  fastify.post('/user', async (req: FastifyRequest) => {
+    const token = req.headers['authorization'] as string
 
-      const prisma = await requestHandler(token)
-      const { name } = req.body
+    const prisma = await requestHandler(token)
+    const username = await generateUsername(token)
 
-      const user = await prisma.user.create({
-        data: {
-          id: extractId(token),
-          profile: {
-            create: {
-              name: name,
-              description: defaultDescription,
-              image: defaultImage,
-              reputation: 69,
-            },
+    const user = await prisma.user.create({
+      data: {
+        id: extractId(token),
+        profile: {
+          create: {
+            name: username,
+            reputation: 69,
           },
         },
-      })
-      return user
-    }
-  )
+      },
+    })
+    return user
+  })
 
   /*
    *  GET /user

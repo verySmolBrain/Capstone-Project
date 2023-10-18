@@ -25,6 +25,7 @@ enum Status {
     DECLINED
 }
 
+/// @@deny('update', true)
 /// @@allow('create, read', true)
 /// @@allow('update,delete', auth() == this)
 /// @@allow('all', auth().role == ADMIN)
@@ -41,8 +42,8 @@ model Profile {
     id String @id()
     name String @unique()
     user User @relation(fields: [id], references: [id])
-    description String
-    image String
+    description String?
+    image String?
     inventory Collectable[] @relation("inventory")
     wishlist Collectable[] @relation("wishlist")
     wares Collectable[] @relation("wares")
@@ -52,7 +53,7 @@ model Profile {
     reputation Int
     givenReviews Review[] @relation("reviewer")
     receivedReviews Review[] @relation("reviewee")
-    chats Chat[]
+    chats Chat[] @relation("ChatsUsers")
 }
 
 /// @@allow('read', true)
@@ -92,11 +93,12 @@ model Trade {
     price Int
 }
 
-/// @@allow('all', users ? [user.id == auth().id])
+/// @@allow('create', true)
+/// @@allow('read, delete, update', users ? [user.id == auth().id])
 model Chat {
     id Int @id() @default(autoincrement())
     messages Message[]
-    users Profile[]
+    users Profile[] @relation("ChatsUsers")
 }
 
 /// @@allow('all', senderId == auth().id)
@@ -135,11 +137,14 @@ model Collection {
     collections Campaign[]
 }
 
+/// @@allow('read', true)
+/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Campaign {
     id Int @id() @default(autoincrement())
     name String
     image String?
     start DateTime @default(now())
     end DateTime
+    isActive Boolean @default(false)
     collections Collection[]
 }

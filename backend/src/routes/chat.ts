@@ -149,22 +149,37 @@ async function getMessages(
 // Creates a new chat between 2 users that have no existing DM between them
 async function createChat(token: string, userId: string, receiverName: string) {
   const prisma = await requestHandler(token) // fix this
-
   const receiverId = await getUserId(receiverName, prisma)
 
   if (userId === receiverId) {
     throw InvalidFieldError('receiver', 'cannot message oneself')
   }
 
-  const newChat = await prisma.chat.create({
-    data: {
+  const sortedIds = [{ id: userId }, { id: receiverId }].sort((a, b) =>
+    a.id.localeCompare(b.id)
+  )
+
+  const oldChat = await prisma.chat.findFirst({
+    where: {
       users: {
-        connect: [{ id: userId }, { id: receiverId }],
+        every: {
+          id: {
+            in: [userId, receiverId],
+          },
+        },
       },
     },
   })
 
-  return newChat
+  return oldChat
+    ? oldChat
+    : await prisma.chat.create({
+        data: {
+          users: {
+            connect: sortedIds,
+          },
+        },
+      })
 }
 
 async function sendMessage(

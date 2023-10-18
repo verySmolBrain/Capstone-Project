@@ -35,7 +35,6 @@ export async function GET(
     )
 
     const data = await response.json()
-    // console.log(data.messages)
 
     if (!response.ok) {
       throw new Error('Cannot retrieve messages!')
