@@ -1,112 +1,52 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
-import {
-    requestHandler,
-} from '@Source/utils/PrismaHandler'
+import { FastifyInstance, FastifyRequest } from 'fastify'
+import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
-    // get collection
-    fastify.get(
-        '/collection',
-        async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-            try {
-                const token = req.headers['authorization']
+  /*
+   * POST /collection
+   * Creates a collection
+   * @param {string} name
+   * @param {string} image
+   * @returns {object} collection
+   */
+  fastify.post(
+    '/collection',
+    async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
+      const token = req.headers['authorization'] as string
+      const { name, image } = req.body
+      const prisma = await requestHandler(token)
 
-                if (!token) {
-                    reply.status(401).send({ error: 'Unauthorized' })
-                    return
-                }
+      const collection = await prisma.collection.create({
+        data: {
+          name: name,
+          image: image,
+        },
+      })
+      return collection
+    }
+  )
 
-                const prisma = await requestHandler(token)
-
-                const user = await prisma.user.findFirst()
-
-                const collectables = await prisma.collectable.findMany({
-                    where: {
-                        collection: { some: { id: user?.id } },
-                    },
-                })
-                reply.send(collectables)
-            } catch (error) {
-                reply.status(500).send({ error: error })
-            }
-        }
-    )
-
-    // add collectable to collection
-    fastify.put(
-        '/addToCollection',
-        async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-            try {
-                const token = req.headers['authorization']
-
-                if (!token) {
-                    reply.status(401).send({ error: 'Unauthorized' })
-                    return
-                }
-
-                const { collectableId } = req.body
-                const prisma = await requestHandler(token)
-
-                const collectableExists = await prisma.collectable.findFirst({
-                    where: { id: collectableId },
-                })
-                if (!collectableExists) {
-                    reply.status(404).send({ error: 'Collectable does not exist' })
-                    return
-                }
-
-                const user = await prisma.user.findFirst()
-                const collectable = await prisma.profile.update({
-                    where: { id: user?.id },
-                    data: {
-                        collection: {
-                            connect: { id: collectableId },
-                        },
-                    },
-                })
-                reply.send(collectable)
-            } catch (error) {
-                reply.status(500).send({ error: error })
-            }
-        }
-    )
-
-    // remove collectable from collection
-    fastify.delete(
-        '/removeFromCollection',
-        async (req: FastifyRequest<{ Body: { collectableId: string } }>, reply) => {
-            try {
-                const token = req.headers['authorization']
-
-                if (!token) {
-                    reply.status(401).send({ error: 'Unauthorized' })
-                    return
-                }
-
-                const { collectableId } = req.body
-                const prisma = await requestHandler(token)
-
-                const collectableExists = await prisma.collectable.findFirst({
-                    where: { id: collectableId },
-                })
-                if (!collectableExists) {
-                    reply.status(404).send({ error: 'Collectable does not exist' })
-                    return
-                }
-
-                const user = await prisma.user.findFirst()
-                const collectable = await prisma.profile.update({
-                    where: { id: user?.id },
-                    data: {
-                        collection: {
-                            disconnect: { id: collectableId },
-                        },
-                    },
-                })
-                reply.send(collectable)
-            } catch (error) {
-                reply.status(500).send({ error: error })
-            }
-        }
-    )
+  /*
+   * GET /collection
+   * Returns all collections
+   * @returns {object} collections
+   */
+  /*
+   * GET /collection/:name
+   * Returns a collection by name
+   * @returns {object} collection
+   */
+  /*
+   * PUT /collection/:name
+   * Updates a collection by name
+   * @param {string} name
+   * @param {string} image
+   * @returns {object} collection
+   */
+  /*
+   * DELETE /collection/:name
+   * Deletes a collection by name
+   * @param {string} name
+   * @returns {boolean} success
+   */
 }

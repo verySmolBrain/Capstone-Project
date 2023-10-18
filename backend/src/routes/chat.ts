@@ -1,137 +1,203 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import 'dotenv/config'
-import { getChats, getMessages, sendMessage, updateChat } from '@Source/chat'
-import {
-  supabase,
-} from '@Source/utils/PrismaHandler'
+import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
+import { getUserId } from '@Source/utils/utils'
+import { throwInvalidFieldError, throwMissingFieldError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
-  fastify.put(
-    '/chat/:receiverName',
-    async (req: FastifyRequest<{ Params: { receiverName: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-
-        const {
-          data: { user },
-        } = await supabase().auth.getUser(token)
-        const { receiverName } = req.params
-
-        if (!token || !user?.id) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-        reply.send(updateChat(token, user?.id, receiverName))
-      } catch (error) {
-        console.log(error)
-        reply.code(500).send({ error: error })
-      }
-    }
-  )
-
-  // API endpoint for retrieving messages with a user
-  fastify.get(
-    '/chat/:receiverName',
-    async (req: FastifyRequest<{ Params: { receiverName: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-        const { receiverName } = req.params
-        const {
-          data: { user },
-        } = await supabase().auth.getUser(token)
-
-        if (!token || !user?.id) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const messages = getMessages(token, user?.id, receiverName)
-        reply.send(await messages)
-      } catch (error) {
-        console.log(error)
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
-  // API endpoint for retrieving chats of a user from the database
-  fastify.get('/chats', async (req, reply) => {
-    try {
-      const token = req.headers['authorization']
-      const {
-        data: { user },
-      } = await supabase().auth.getUser(token)
-
-      if (!token || !user?.id) {
-        reply.status(401).send({ error: 'Unauthorized' })
-        return
-      }
-
-      const chats = await getChats(token, user?.id)
-      reply.send(chats)
-    } catch (error) {
-      console.log(error)
-      reply.status(500).send({ error: error })
-    }
+  /*
+   *  POST /chat/:receiverName
+   *  Creates a chat between current user and user with receiverName
+   *  @returns {object} chat
+   */
+  fastify.post('/chat/:receiverName', async (req: FastifyRequest<{ Params: { receiverName: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { receiverName } = req.params
+    return await createChat(token, extractId(token), receiverName)
   })
 
-  // API endpoint for updating chat
-  fastify.put(
-    '/chat/update/:receiverName',
-    async (req: FastifyRequest<{ Params: { receiverName: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-        const { receiverName } = req.params
+  /*
+   *  GET /chat/:receiverName
+   *  Returns a chat between current user and user with receiverName
+   *  @returns {object} chat
+   */
+  fastify.get('/chat/:receiverName', async (req: FastifyRequest<{ Params: { receiverName: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { receiverName } = req.params
+    return await getMessages(token, extractId(token), receiverName)
+  })
 
-        const {
-          data: { user },
-        } = await supabase().auth.getUser(token)
+  /*
+   *  GET /chat
+   *  Returns all chats
+   *  @returns {object} chats
+   */
+  fastify.get('/chat', async (req) => {
+    const token = req.headers['authorization'] as string
+    return await getChats(token, extractId(token))
+  })
 
-        if (!token || !user?.id) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const messageContents = req.body as string
-        reply.send(sendMessage(token, user?.id, receiverName, messageContents))
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
-
-  // API endpoint for sending a chat message
+  /*
+   *  PUT /chat/send/:receiverName
+   *  Sends a message to user with receiverName
+   *  @returns {object} message
+   */
   fastify.put(
     '/chat/send/:receiverName',
     async (
       req: FastifyRequest<{
         Params: { receiverName: string }
         Body: { messageContents: string }
-      }>,
-      reply
+      }>
     ) => {
-      try {
-        const token = req.headers['authorization']
-        const { receiverName } = req.params
-        const { messageContents } = req.body
+      const token = req.headers['authorization'] as string
+      const { receiverName } = req.params
+      const { messageContents } = req.body
 
-        const {
-          data: { user },
-        } = await supabase().auth.getUser(token)
-
-        if (!token || !user?.id) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        if (!messageContents) {
-          reply.status(400).send({ error: 'Missing message in request' })
-          return
-        }
-
-        reply.send(sendMessage(token, user?.id, receiverName, messageContents))
-      } catch (error) {
-        reply.status(500).send({ error: error })
+      if (!messageContents) {
+        throw throwMissingFieldError('messageContents')
       }
+
+      return sendMessage(token, extractId(token), receiverName, messageContents)
     }
   )
+}
+
+// helper functions ------------------------------------------------------------
+
+enum MessageType {
+  USER,
+  RECEIVER,
+}
+
+type Message = {
+  type: MessageType
+  content: string
+  timestamp: Date
+}
+
+async function getChats(token: string, userId: string) {
+  const prisma = await requestHandler(token)
+  const chats = await prisma.chat.findMany({
+    include: {
+      users: true,
+      messages: true,
+    },
+  })
+
+  const latestMessages = []
+  for (const chat of chats) {
+    const chatMessages = chat.messages
+    latestMessages.push(chatMessages[chatMessages.length - 1])
+  }
+
+  const formattedChats = [] // refactor this later im pretty sure there's an easier way of doing this
+  for (const chat of chats) {
+    const receiver = chat.users.at(0)?.id === userId ? chat.users.at(1) : chat.users.at(0)
+    formattedChats.push({
+      id: chat.id,
+      latestMessage: latestMessages[chats.indexOf(chat)],
+      receiver: receiver,
+      image: receiver?.image,
+    })
+  }
+
+  return { chats: formattedChats }
+}
+
+async function getMessages(token: string, userId: string, receiverName: string) {
+  const prisma = await requestHandler(token)
+
+  const receiverId = await getUserId(receiverName, prisma)
+
+  const chat = await prisma.chat.findFirstOrThrow({
+    where: {
+      users: {
+        some: {
+          id: receiverId,
+        },
+      },
+    },
+    include: { messages: true },
+  })
+
+  const formattedMessages: Message[] = chat.messages.map((message) => {
+    const type = message.senderId === userId ? MessageType.USER : MessageType.RECEIVER
+
+    return {
+      type: type,
+      content: message.content,
+      timestamp: message.updatedAt,
+    }
+  })
+
+  return { messages: formattedMessages }
+} // Write documentation for this later
+
+// Creates a new chat between 2 users that have no existing DM between them
+async function createChat(token: string, userId: string, receiverName: string) {
+  const prisma = await requestHandler(token) // fix this
+  const receiverId = await getUserId(receiverName, prisma)
+
+  if (userId === receiverId) {
+    throwInvalidFieldError('receiver', 'cannot message oneself')
+  }
+
+  const sortedIds = [{ id: userId }, { id: receiverId }].sort((a, b) => a.id.localeCompare(b.id))
+
+  const oldChat = await prisma.chat.findFirst({
+    where: {
+      users: {
+        every: {
+          id: {
+            in: [userId, receiverId],
+          },
+        },
+      },
+    },
+  })
+
+  return oldChat
+    ? oldChat
+    : await prisma.chat.create({
+        data: {
+          users: {
+            connect: sortedIds,
+          },
+        },
+      })
+}
+
+async function sendMessage(token: string, userId: string, receiverName: string, message: string) {
+  const prisma = await requestHandler(token as string)
+  const receiverId = await getUserId(receiverName, prisma)
+  const id = await getChatId(token, receiverId)
+
+  const updateResult = await prisma.chat.update({
+    where: { id: id },
+    data: {
+      messages: {
+        create: {
+          content: message,
+          senderId: userId,
+        },
+      },
+    },
+    include: { messages: true },
+  })
+
+  return updateResult
+}
+
+async function getChatId(token: string, receiverId: string) {
+  const prisma = await requestHandler(token)
+  const { id: id } = await prisma.chat.findFirstOrThrow({
+    where: {
+      users: {
+        some: { id: receiverId },
+      },
+    },
+  })
+
+  return id
 }

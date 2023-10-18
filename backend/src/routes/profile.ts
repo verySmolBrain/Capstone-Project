@@ -1,211 +1,139 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
-import { requestHandler, getUserId } from '@Source/utils/PrismaHandler'
+import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
+import { throwNotUniqueError } from '@Source/utils/error'
+import { generateUsername } from '@Source/utils/utils'
 
 export default async function (fastify: FastifyInstance) {
-  // create user AND profile
-  fastify.post(
-    '/createUser',
-    async (req: FastifyRequest<{ Body: { name: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
+  /*
+   *  POST /user
+   *  Creates a user and profile
+   *  @param {string} name
+   *  @returns {object} user
+   */
+  fastify.post('/user', async (req: FastifyRequest) => {
+    const token = req.headers['authorization'] as string
 
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
+    const prisma = await requestHandler(token)
+    const username = await generateUsername(token)
 
-        const userId = await getUserId(token)
-
-        const { name } = req.body
-        const prisma = await requestHandler(token)
-
-        const user = await prisma.user.create({
-          data: {
-            id: userId,
-            profile: {
-              create: {
-                name: name,
-                description: 'im such a goomba',
-                image: 'thisisaurl',
-                collection: {},
-                achievements: {},
-                sales: {},
-                purchases: {},
-                reputation: 69,
-              },
-            },
+    const user = await prisma.user.create({
+      data: {
+        id: extractId(token),
+        profile: {
+          create: {
+            name: username,
+            reputation: 69,
           },
-        })
-        reply.send(user)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
-
-  // get user profile
-  fastify.get('/profile', async (req, reply) => {
-    try {
-      const token = req.headers['authorization']
-
-      if (!token) {
-        reply.status(401).send({ error: 'Unauthorized' })
-        return
-      }
-
-      const prisma = await requestHandler(token)
-      const userId = await getUserId(token)
-      const profile = await prisma.profile.findFirst({
-        where: {
-          id: userId,
         },
-      })
-      reply.send(profile)
-    } catch (error) {
-      reply.status(500).send({ error: error })
-    }
+      },
+    })
+    return user
   })
 
-  // get user profile by name
-  fastify.get(
-    '/getUser/:name',
-    async (req: FastifyRequest<{ Params: { name: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-        const { name } = req.params
+  /*
+   *  GET /user
+   *  Returns the current user
+   *  @returns {object} user
+   */
+  fastify.get('/profile', async (req) => {
+    const token = req.headers['authorization'] as string
 
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
+    const prisma = await requestHandler(token)
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        id: extractId(token),
+      },
+    })
+    return profile
+  })
 
-        const prisma = await requestHandler(token)
-        const profile = await prisma.profile.findMany({
-          where: {
-            name: {
-              search: name,
-            },
-          },
-        })
-        reply.send(profile)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
+  /*
+   *  GET /profile/:name
+   *  Returns the user's profile by name
+   *  @param {string} name
+   *  @returns {object} profile
+   */
+  fastify.get('/profile/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+
+    const prisma = await requestHandler(token)
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        name: name,
+      },
+    })
+    return profile
+  })
+
+  /*
+   *  PUT /profile/name
+   *  Updates the user's name
+   *  @param {string} name
+   *  @returns {object} profile
+   */
+  fastify.put('/profile/name', async (req: FastifyRequest<{ Body: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+
+    const { name } = req.body
+    const prisma = await requestHandler(token)
+
+    const nameExists = await prisma.profile.findFirst({
+      where: { name: name },
+    })
+    if (nameExists) {
+      throw throwNotUniqueError('name')
     }
-  )
 
-  // get collectable by name
-  fastify.get(
-    '/getCollectable/:name',
-    async (req: FastifyRequest<{ Params: { name: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-        const { name } = req.params
+    const profile = await prisma.profile.update({
+      where: {
+        id: extractId(token),
+      },
+      data: {
+        name: name,
+      },
+    })
+    return profile
+  })
 
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-        const prisma = await requestHandler(token)
-        const collectable = await prisma.collectable.findMany({
-          where: {
-            name: {
-              search: name,
-            },
-          },
-        })
-        reply.send(collectable)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
+  /*
+   *  PUT /profile/description
+   *  Updates the user's description
+   *  @param {string} description
+   *  @returns {object} profile
+   */
+  fastify.put('/profile/description', async (req: FastifyRequest<{ Body: { description: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { description } = req.body
+    const prisma = await requestHandler(token)
 
-  // change name of user
-  fastify.put(
-    '/changeName',
-    async (req: FastifyRequest<{ Body: { name: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
+    const changedDescription = await prisma.profile.updateMany({
+      data: {
+        description: description,
+      },
+    })
+    return changedDescription
+  })
 
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
+  /*
+   *  PUT /profile/image
+   *  Updates the user's image url
+   *  @param {string} image url
+   *  @returns {object} profile
+   */
+  fastify.put('/profile/image', async (req: FastifyRequest<{ Body: { image: string } }>) => {
+    const token = req.headers['authorization'] as string
 
-        const { name } = req.body
-        const prisma = await requestHandler(token)
+    const { image } = req.body
+    const prisma = await requestHandler(token)
 
-        const nameExists = await prisma.profile.findFirst({
-          where: { name: name },
-        })
-        if (nameExists) {
-          reply.status(403).send({ error: 'Name is already taken' })
-          return
-        }
+    const changedImage = await prisma.profile.updateMany({
+      data: {
+        image: image,
+      },
+    })
+    return changedImage
+  })
 
-        const changedName = await prisma.profile.updateMany({
-          data: {
-            name: name,
-          },
-        })
-        reply.send(changedName)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
-
-  // change description of user profile
-  fastify.put(
-    '/changeDescription',
-    async (req: FastifyRequest<{ Body: { description: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const { description } = req.body
-        const prisma = await requestHandler(token)
-
-        const changedDescription = await prisma.profile.updateMany({
-          data: {
-            description: description,
-          },
-        })
-        reply.send(changedDescription)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
-
-  // change image of user profile
-  fastify.put(
-    '/changeImage',
-    async (req: FastifyRequest<{ Body: { image: string } }>, reply) => {
-      try {
-        const token = req.headers['authorization']
-
-        if (!token) {
-          reply.status(401).send({ error: 'Unauthorized' })
-          return
-        }
-
-        const { image } = req.body
-        const prisma = await requestHandler(token)
-
-        const changedImage = await prisma.profile.updateMany({
-          data: {
-            image: image,
-          },
-        })
-        reply.send(changedImage)
-      } catch (error) {
-        reply.status(500).send({ error: error })
-      }
-    }
-  )
+  //fastify.setErrorHandler((error, request, reply) => {})
 }

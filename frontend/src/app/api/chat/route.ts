@@ -16,16 +16,16 @@ export async function GET(request: Request) {
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_HOSTNAME}/chats`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: token!,
-        }
-      }
-    )
+    const response = await fetch(`${process.env.BACKEND_HOSTNAME}/chat`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+    console.log(response)
     const data = await response.json()
+    console.log(data)
 
     if (!response.ok || response.status === 404) {
       throw new Error('Cannot find chat list')

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended'
 
-import { requestHandler, getUserId } from '@Source/utils/PrismaHandler'
+import { requestHandler, getUserId } from '@Source/utils/SupabaseUtils'
 import SupabaseService from '@Source/utils/Supabase.service'
 
 const prismaMock = mockDeep<PrismaClient>()

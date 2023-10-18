@@ -76,7 +76,6 @@ CREATE TABLE "Message" (
     "id" SERIAL NOT NULL,
     "chatId" INTEGER NOT NULL,
     "senderId" TEXT NOT NULL,
-    "receiverId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -85,7 +84,7 @@ CREATE TABLE "Message" (
 );
 
 -- CreateTable
-CREATE TABLE "_collection" (
+CREATE TABLE "_inventory" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
@@ -118,10 +117,10 @@ CREATE TABLE "_ChatsUsers" (
 CREATE UNIQUE INDEX "Profile_name_key" ON "Profile"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_collection_AB_unique" ON "_collection"("A", "B");
+CREATE UNIQUE INDEX "_inventory_AB_unique" ON "_inventory"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_collection_B_index" ON "_collection"("B");
+CREATE INDEX "_inventory_B_index" ON "_inventory"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_wishlist_AB_unique" ON "_wishlist"("A", "B");
@@ -169,10 +168,10 @@ ALTER TABLE "Trade" ADD CONSTRAINT "Trade_collectableId_fkey" FOREIGN KEY ("coll
 ALTER TABLE "Message" ADD CONSTRAINT "Message_chatId_fkey" FOREIGN KEY ("chatId") REFERENCES "Chat"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_collection" ADD CONSTRAINT "_collection_A_fkey" FOREIGN KEY ("A") REFERENCES "Collectable"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_inventory" ADD CONSTRAINT "_inventory_A_fkey" FOREIGN KEY ("A") REFERENCES "Collectable"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_collection" ADD CONSTRAINT "_collection_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_inventory" ADD CONSTRAINT "_inventory_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_wishlist" ADD CONSTRAINT "_wishlist_A_fkey" FOREIGN KEY ("A") REFERENCES "Collectable"("id") ON DELETE CASCADE ON UPDATE CASCADE;

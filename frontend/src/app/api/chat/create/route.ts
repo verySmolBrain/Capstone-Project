@@ -6,7 +6,7 @@ import type { Database } from '@/lib/database.types'
 
 export const dynamic = 'force-dynamic'
 
-export async function PUT(request: Request) {
+export async function POST(request: Request) {
   const requestUrl = new URL(request.url)
   const formData = await request.json()
 
@@ -23,7 +23,7 @@ export async function PUT(request: Request) {
     const response = await fetch(
       `${process.env.BACKEND_HOSTNAME}/chat/${formData.name}`,
       {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           authorization: token!,
@@ -31,6 +31,12 @@ export async function PUT(request: Request) {
         body: JSON.stringify(formData),
       }
     )
+
+    console.log(response)
+    console.log(response.ok)
+    const data = await response.json()
+    console.log(data)
+    console.log(response.ok)
 
     if (!response.ok || response.status === 500) {
       throw new Error('Cannot create chat')
