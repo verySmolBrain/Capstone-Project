@@ -26,7 +26,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[700px]">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-6 xs:w-[400px] md:w-[700px]">
         <UpdateUsernameForm />
         <UpdateProfilePictureForm />
         <span className="w-full border-t" />
@@ -39,7 +39,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[700px] pb-20">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-6 xs:w-[400px] md:w-[700px] pb-20">
         <UpdateEmailForm />
         <p className="text-sm text-muted-foreground">
           Email must not belong to an existing account.

@@ -56,13 +56,21 @@ export function UpdateUsernameForm() {
       body: JSON.stringify(data),
     })
 
+    console.log(updateResult)
+
     setIsLoading(false)
 
     if (!updateResult?.ok) {
       return toast({
-        title: 'Uh Oh! Something went wrong!',
+        title: 'Uh Oh! Something went wrong!', // Fix edge case can still update username if same as before
         description: updateResult?.statusText,
         variant: 'destructive',
+      })
+    } else {
+      toast({
+        title: 'Success!',
+        description: 'Your username has been updated!',
+        variant: 'default',
       })
     }
   }
