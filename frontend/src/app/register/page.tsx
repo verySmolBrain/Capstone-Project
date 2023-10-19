@@ -19,10 +19,10 @@ export default function SignupPage() {
           height={500}
           priority
         />
-        <BackButton />
       </div>
 
       <div className="mx-auto flex flex-col justify-center space-y-3 w-[350px]">
+      <BackButton />
         <div className="flex flex-col text-center">
           <IconLogo className="w-16 h-16 mx-auto" />
           <h1 className="text-2xl font-semibold tracking-tight">

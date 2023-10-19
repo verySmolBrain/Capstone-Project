@@ -1,6 +1,7 @@
 import Fastify, { FastifyServerOptions } from 'fastify'
 import { validateUser } from '@Source/utils/supabaseUtils'
 import { InvalidIdError } from '@Source/utils/error'
+import cors from '@fastify/cors'
 
 import chatRoute from '@Source/routes/chat'
 import inventoryRoute from '@Source/routes/inventory'
@@ -17,15 +18,9 @@ export const build = async (opt: FastifyServerOptions) => {
   const fastify = Fastify(opt)
 
   fastify.register(cors, {
-    origin: '*',
+    origin: '*', // replace
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Update-Type',
-      'X-Requested-With',
-      'Accept',
-    ],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Update-Type', 'X-Requested-With', 'Accept'],
   })
 
   fastify.register(chatRoute)
@@ -41,19 +36,20 @@ export const build = async (opt: FastifyServerOptions) => {
 
   // checks if user is authenticated before every request
   // handlers are guaranteed to be given a valid user
-  fastify.addHook('onRequest', async (request) => {
-    const token = request.headers['authorization']
+  //   fastify.addHook('onRequest', async (request) => {
+  //     console.log('a')
+  //     const token = request.headers['authorization']
 
-    if (!token) {
-      throw new InvalidIdError()
-    }
+  //     if (!token) {
+  //       throw new InvalidIdError()
+  //     }
 
-    const isValid = await validateUser(token)
+  //     const isValid = await validateUser(token)
 
-    if (!isValid) {
-      throw new InvalidIdError()
-    }
-  })
+  //     if (!isValid) {
+  //       throw new InvalidIdError()
+  //     }
+  //   })
 
   // see utils/error.ts for custom error handling
   fastify.setErrorHandler(async (error, request, reply) => {
