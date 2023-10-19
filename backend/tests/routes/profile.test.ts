@@ -283,7 +283,7 @@ describe('/profile/name - PUT', () => {
       image: null,
       reputation: 1,
     })
-    
+
     const response1 = await app.inject({
       method: 'PUT',
       url: '/profile/name',
