@@ -81,7 +81,7 @@ export default async function (fastify: FastifyInstance) {
       where: { name: name },
     })
     if (nameExists) {
-      throw throwNotUniqueError('name')
+      throwNotUniqueError('name')
     }
 
     const profile = await prisma.profile.update({
