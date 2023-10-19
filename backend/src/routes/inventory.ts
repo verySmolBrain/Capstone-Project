@@ -4,12 +4,12 @@ import { Id } from '@Source/utils/utils'
 
 export default async function (fastify: FastifyInstance) {
   /*
-   *  GET /wares
-   *  Returns the user's wares
-   *  @returns {object} wares
+   *  GET /inventory
+   *  Returns the user's inventory
+   *  @returns {object} inventory
    */
   fastify.get(
-    '/wares',
+    '/inventory',
     async (req: FastifyRequest<{ Body: { collectableId: string } }>) => {
       const token = req.headers['authorization'] as string
 
@@ -19,35 +19,33 @@ export default async function (fastify: FastifyInstance) {
         where: {
           id: extractId(token),
         },
-        include: { wares: true },
+        include: { inventory: true },
       })
-      return profile.wares
+      return profile.inventory
     }
   )
 
   /*
-   *  PUT /wares
-   *  Update the user's wares
+   *  PUT /inventory
+   *  Update the user's inventory
    *  @param {Id[]} collectableIds
-   *  @returns {object} wares
+   *  @returns {object} inventory
    */
   fastify.put(
-    '/wares',
+    '/inventory',
     async (req: FastifyRequest<{ Body: { collectableIds: Id[] } }>) => {
       const token = req.headers['authorization'] as string
       const prisma = await requestHandler(token)
-
-      // TODO: enforce wares are a subset of inventory
       const profile = await prisma.profile.update({
         where: { id: extractId(token) },
         data: {
-          wares: {
+          inventory: {
             set: req.body.collectableIds,
           },
         },
-        include: { wares: true },
+        include: { inventory: true },
       })
-      return profile.wares
+      return profile.inventory
     }
   )
 }

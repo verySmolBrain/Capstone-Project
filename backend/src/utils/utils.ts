@@ -1,19 +1,55 @@
 import { PrismaClient } from '@prisma/client'
+import {
+  uniqueNamesGenerator,
+  Config,
+  adjectives,
+  colors,
+  animals,
+} from 'unique-names-generator'
+import { requestHandler } from './supabaseUtils'
 
-export async function getUserIdGivenName(
+const customConfig: Config = {
+  dictionaries: [adjectives, colors, animals],
+}
+
+export type Id = {
+  id: number
+}
+
+// get user id from name
+export async function getUserId(
   name: string,
   prisma: PrismaClient
 ): Promise<string> {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.profile.findUniqueOrThrow({
     where: {
-      profile: {
-        name: name,
-      },
+      name: name,
     },
   })
-
-  if (!user) {
-    throw new Error("Username doesn't exist")
-  }
   return user.id
 }
+
+export async function generateUsername(token: string) {
+  let username = uniqueNamesGenerator(customConfig)
+  const prisma = await requestHandler(token)
+
+  while (true) {
+    username = uniqueNamesGenerator(customConfig)
+    const user = await prisma.profile.findUnique({
+      where: {
+        name: username,
+      },
+    })
+
+    if (!user) {
+      break
+    }
+  }
+
+  return username
+}
+
+export const defaultImage =
+  'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG' // deprecate later
+
+export const defaultDescription = 'im such a goomba' // deprecate later

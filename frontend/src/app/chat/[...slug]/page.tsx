@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 const fetcher = (url: string, receiver: string) =>
   fetch(url, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'update-type': 'name',
