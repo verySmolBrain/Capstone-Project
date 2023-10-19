@@ -29,6 +29,8 @@ export default function ChatList() {
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
+    console.log('a')
+
     const res = await fetch(url, {
       method: 'GET',
       headers: {
@@ -36,6 +38,8 @@ export default function ChatList() {
         authorization: token!,
       },
     })
+
+    console.log('b')
 
     if (res?.ok) {
       return await res.json()
