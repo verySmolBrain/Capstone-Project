@@ -12,15 +12,18 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 
 export const dynamic = 'force-dynamic'
 
-const fetcher = (url: string, receiver: string) =>
-  fetch(url, {
+const fetcher = async (url: string, receiver: string, router: AppRouterInstance) => {
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
+
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       authorization: token!,
       'update-type': 'name',
     },
-    body: JSON.stringify({ receiverName: receiverName }),
+    body: JSON.stringify({ receiverName: receiver }),
   })
 
   if (res?.ok) {

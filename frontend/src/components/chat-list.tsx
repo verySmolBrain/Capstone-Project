@@ -29,7 +29,19 @@ export default function ChatList() {
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
+    console.log(url)
     console.log('a')
+
+    const res2 = await fetch('http://127.0.0.1:3001/chat', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: token!,
+        },
+      })
+      console.log('b')
+      console.log(res2)
+
 
     const res = await fetch(url, {
       method: 'GET',
@@ -38,6 +50,8 @@ export default function ChatList() {
         authorization: token!,
       },
     })
+    console.log('b')
+    console.log(res)
 
     console.log('b')
 
@@ -47,14 +61,13 @@ export default function ChatList() {
   }
 
   const { data } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/chats`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/chat`,
     fetcher,
     { refreshInterval: 2500 }
   )
 
   React.useEffect(() => {
     if (data) {
-      console.log(data)
       setChats(data.chats)
     }
   }, [data])

@@ -1,7 +1,11 @@
 import { build } from '@Source/app'
 
 const start = async () => {
-  const app = await build({ logger: true })
+  const app = await build({
+    logger: {
+      level: 'trace',
+    },
+  })
 
   try {
     await app.listen({ port: 3001 })
