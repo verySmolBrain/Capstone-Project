@@ -55,7 +55,7 @@ export default async function (fastify: FastifyInstance) {
       const { messageContents } = req.body
 
       if (!messageContents) {
-        throwMissingFieldError('messageContents')
+        throw throwMissingFieldError('messageContents')
       }
 
       return sendMessage(token, extractId(token), receiverName, messageContents)
