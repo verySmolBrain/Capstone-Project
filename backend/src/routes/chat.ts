@@ -140,7 +140,7 @@ async function createChat(token: string, userId: string, receiverName: string) {
   const receiverId = await getUserId(receiverName, prisma)
 
   if (userId === receiverId) {
-    throwInvalidFieldError('receiver', 'cannot message oneself')
+    throw throwInvalidFieldError('receiver', 'cannot message oneself')
   }
 
   const sortedIds = [{ id: userId }, { id: receiverId }].sort((a, b) => a.id.localeCompare(b.id))
