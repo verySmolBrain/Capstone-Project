@@ -36,7 +36,7 @@ export default function ChatList() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          authorization: token!,
+          Authorization: token!,
         },
       })
       console.log('b')
@@ -52,8 +52,6 @@ export default function ChatList() {
     })
     console.log('b')
     console.log(res)
-
-    console.log('b')
 
     if (res?.ok) {
       return await res.json()
