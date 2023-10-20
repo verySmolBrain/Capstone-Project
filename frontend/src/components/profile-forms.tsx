@@ -77,7 +77,7 @@ export function UpdateUsernameForm() {
             <Input
               className="w-full justify-self-start"
               type="username"
-              placeholder="This is your public display name."
+              placeholder="This is your public display name"
               autoCapitalize="none"
               autoCorrect="off"
               required
@@ -337,7 +337,7 @@ export function UpdatePasswordForm() {
             <Input
               className="w-full justify-self-start"
               type="password"
-              placeholder="new password"
+              placeholder="New password"
               autoCapitalize="none"
               autoCorrect="off"
               required

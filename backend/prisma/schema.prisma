@@ -25,9 +25,10 @@ enum Status {
     DECLINED
 }
 
+/// @@deny('update', true)
 /// @@allow('create, read', true)
 /// @@allow('update,delete', auth() == this)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model User {
     id String @id()
     role Role @default(USER)
@@ -36,16 +37,16 @@ model User {
 
 /// @@allow('create,read', true)
 /// @@allow('update,delete', auth() == user)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model Profile {
     id String @id()
     name String @unique()
     user User @relation(fields: [id], references: [id])
-    collection Collectable[] @relation("collection")
+    description String?
+    image String?
+    inventory Collectable[] @relation("inventory")
     wishlist Collectable[] @relation("wishlist")
     wares Collectable[] @relation("wares")
-    description String
-    image String
     achievements Achievement[]
     sales Trade[] @relation("seller")
     purchases Trade[] @relation("buyer")
@@ -56,18 +57,7 @@ model Profile {
 }
 
 /// @@allow('read', true)
-/// @@allow('all', auth().role == 'ADMIN')
-model Collectable {
-    id String @id()
-    name String
-    collection Profile[] @relation("collection")
-    wishlist Profile[] @relation("wishlist")
-    wares Profile[] @relation("wares")
-    Trade Trade[]
-}
-
-/// @@allow('read', true)
-/// @@allow('all', auth().role == 'ADMIN' || auth().id == reviewer.id)
+/// @@allow('all', auth().role == ADMIN || auth().id == reviewer.id)
 model Review {
     id String @id()
     rating Int
@@ -79,7 +69,7 @@ model Review {
 }
 
 /// @@allow('read', true)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('all', auth().role == ADMIN)
 model Achievement {
     id String @id()
     name String
@@ -97,14 +87,14 @@ model Trade {
     buyer Profile @relation("buyer", fields: [buyerId], references: [id])
     buyerId String
     collectable Collectable @relation(fields: [collectableId], references: [id])
-    collectableId String
+    collectableId Int
     /// @allow('update', auth().id == sellerId)
     status Status @default(PENDING)
     price Int
 }
 
 /// @@allow('create', true)
-/// @@allow('read, delete, delete', users ? [user.id == auth().id])
+/// @@allow('read, delete, update', users ? [user.id == auth().id])
 model Chat {
     id Int @id() @default(autoincrement())
     messages Message[]
@@ -112,15 +102,49 @@ model Chat {
 }
 
 /// @@allow('all', senderId == auth().id)
-/// @@allow('all', receiverId == auth().id)
-/// @@allow('all', auth().role == 'ADMIN')
+/// @@allow('read', chat.users ? [user.id == auth().id])
+/// @@allow('all', auth().role == ADMIN)
 model Message {
     id Int @id() @default(autoincrement())
     chatId Int
     chat Chat @relation(fields: [chatId], references: [id])
     senderId String
-    receiverId String
     content String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt()
+}
+
+/// @@allow('read', true)
+/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+model Collectable {
+    id Int @id() @default(autoincrement())
+    name String
+    image String?
+    collection Collection[]
+    Trade Trade[]
+    inventory Profile[] @relation("inventory")
+    wishlist Profile[] @relation("wishlist")
+    wares Profile[] @relation("wares")
+}
+
+/// @@allow('read', true)
+/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+model Collection {
+    id Int @id() @default(autoincrement())
+    name String
+    image String?
+    collectables Collectable[]
+    collections Campaign[]
+}
+
+/// @@allow('read', true)
+/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+model Campaign {
+    id Int @id() @default(autoincrement())
+    name String
+    image String?
+    start DateTime @default(now())
+    end DateTime
+    isActive Boolean @default(false)
+    collections Collection[]
 }
