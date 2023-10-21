@@ -10,6 +10,8 @@ jest.mock('@Source/utils/supabaseUtils', () => ({
   supabase: jest.fn(() => SupabaseService.getInstance()),
   validateUser: jest.fn(() => Promise.resolve(true)),
   extractId: jest.fn(() => ''),
+  getUserId: jest.fn(() => ''),
+  getChatId: jest.fn(() => 1),
 }))
 
 beforeEach(() => {
