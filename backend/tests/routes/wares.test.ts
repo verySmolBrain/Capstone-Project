@@ -11,7 +11,7 @@ import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
 describe('/wares', () => {
   it('Successfully retrieves user\'s wares - return 200', async () => {
 
-    // @ts-expect-error 
+    // @ts-expect-error - Findunique generates type on query so will throw 
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
         wares: [{
             id: 1,
@@ -64,7 +64,7 @@ describe('/wares', () => {
 describe('/wares', () => {
   it('Successfully retrieves updates user\'s wares - return 200', async () => {
 
-    // @ts-expect-error 
+    // @ts-expect-error - update generates type on query so will throw 
     prismaMockInstance.profile.update.mockResolvedValueOnce({
         wares: [{
             id: 1,

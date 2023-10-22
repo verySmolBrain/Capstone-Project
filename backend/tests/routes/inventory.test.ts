@@ -9,7 +9,7 @@ import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
 
 describe('/inventory', () => {
   it('Successfully retrieves inventory of a user - return 200', async () => {
-    // @ts-expect-error 
+    // @ts-expect-error - Findunique generates type on query so will throw 
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
         inventory: [{
             id: 1,
@@ -87,7 +87,7 @@ describe('/inventory', () => {
 
 describe('/inventory', () => {
   it('Successfully retrieves inventory of a user - return 200', async () => {
-    // @ts-expect-error 
+    // @ts-expect-error Update generates type on query so will throw 
     prismaMockInstance.profile.update.mockResolvedValueOnce({
         inventory: [{
             id: 1,
