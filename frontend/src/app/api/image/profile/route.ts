@@ -62,9 +62,14 @@ export async function POST(request: NextRequest) {
 /**
  * Todo:
  *
- * - Profile page
- * - Zustand
- * - Cloudinary upload
+ * - Profile page (Public vs Private)
+ * - Cloudinary upload (Don't need this route)
  *
  * - Clean up the code
+ *
+ * Then merge:
+ *
+ * - System Administrator (Create collections)
+ * - Profile Page (View Collections + Collectibles)
+ * - Forum Page
  */
