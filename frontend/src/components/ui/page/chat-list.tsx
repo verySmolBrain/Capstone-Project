@@ -29,20 +29,6 @@ export default function ChatList() {
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
-    console.log(url)
-    console.log('a')
-
-    const res2 = await fetch('http://127.0.0.1:3001/chat', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token!,
-        },
-      })
-      console.log('b')
-      console.log(res2)
-
-
     const res = await fetch(url, {
       method: 'GET',
       headers: {
@@ -50,8 +36,6 @@ export default function ChatList() {
         authorization: token!,
       },
     })
-    console.log('b')
-    console.log(res)
 
     if (res?.ok) {
       return await res.json()

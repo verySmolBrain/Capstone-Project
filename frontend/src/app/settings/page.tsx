@@ -1,19 +1,14 @@
 import React from 'react'
 
 //import { IconLogo } from '@/components/ui/assets/IconLogo'
-import { GeneralNavBar } from '@/components/general-navbar'
-import { TypographyH2 } from '@/components/typography-h2'
+import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
+import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 
-import {
-  UpdateUsernameForm,
-  UpdateProfilePictureForm,
-  UpdateDescriptionForm,
-  UpdateEmailForm,
-  UpdatePasswordForm,
-} from '@/components/profile-forms'
-//import Link from 'next/link'
-
-//import Image from 'next/image'
+import { UpdateUsernameForm } from '@/components/ui/form/update-username-form'
+import { UpdateProfilePictureForm } from '@/components/ui/form/update-profile-picture-form'
+import { UpdateDescriptionForm } from '@/components/ui/form/update-description-form'
+import { UpdateEmailForm } from '@/components/ui/form/update-email-form'
+import { UpdatePasswordForm } from '@/components/ui/form/update-password-form'
 
 export default function SettingsPage() {
   return (

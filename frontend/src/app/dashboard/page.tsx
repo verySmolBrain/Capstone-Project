@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import { DashboardNavBar } from '@/components/dashboard-navbar'
-import { TypographyH2 } from '@/components/typography-h2'
+import { DashboardNavBar } from '@/components/ui/navbar/dashboard-navbar'
+import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
 
