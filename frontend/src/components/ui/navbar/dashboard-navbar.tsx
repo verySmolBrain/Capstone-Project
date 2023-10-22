@@ -1,7 +1,8 @@
-import { ChatsButton } from './ui/button/chats-button'
-import { LogoutButton } from './ui/button/logout-button'
-import { SettingsButton } from './ui/button/settings-button'
-import { ToggleDarkMode } from './ui/button/theme-toggle-button'
+import { AvatarButton } from '../button/avatar-button'
+import { ChatsButton } from '../button/chats-button'
+import { LogoutButton } from '../button/logout-button'
+import { SettingsButton } from '../button/settings-button'
+import { ToggleDarkMode } from '../button/theme-toggle-button'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
 import Link from 'next/link'
 
@@ -20,6 +21,7 @@ export function DashboardNavBar() {
           <ToggleDarkMode />
           <ChatsButton />
           <SettingsButton />
+          <AvatarButton />
           <LogoutButton />
         </div>
       </div>

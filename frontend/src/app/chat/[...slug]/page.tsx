@@ -2,8 +2,8 @@
 
 import React from 'react'
 import useSWR from 'swr'
-import { GeneralNavBar } from '@/components/general-navbar'
-import { ChatPage } from '@/components/chat-page'
+import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
+import { ChatPage } from '@/components/ui/page/chat-page'
 import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
@@ -12,9 +12,13 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 
 export const dynamic = 'force-dynamic'
 
-const fetcher = async (url: string, receiver: string, router: AppRouterInstance) => {
-    const supabase = createClientComponentClient<Database>()
-    const token = (await supabase.auth.getSession()).data.session?.access_token
+const fetcher = async (
+  url: string,
+  receiver: string,
+  router: AppRouterInstance
+) => {
+  const supabase = createClientComponentClient<Database>()
+  const token = (await supabase.auth.getSession()).data.session?.access_token
 
   const res = await fetch(url, {
     method: 'POST',

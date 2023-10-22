@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { UserAuthForm } from '@/components/signup-form'
+import { UserAuthForm } from '@/components/ui/form/signup-form'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
 import { BackButton } from '@/components/ui/button/back-button'
 import Link from 'next/link'
@@ -22,7 +22,7 @@ export default function SignupPage() {
       </div>
 
       <div className="mx-auto flex flex-col justify-center space-y-3 w-[350px]">
-      <BackButton />
+        <BackButton />
         <div className="flex flex-col text-center">
           <IconLogo className="w-16 h-16 mx-auto" />
           <h1 className="text-2xl font-semibold tracking-tight">

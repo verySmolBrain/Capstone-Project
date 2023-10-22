@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { Input } from './ui/input'
-import { SendMessageButton } from './ui/button/send-message-button'
+import { Input } from '../input'
+import { SendMessageButton } from '../button/send-message-button'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 import { zodResolver } from '@hookform/resolvers/zod'

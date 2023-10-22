@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { UserAuthForm } from '@/components/login-form'
+import { UserAuthForm } from '@/components/ui/form/login-form'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
 import { BackButton } from '@/components/ui/button/back-button'
 import Link from 'next/link'

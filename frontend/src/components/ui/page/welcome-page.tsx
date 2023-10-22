@@ -1,4 +1,4 @@
-import { GetStartedButton } from './ui/button/signup-button'
+import { GetStartedButton } from '../button/signup-button'
 
 export function WelcomePage() {
   return (

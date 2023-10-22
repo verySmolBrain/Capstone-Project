@@ -1,9 +1,10 @@
-import { BackButton } from './ui/button/back-button'
-import { LogoutButton } from './ui/button/logout-button'
-import { SettingsButton } from './ui/button/settings-button'
-import { ToggleDarkMode } from './ui/button/theme-toggle-button'
+import { BackButton } from '../button/back-button'
+import { LogoutButton } from '../button/logout-button'
+import { SettingsButton } from '../button/settings-button'
+import { ToggleDarkMode } from '../button/theme-toggle-button'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
-import { ChatsButton } from './ui/button/chats-button'
+import { ChatsButton } from '../button/chats-button'
+import { AvatarButton } from '../button/avatar-button'
 
 export function GeneralNavBar() {
   return (
@@ -20,6 +21,7 @@ export function GeneralNavBar() {
           <ToggleDarkMode />
           <ChatsButton />
           <SettingsButton />
+          <AvatarButton />
           <LogoutButton />
         </div>
       </div>
