@@ -44,9 +44,9 @@ model Profile {
     user User @relation(fields: [id], references: [id])
     description String?
     image String?
-    inventory Collectable[] @relation("inventory")
-    wishlist Collectable[] @relation("wishlist")
-    wares Collectable[] @relation("wares")
+    inventory CollectableCount[] @relation("inventory")
+    wishlist CollectableCount[] @relation("wishlist")
+    wares CollectableCount[] @relation("wares")
     achievements Achievement[]
     sales Trade[] @relation("seller")
     purchases Trade[] @relation("buyer")
@@ -120,8 +120,18 @@ model Collectable {
     id Int @id() @default(autoincrement())
     name String
     image String?
+    count CollectableCount[]
     collection Collection[]
     Trade Trade[]
+}
+
+/// @@deny('update', true)
+/// @@allow('all', true)
+model CollectableCount {
+    id Int @id() @default(autoincrement())
+    collectable Collectable @relation(fields: [collectableId], references: [id])
+    collectableId Int
+    count Int @default(0)
     inventory Profile[] @relation("inventory")
     wishlist Profile[] @relation("wishlist")
     wares Profile[] @relation("wares")

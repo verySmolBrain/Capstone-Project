@@ -36,19 +36,18 @@ model Profile {
   description  String?
   image        String?
 
-  // TODO: implement owning multiple of a single collectable
-  inventory    Collectable[]  @relation('inventory')
-  wishlist     Collectable[]  @relation('wishlist')
-  wares        Collectable[]  @relation('wares')
+  inventory    CollectableCount[]  @relation('inventory')
+  wishlist     CollectableCount[]  @relation('wishlist')
+  wares        CollectableCount[]  @relation('wares')
   
   achievements Achievement[]
   sales        Trade[]       @relation('seller')
   purchases    Trade[]       @relation('buyer')
   reputation   Int
 
-  givenReviews Review[] @relation('reviewer')
-  receivedReviews Review[] @relation('reviewee')
-  chats   Chat[] @relation("ChatsUsers")
+  givenReviews Review[]     @relation('reviewer')
+  receivedReviews Review[]  @relation('reviewee')
+  chats   Chat[]            @relation("ChatsUsers")
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)
@@ -135,15 +134,25 @@ model Collectable {
   name        String
   image       String?
 
+  count       CollectableCount[]
   collection  Collection[]
-  Trade       Trade[]
+  Trade       Trade[]  
+
+  @@allow('read', true)
+  @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+}
+
+model CollectableCount {
+  id          Int         @id @default(autoincrement())
+  collectable Collectable @relation(fields: [collectableId], references: [id])
+  collectableId Int       @@deny('update', true)
+  count Int               @default(0)
 
   inventory   Profile[]   @relation('inventory')
   wishlist    Profile[]   @relation('wishlist')
   wares       Profile[]   @relation('wares')
 
-  @@allow('read', true)
-  @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+  @@allow('all', true)
 }
 
 model Collection {
