@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import defaultTheme from 'tailwindcss/defaultTheme'
 
 module.exports = {
   darkMode: ['class'],
@@ -75,6 +76,10 @@ module.exports = {
         '63/88': '63 / 88',
         '10/50': '150 / 51',
       },
+    },
+    screens: {
+      xs: '475px',
+      ...defaultTheme.screens,
     },
   },
   plugins: [require('tailwindcss-animate')],

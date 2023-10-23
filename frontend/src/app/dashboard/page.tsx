@@ -34,7 +34,7 @@ export default function Dashboard() {
             {collections.map((src, i) => {
               return (
                 <div key={i} className="">
-                  <div className="relative aspect-10/50 mt-6 mb-6 h-20 sm:h-24 w-auto mr-3 ml-3">
+                  <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                     <Image
                       src={src}
                       layout="fill"
@@ -56,7 +56,7 @@ export default function Dashboard() {
             {images.map((src, i) => {
               return (
                 <div
-                  className="relative aspect-63/88 mt-6 mb-6 h-80 sm:h-96 mr-3 ml-3 w-auto"
+                  className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto"
                   key={i}
                 >
                   <Image
@@ -79,7 +79,7 @@ export default function Dashboard() {
             {images.map((src, i) => {
               return (
                 <div
-                  className="relative aspect-63/88 mt-6 mb-6 h-80 sm:h-96 mr-3 ml-3 w-auto"
+                  className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto"
                   key={i}
                 >
                   <Image

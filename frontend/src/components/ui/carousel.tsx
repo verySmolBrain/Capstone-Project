@@ -26,7 +26,7 @@ export const Carousel = ({ children, ...options }: Props) => {
   } = usePrevNextButtons(emblaApi)
 
   return (
-    <div className="container flex flex-row justify-between">
+    <div className="flex flex-row justify-between">
       <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">{children}</div>

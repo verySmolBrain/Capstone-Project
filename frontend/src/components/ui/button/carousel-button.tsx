@@ -61,7 +61,7 @@ export function PrevButton(props: PropType) {
       className="flex flex-col align-middle justify-center pr-2 pl-2 border rounded-2xl hover:bg-primary-foreground transition-transform duration-300 transform active:-translate-x-3 disabled:invisible"
       {...props}
     >
-      <MoveLeftIcon className="w-6 h-6" />
+      <MoveLeftIcon className="w-3 h-3 xs:w-6 xs:h-6" />
     </button>
   )
 }
@@ -72,7 +72,7 @@ export function NextButton(props: PropType) {
       className="flex flex-col align-middle justify-center pl-2 pr-2 border rounded-2xl hover:bg-primary-foreground transition-transform duration-300 transform active:translate-x-3 disabled:invisible"
       {...props}
     >
-      <MoveRightIcon className="w-6 h-6" />
+      <MoveRightIcon className="w-3 h-3 xs:w-6 xs:h-6" />
     </button>
   )
 }
