@@ -30,8 +30,8 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   *  GET /user
-   *  Returns the current user
+   *  GET /profile
+   *  Returns the current user's profile
    *  @returns {object} user
    */
   fastify.get('/profile', async (req) => {
@@ -99,7 +99,7 @@ export default async function (fastify: FastifyInstance) {
    *  PUT /profile/description
    *  Updates the user's description
    *  @param {string} description
-   *  @returns {object} profile
+   *  @returns a batch payload
    */
   fastify.put('/profile/description', async (req: FastifyRequest<{ Body: { description: string } }>) => {
     const token = req.headers['authorization'] as string
@@ -118,7 +118,7 @@ export default async function (fastify: FastifyInstance) {
    *  PUT /profile/image
    *  Updates the user's image url
    *  @param {string} image url
-   *  @returns {object} profile
+   *  @returns a batch payload
    */
   fastify.put('/profile/image', async (req: FastifyRequest<{ Body: { image: string } }>) => {
     const token = req.headers['authorization'] as string
