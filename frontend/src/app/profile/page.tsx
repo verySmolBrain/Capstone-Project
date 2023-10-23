@@ -6,6 +6,7 @@ import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import Image from 'next/image'
+import { ProfileEditButton } from '@/components/ui/button/profile-edit-button'
 
 type Profile = {
   id: string
@@ -50,16 +51,44 @@ export default function ProfilePage() {
   return (
     <>
       <GeneralNavBar />
-      {JSON.stringify(profile)}
-      <section className="space pb-8 pt-6 md:pb-12 md:pt-10">
-        <div className="container flex flex-col gap-4">
-          <div className="relative w-20 h-20 rounded-full overflow-hidden ml-6 shrink-0">
-            <Image // make it so no crash if invalid source
-              src={!profile?.image ? '' : profile!.image}
-              layout="fill"
-              className="object-cover w-full h-full"
-              alt="profile picture"
-            />
+      <section className="space pb-8 pt-6 md:pt-10 container flex gap-4">
+        <div className="container gap-4 border rounded-2xl pt-6 pb-6">
+          <div className="float-right">
+            <ProfileEditButton />
+          </div>
+          <div className="flex items-center gap-4 pt-6 pb-6">
+            <div className="relative w-20 h-20 rounded-full overflow-hidden shrink-0">
+              <Image // make it so no crash if invalid source
+                src={!profile?.image ? '' : profile!.image}
+                layout="fill"
+                className="object-cover w-full h-full"
+                alt="profile picture"
+              />
+            </div>
+            <div className="flex flex-col gap-4 overflow-hidden">
+              <p className="text-2xl font-semibold truncate">{profile?.name}</p>
+              <p className="text-sm truncate">{profile?.description}</p>
+            </div>
+          </div>
+          <div className="">
+            <h2 className="text-2xl font-semibold truncate pt-6 pb-6">
+              My collections
+            </h2>
+            <div className="container gap-4 border rounded-2xl pt-6 pb-6">
+              PLACEHOLDER
+            </div>
+            <h2 className="text-2xl font-semibold truncate pt-6 pb-6">
+              Looking for
+            </h2>
+            <div className="container gap-4 border rounded-2xl pt-6 pb-6">
+              PLACEHOLDER
+            </div>
+            <h2 className="text-2xl font-semibold truncate pt-6 pb-6">
+              Willing to trade
+            </h2>
+            <div className="container gap-4 border rounded-2xl pt-6 pb-6">
+              PLACEHOLDER
+            </div>
           </div>
         </div>
       </section>
