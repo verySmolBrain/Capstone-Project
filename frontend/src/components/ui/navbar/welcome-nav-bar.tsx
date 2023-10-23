@@ -1,5 +1,5 @@
-import { LoginButton } from './ui/button/login-button'
-import { ToggleDarkMode } from './ui/button/theme-toggle-button'
+import { LoginButton } from '../button/login-button'
+import { ToggleDarkMode } from '../button/theme-toggle-button'
 
 export function DefaultNavBar() {
   return (

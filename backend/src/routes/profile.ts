@@ -7,7 +7,6 @@ export default async function (fastify: FastifyInstance) {
   /*
    *  POST /user
    *  Creates a user and profile
-   *  @param {string} name
    *  @returns {object} user
    */
   fastify.post('/user', async (req: FastifyRequest) => {
@@ -134,6 +133,4 @@ export default async function (fastify: FastifyInstance) {
     })
     return changedImage
   })
-
-  //fastify.setErrorHandler((error, request, reply) => {})
 }

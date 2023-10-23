@@ -1,5 +1,5 @@
-import { DefaultNavBar } from '@/components/welcome-nav-bar'
-import { WelcomePage } from '@/components/welcome-page'
+import { DefaultNavBar } from '@/components/ui/navbar/welcome-nav-bar'
+import { WelcomePage } from '@/components/ui/page/welcome-page'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'

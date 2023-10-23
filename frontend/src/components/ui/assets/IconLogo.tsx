@@ -1,11 +1,20 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { LucideProps } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 export function IconLogo(props: LucideProps) {
+  const [mounted, setMounted] = useState(false)
   const { theme } = useTheme()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <svg
