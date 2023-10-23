@@ -60,8 +60,8 @@ export default function ChatList() {
         {chats.map((chat, index) => (
           <div key={index}>
             <a href={`/chat/${chat.receiver.name}`}>
-              <div className="container flex items-center gap-4 border rounded-2xl pt-6 pb-6">
-                <div className="min-w-20 h-20 rounded-full">
+              <div className="flex items-center gap-4 border rounded-2xl pt-6 pb-6">
+                <div className="relative w-20 h-20 rounded-full">
                   <Image // make it so no crash if invalid source
                     src={chat.image}
                     layout="fill"
@@ -69,9 +69,11 @@ export default function ChatList() {
                     alt="profile picture"
                   />
                 </div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-2xl font-semibold">{chat.receiver.name}</p>
-                  <div className="text-xs text-gray-400	-mt-3">
+                <div className="flex flex-col gap-4 overflow-hidden">
+                  <p className="text-2xl font-semibold truncate">
+                    {chat.receiver.name}
+                  </p>
+                  <div className="text-xs text-gray-400	-mt-3 truncate">
                     {chat?.latestMessage?.updatedAt
                       ? format(
                           new Date(chat.latestMessage.updatedAt),
@@ -81,16 +83,7 @@ export default function ChatList() {
                         format(new Date(chat.latestMessage.updatedAt), 'd/M/y')
                       : ''}
                   </div>
-                  <div
-                    className="text-500"
-                    style={{
-                      maxHeight: '3em',
-                      maxWidth: '69em',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
+                  <div className="text-500 truncate">
                     {chat?.latestMessage?.content
                       ? chat.latestMessage.content
                       : ''}
