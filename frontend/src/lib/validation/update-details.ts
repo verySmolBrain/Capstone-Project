@@ -4,7 +4,7 @@ export const usernameUpdateSchema = z.object({
   name: z.string(),
 })
 
-const MAX_IMAGE_SIZE = 50000 // 50kb
+const MAX_IMAGE_SIZE = 500000 // 500kb
 const ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
   'image/png',

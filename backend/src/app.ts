@@ -13,6 +13,7 @@ import collectableRoute from '@Source/routes/collectable'
 import collectionRoute from '@Source/routes/collection'
 import campaignRoute from '@Source/routes/campaign'
 import managerRoute from '@Source/routes/manager'
+import imageRoute from '@Source/routes/image'
 
 export const build = async (opt: FastifyServerOptions) => {
   const fastify = Fastify(opt)
@@ -33,6 +34,7 @@ export const build = async (opt: FastifyServerOptions) => {
   fastify.register(collectionRoute)
   fastify.register(campaignRoute)
   fastify.register(managerRoute)
+  fastify.register(imageRoute)
 
   // checks if user is authenticated before every request
   // handlers are guaranteed to be given a valid user

@@ -64,15 +64,7 @@ export default async function getCroppedImg(
 
   ctx.drawImage(image, x, y, width, height, 0, 0, width, height)
 
-  return new Promise<string | null>((resolve) => {
-    canvas.toBlob((file) => {
-      if (file) {
-        resolve(URL.createObjectURL(file))
-      } else {
-        resolve(null)
-      }
-    }, 'image/png')
-  })
+  return canvas.toDataURL('image/png')
 }
 
 export function UpdateProfilePictureForm() {
@@ -84,7 +76,6 @@ export function UpdateProfilePictureForm() {
     null
   )
   const [zoom, setZoom] = React.useState(1)
-  const [croppedImage, setCroppedImage] = React.useState<string | null>(null)
 
   const form = useForm<FormData>({
     mode: 'onChange',
@@ -103,39 +94,44 @@ export function UpdateProfilePictureForm() {
     const file = URL.createObjectURL(dataTransfer.files[0])
     setImage(file)
 
-    // const updateResult = await fetch(
-    //   `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/profile/image`,
-    //   {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'update-type': 'picture',
-    //       authorization: token!,
-    //     },
-    //     body: JSON.stringify(data),
-    //   }
-    // )
-
-    // setIsLoading(false)
-
-    // if (!updateResult?.ok) {
-    //   return toast({
-    //     title: 'Uh Oh! Something went wrong!',
-    //     description: updateResult?.statusText,
-    //     variant: 'destructive',
-    //   })
-    // }
-
-    // return toast({
-    //   title: 'Success!',
-    //   description: 'Your profile picture has been updated!',
-    //   variant: 'default',
-    // })
+    setIsLoading(false)
   }
 
   async function onCropSubmit() {
+    setIsLoading(true)
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
+
     const croppedImage = await getCroppedImg(image, croppedAreaPixels)
-    setCroppedImage(croppedImage)
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/profile/upload`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'update-type': 'image',
+          authorization: token!,
+        },
+        body: JSON.stringify({ image: croppedImage }),
+      }
+    )
+
+    setIsLoading(false)
+
+    if (!response.ok) {
+      return toast({
+        title: 'Uh Oh! Something went wrong!',
+        description: response.statusText,
+        variant: 'destructive',
+      })
+    }
+
+    return toast({
+      title: 'Success!',
+      description: 'Your profile picture has been updated!',
+      variant: 'default',
+    })
   }
 
   return (
@@ -180,15 +176,25 @@ export function UpdateProfilePictureForm() {
           />
           {imageAvailable ? (
             <DialogTrigger asChild>
-              <Button type="submit">Upload</Button>
+              <Button type="submit">
+                {isLoading && (
+                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Upload
+              </Button>
             </DialogTrigger>
           ) : (
-            <Button type="submit">Upload</Button>
+            <Button type="submit">
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Upload
+            </Button>
           )}
         </form>
       </Form>
 
-      <DialogContent className="xs:max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
+      <DialogContent className="max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Crop Image</DialogTitle>
           <DialogDescription>Crop your profile picture here!</DialogDescription>
@@ -207,6 +213,9 @@ export function UpdateProfilePictureForm() {
         <DialogFooter>
           <DialogClose asChild>
             <Button type="submit" onClick={onCropSubmit}>
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Save changes
             </Button>
           </DialogClose>

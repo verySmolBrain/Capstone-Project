@@ -133,6 +133,4 @@ export default async function (fastify: FastifyInstance) {
     })
     return changedImage
   })
-
-  //fastify.setErrorHandler((error, request, reply) => {})
 }
