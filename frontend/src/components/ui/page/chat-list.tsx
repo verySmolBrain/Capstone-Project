@@ -71,7 +71,7 @@ export default function ChatList() {
           <div key={index}>
             <a href={`/chat/${chat.receiver.name}`}>
               <div className="flex items-center gap-4 border rounded-2xl pt-6 pb-6">
-                <div className="relative w-20 h-20 rounded-full">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden ml-6 shrink-0">
                   <Image // make it so no crash if invalid source
                     src={chat.image}
                     layout="fill"
