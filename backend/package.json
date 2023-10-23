@@ -20,6 +20,7 @@
     "@fastify/error": "^3.4.0",
     "@prisma/client": "^5.4.1",
     "@supabase/supabase-js": "^2.38.0",
+    "cloudinary": "^1.41.0",
     "fastify": "^4.23.2",
     "jwt-decode": "^3.1.2",
     "nodemon": "^3.0.1",

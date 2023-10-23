@@ -1,16 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { User } from 'lucide-react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
+import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 
-export function AvatarButton() {
-  const [image, setImage] = React.useState<string>('')
+export default function ProfilePage() {
+  const [profile, setProfile] = React.useState<string>('')
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -37,21 +34,15 @@ export function AvatarButton() {
 
   React.useEffect(() => {
     if (data) {
-      setImage(data.image)
+      setProfile(data)
     }
   }, [data])
 
   return (
-    <Link href="/profile">
-      {' '}
-      <Button variant="outline" size="icon">
-        <Avatar className="w-8 h-8">
-          <AvatarImage src={image} alt="Profile Picture" className="" />
-          <AvatarFallback>
-            <User />
-          </AvatarFallback>
-        </Avatar>
-      </Button>
-    </Link>
+    <>
+      <GeneralNavBar />
+      {JSON.stringify(profile)}
+    </>
   )
+  // Maybe change this to redirect to profile/name later
 }
