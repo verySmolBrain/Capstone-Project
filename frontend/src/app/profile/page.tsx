@@ -18,11 +18,12 @@ type Profile = {
 
 export default function ProfilePage() {
   const [profile, setProfile] = React.useState<Profile>()
+  const [email, setEmail] = React.useState<string>()
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
-    const token = (await supabase.auth.getSession()).data.session?.access_token
-
+    const session = (await supabase.auth.getSession()).data.session
+    const token = session?.access_token
     const res = await fetch(url, {
       method: 'GET',
       headers: {
@@ -43,6 +44,16 @@ export default function ProfilePage() {
   )
 
   React.useEffect(() => {
+    const emailFetcher = async () => {
+      const email = (
+        await createClientComponentClient<Database>().auth.getUser()
+      ).data.user?.email
+
+      setEmail(email)
+    }
+
+    emailFetcher()
+
     if (data) {
       setProfile(data)
     }
@@ -66,11 +77,16 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex flex-col gap-4 overflow-hidden">
-              <p className="text-2xl font-semibold truncate">{profile?.name}</p>
-              <p className="text-sm truncate">{profile?.description}</p>
+              <p className="text-2xl font-semibold truncate">
+                {profile?.name}
+                <hr></hr>
+                <p className="text-sm font-normal">{email}</p>
+              </p>
             </div>
           </div>
           <div className="">
+            <p className="text-sm truncate">{profile?.description}</p>
+
             <h2 className="text-2xl font-semibold truncate pt-6 pb-6">
               My collections
             </h2>
