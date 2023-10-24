@@ -1,8 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-<<<<<<< HEAD
-=======
 import defaultTheme from 'tailwindcss/defaultTheme'
->>>>>>> b5b77f20c382fadc8c91cb4f72f319c5dbad8a0a
 
 module.exports = {
   darkMode: ['class'],
