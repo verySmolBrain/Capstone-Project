@@ -33,6 +33,7 @@ model User {
     id String @id()
     role Role @default(USER)
     profile Profile?
+    campaigns Campaign[] @relation("managers")
 }
 
 /// @@allow('create,read', true)
@@ -50,7 +51,7 @@ model Profile {
     achievements Achievement[]
     sales Trade[] @relation("seller")
     purchases Trade[] @relation("buyer")
-    reputation Int
+    reputation Int @default(0)
     givenReviews Review[] @relation("reviewer")
     receivedReviews Review[] @relation("reviewee")
     chats Chat[] @relation("ChatsUsers")
@@ -71,10 +72,9 @@ model Review {
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN)
 model Achievement {
-    id String @id()
-    name String
+    name String @id() @unique()
     description String
-    image String
+    image String?
     users Profile[]
 }
 
@@ -86,8 +86,8 @@ model Trade {
     sellerId String
     buyer Profile @relation("buyer", fields: [buyerId], references: [id])
     buyerId String
-    collectable Collectable @relation(fields: [collectableId], references: [id])
-    collectableId Int
+    collectable Collectable @relation(fields: [collectableName], references: [name])
+    collectableName String
     /// @allow('update', auth().id == sellerId)
     status Status @default(PENDING)
     price Int
@@ -117,11 +117,11 @@ model Message {
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Collectable {
-    id Int @id() @default(autoincrement())
-    name String
+    name String @id() @unique()
     image String?
-    count CollectableCount[]
-    collection Collection[]
+    tags String[]
+    count CollectableCount[] @relation("count")
+    collection Collection[] @relation("collection")
     Trade Trade[]
 }
 
@@ -129,8 +129,8 @@ model Collectable {
 /// @@allow('all', true)
 model CollectableCount {
     id Int @id() @default(autoincrement())
-    collectable Collectable @relation(fields: [collectableId], references: [id])
-    collectableId Int
+    collectable Collectable @relation("count", fields: [name], references: [name])
+    name String
     count Int @default(0)
     inventory Profile[] @relation("inventory")
     wishlist Profile[] @relation("wishlist")
@@ -140,10 +140,10 @@ model CollectableCount {
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Collection {
-    id Int @id() @default(autoincrement())
-    name String
+    name String @id() @unique()
     image String?
-    collectables Collectable[]
+    tags String[]
+    collectables Collectable[] @relation("collection")
     collections Campaign[]
 }
 
@@ -153,8 +153,10 @@ model Campaign {
     id Int @id() @default(autoincrement())
     name String
     image String?
+    tags String[]
     start DateTime @default(now())
     end DateTime
     isActive Boolean @default(false)
     collections Collection[]
+    managers User[] @relation("managers")
 }
