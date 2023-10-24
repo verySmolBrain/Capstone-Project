@@ -19,6 +19,7 @@ type Profile = {
 export default function ProfilePage() {
   const [profile, setProfile] = React.useState<Profile>()
   const [email, setEmail] = React.useState<string>()
+  const [creationDate, setCreationDate] = React.useState<string>()
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -44,15 +45,17 @@ export default function ProfilePage() {
   )
 
   React.useEffect(() => {
-    const emailFetcher = async () => {
-      const email = (
-        await createClientComponentClient<Database>().auth.getUser()
-      ).data.user?.email
+    const authProfileDetailsFetcher = async () => {
+      const supabase = createClientComponentClient<Database>()
+      const email = (await supabase.auth.getUser()).data.user?.email
+
+      const creationDate = (await supabase.auth.getUser()).data.user?.created_at
 
       setEmail(email)
+      setCreationDate(creationDate) // maybe we should be storing creation times in the database instead of auth
     }
 
-    emailFetcher()
+    authProfileDetailsFetcher()
 
     if (data) {
       setProfile(data)
@@ -69,7 +72,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex items-center gap-4 pt-6 pb-6">
             <div className="relative w-20 h-20 rounded-full overflow-hidden shrink-0">
-              <Image // make it so no crash if invalid source
+              <Image
                 src={!profile?.image ? '' : profile!.image}
                 layout="fill"
                 className="object-cover w-full h-full"
@@ -77,11 +80,13 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex flex-col gap-4 overflow-hidden">
-              <p className="text-2xl font-semibold truncate">
+              <div className="text-2xl font-semibold truncate">
                 {profile?.name}
-                <hr></hr>
-                <p className="text-sm font-normal">{email}</p>
-              </p>
+                <hr />
+                <p className="text-sm font-normal">
+                  {email} | Goomba since {new Date(creationDate!).getFullYear()}
+                </p>
+              </div>
             </div>
           </div>
           <div className="">
