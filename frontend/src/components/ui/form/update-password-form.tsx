@@ -57,7 +57,11 @@ export function UpdatePasswordForm() {
           <div className="flex w-full items-center space-x-2">
             <Input
               className="w-full justify-self-start"
+<<<<<<< HEAD
               type="password"
+=======
+              type="new-password"
+>>>>>>> b5b77f20c382fadc8c91cb4f72f319c5dbad8a0a
               placeholder="New password"
               autoCapitalize="none"
               autoCorrect="off"
