@@ -2,15 +2,16 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { Input } from './ui/input'
-import { SendMessageButton } from './ui/button/send-message-button'
-import _ from 'lodash'
-
+import { Input } from '../input'
+import { SendMessageButton } from '../button/send-message-button'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import type { Database } from '@/lib/database.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { messageSchema } from '@/lib/validation/chat'
 import { useForm } from 'react-hook-form'
-import LinkParser from "react-link-parser";
+import LinkParser from 'react-link-parser'
 import * as z from 'zod'
+import useSWR from 'swr'
 
 enum MessageType {
   USER,
@@ -39,41 +40,34 @@ export function ChatPage({ receiver }: Props) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  React.useEffect(() => {
-    const fetchMessages = async () => {
-      const response = await fetch(`/api/chat/${receiver}`, {
-        // Add a check later and raise toast
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
 
-      const data = await response.json()
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
 
-      const newMessagesOmittedTimestamp = _.omit(data.messages, 'prop2')
-      const messagesOmittedTimestamp = _.omit(messages, 'prop2')
-
-      console.log('newMessagesOmittedTimestamp', newMessagesOmittedTimestamp)
-      console.log('messagesOmittedTimestamp', messagesOmittedTimestamp)
-      console.log(
-        _.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp)
-      )
-
-      console.log("test")
-      if (
-        !_.isEqual(newMessagesOmittedTimestamp, messagesOmittedTimestamp) &&
-        data.messages.length >= messages.length
-      ) {
-        setMessages(data.messages) // Fix this sometime
-      }
+    if (res?.ok) {
+      return await res.json()
     }
+  }
 
-    fetchMessages()
-    const timeout = setInterval(fetchMessages, 2500)
-    console.log(timeout)
-    return () => clearInterval(timeout)
-  }, [messages, receiver])
+  const { data } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/chat/${receiver}`,
+    fetcher,
+    { refreshInterval: 2500 }
+  )
+
+  React.useEffect(() => {
+    if (data?.messages) {
+      setMessages(data.messages)
+    }
+  }, [data])
 
   async function onSubmit(data: FormData) {
     setMessages([
@@ -85,18 +79,25 @@ export function ChatPage({ receiver }: Props) {
       },
     ])
 
-    await fetch('/api/chat/send', {
-      // Add a check later and raise toast
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'update-type': 'name',
-      },
-      body: JSON.stringify({
-        messageContents: data.message,
-        receiver: receiver,
-      }),
-    })
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
+
+    await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/chat/send/${receiver}`,
+      {
+        // Add a check later and raise toast
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'update-type': 'name',
+          authorization: token!,
+        },
+        body: JSON.stringify({
+          messageContents: data.message,
+          receiver: receiver,
+        }),
+      }
+    )
 
     reset()
     scrollToBottom()
@@ -105,22 +106,30 @@ export function ChatPage({ receiver }: Props) {
   // Array of watchers which specify how to render certain string types (i.e links)
   const linkWatcher = [
     {
-      watchFor: "http",
+      watchFor: 'http',
       render: (url: string) => (
-        <u><a href={url} target="_blank" rel="noreferrer noopener nofollow">
-          {url}
-        </a></u>
+        <u>
+          <a href={url} target="_blank" rel="noreferrer noopener nofollow">
+            {url}
+          </a>
+        </u>
       ),
     },
     {
-      watchFor: "www.",
+      watchFor: 'www.',
       render: (url: string) => (
-        <u><a href={"http://" + url.slice(url.lastIndexOf('w') + 2)} target="_blank" rel="noreferrer noopener nofollow">
-          {url}
-        </a></u>
+        <u>
+          <a
+            href={'http://' + url.slice(url.lastIndexOf('w') + 2)}
+            target="_blank"
+            rel="noreferrer noopener nofollow"
+          >
+            {url}
+          </a>
+        </u>
       ),
     },
-  ];
+  ]
 
   return (
     <div className="container flex w-screen pt-4 pb-24 min-w-full flex-grow overflow-x-hidden">
@@ -129,7 +138,7 @@ export function ChatPage({ receiver }: Props) {
           <div
             key={index}
             className={cn(
-              'flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm',
+              'flex w-max max-w-[90%] flex-col gap-2 rounded-lg px-3 py-2 text-sm break-all',
               message.type === MessageType.USER
                 ? 'ml-auto bg-primary text-primary-foreground'
                 : 'bg-muted'

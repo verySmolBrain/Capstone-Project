@@ -3,6 +3,9 @@
 import Image from 'next/image'
 import * as React from 'react'
 import { format } from 'date-fns'
+import useSWR from 'swr'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Database } from '@/lib/database.types'
 
 type FormattedChat = {
   id: number
@@ -22,23 +25,34 @@ type Receiver = {
 export default function ChatList() {
   const [chats, setChats] = React.useState<FormattedChat[]>([])
 
-  React.useEffect(() => {
-    // Fetching chat list by making call to api route
-    const fetchChats = async () => {
-      const response = await fetch('/api/chat', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
 
-      const data = await response.json()
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+
+    if (res?.ok) {
+      return await res.json()
+    }
+  }
+
+  const { data } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/chat`,
+    fetcher,
+    { refreshInterval: 2500 }
+  )
+
+  React.useEffect(() => {
+    if (data) {
       setChats(data.chats)
     }
-    fetchChats()
-    const timeout = setInterval(fetchChats, 2500)
-    return () => clearInterval(timeout)
-  }, [])
+  }, [data])
 
   if (chats.length === 0) {
     return (
@@ -56,8 +70,8 @@ export default function ChatList() {
         {chats.map((chat, index) => (
           <div key={index}>
             <a href={`/chat/${chat.receiver.name}`}>
-              <div className="container flex items-center gap-4 border rounded-2xl pt-6 pb-6">
-                <div className="relative w-20 h-20 rounded-full overflow-hidden ">
+              <div className="flex items-center gap-4 border rounded-2xl pt-6 pb-6">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden ml-6 shrink-0">
                   <Image // make it so no crash if invalid source
                     src={chat.image}
                     layout="fill"
@@ -65,9 +79,11 @@ export default function ChatList() {
                     alt="profile picture"
                   />
                 </div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-2xl font-semibold">{chat.receiver.name}</p>
-                  <div className="text-xs text-gray-400	 -mt-3">
+                <div className="flex flex-col gap-4 overflow-hidden">
+                  <p className="text-2xl font-semibold truncate">
+                    {chat.receiver.name}
+                  </p>
+                  <div className="text-xs text-gray-400	-mt-3 truncate">
                     {chat?.latestMessage?.updatedAt
                       ? format(
                           new Date(chat.latestMessage.updatedAt),
@@ -77,16 +93,7 @@ export default function ChatList() {
                         format(new Date(chat.latestMessage.updatedAt), 'd/M/y')
                       : ''}
                   </div>
-                  <div
-                    className="text-500 overflow-hidden"
-                    style={{
-                      maxHeight: '3em',
-                      maxWidth: '69em',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
+                  <div className="text-500 truncate">
                     {chat?.latestMessage?.content
                       ? chat.latestMessage.content
                       : ''}

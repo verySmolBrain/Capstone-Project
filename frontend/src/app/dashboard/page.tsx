@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import { DashboardNavBar } from '@/components/dashboard-navbar'
-import { TypographyH2 } from '@/components/typography-h2'
+import { DashboardNavBar } from '@/components/ui/navbar/dashboard-navbar'
+import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
 
@@ -34,7 +34,7 @@ export default function Dashboard() {
             {collections.map((src, i) => {
               return (
                 <div key={i} className="">
-                  <div className="relative aspect-10/50 mt-6 mb-6 h-24 w-auto mr-3 ml-3">
+                  <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                     <Image
                       src={src}
                       layout="fill"
@@ -56,7 +56,7 @@ export default function Dashboard() {
             {images.map((src, i) => {
               return (
                 <div
-                  className="relative aspect-63/88 mt-6 mb-6 h-96 mr-3 ml-3 w-auto"
+                  className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto"
                   key={i}
                 >
                   <Image
@@ -72,14 +72,14 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0pb-4 md:pb-12">
+      <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0pb-4 pb-8 md:pb-12">
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <TypographyH2 text="Recommended For You" />
           <Carousel>
             {images.map((src, i) => {
               return (
                 <div
-                  className="relative aspect-63/88 mt-6 mb-6 h-96 mr-3 ml-3 w-auto"
+                  className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto"
                   key={i}
                 >
                   <Image

@@ -1,9 +1,7 @@
-'use client'
-
 import React from 'react'
-import { GeneralNavBar } from '@/components/general-navbar'
-import { TypographyH2 } from '@/components/typography-h2'
-import ChatList from '@/components/chat-list'
+import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
+import { TypographyH2 } from '@/components/ui/assets/typography-h2'
+import ChatList from '@/components/ui/page/chat-list'
 
 export default function ChatListPage() {
   return (
