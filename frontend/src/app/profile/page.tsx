@@ -79,14 +79,22 @@ export default function ProfilePage() {
                 alt="profile picture"
               />
             </div>
-            <div className="flex flex-col gap-4 overflow-hidden">
-              <div className="text-2xl font-semibold truncate">
-                {profile?.name}
+            <div className="flex flex-col gap-4">
+              <div className="truncate">
+                <h2 className="text-2xl font-semibold">{profile?.name}</h2>
                 <hr />
                 <p className="text-sm font-normal">
                   {email} | Goomba since {new Date(creationDate!).getFullYear()}
                 </p>
               </div>
+            </div>
+            <div className="container flex flex-col gap-4 overflow-hidden">
+              <a href="/reputation">
+                <div className="text-right">
+                  <h2 className="text-xl font-semibold">Reputation</h2>
+                  <p className="text-xl">{profile?.reputation}</p>
+                </div>
+              </a>
             </div>
           </div>
           <div className="">
