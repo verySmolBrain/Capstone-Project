@@ -8,14 +8,6 @@ import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import Image from 'next/image'
 import { ProfileEditButton } from '@/components/ui/button/profile-edit-button'
 
-type Profile = {
-  id: string
-  name: string
-  description: string | null
-  image: string | null
-  reputation: number
-}
-
 export default function ProfilePage() {
   const [profile, setProfile] = React.useState<Profile>()
   const [email, setEmail] = React.useState<string>()
