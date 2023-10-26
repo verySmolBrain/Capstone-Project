@@ -6,7 +6,7 @@ import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import Image from 'next/image'
-import { ProfileEditButton } from '@/components/ui/button/profile-edit-button'
+import { ProfileChatButton } from '@/components/ui/button/profile-chat-button'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
@@ -46,9 +46,6 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
       <GeneralNavBar />
       <section className="space pb-8 pt-6 md:pt-10 container flex gap-4">
         <div className="container gap-4 border rounded-2xl pt-6 pb-6">
-          <div className="float-right">
-            <ProfileEditButton />
-          </div>
           <div className="flex items-center gap-4 pt-6 pb-6">
             <div className="relative w-20 h-20 rounded-full overflow-hidden shrink-0">
               <Image
@@ -65,7 +62,9 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 <p className="text-sm font-normal">Goomba since PLACEHOLDER</p>
               </div>
             </div>
-            <div className="container flex flex-col gap-4 overflow-hidden">
+            <ProfileChatButton params={!profile?.name ? '' : profile!.name} />
+
+            <div className="container flex-col">
               <a href="/reputation">
                 <div className="text-right">
                   <h2 className="text-xl font-semibold">Reputation</h2>
