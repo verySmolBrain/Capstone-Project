@@ -62,9 +62,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <div className="truncate">
                 <h2 className="text-2xl font-semibold">{profile?.name}</h2>
                 <hr />
-                <p className="text-sm font-normal">
-                  Goomba since {new Date(creationDate!).getFullYear()}
-                </p>
+                <p className="text-sm font-normal">Goomba since PLACEHOLDER</p>
               </div>
             </div>
             <div className="container flex flex-col gap-4 overflow-hidden">
