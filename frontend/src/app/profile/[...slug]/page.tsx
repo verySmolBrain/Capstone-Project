@@ -112,7 +112,11 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                     Reputation
                   </h2>
                 </Link>
-                <Rating className="overflow-hidden" value={4.37} readOnly />
+                {isOwnProfile ? (
+                  <Rating className="overflow-hidden" value={4.37} readOnly />
+                ) : (
+                  <Rating className="overflow-hidden" value={0} />
+                )}
               </div>
               {isOwnProfile ? (
                 <ProfileEditButton />
