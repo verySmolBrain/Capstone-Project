@@ -9,22 +9,19 @@ export default async function (fastify: FastifyInstance) {
    * @param {string} image
    * @returns {object} collection
    */
-  fastify.post(
-    '/collection',
-    async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
-      const token = req.headers['authorization'] as string
-      const { name, image } = req.body
-      const prisma = await requestHandler(token)
+  fastify.post('/collection', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name, image } = req.body
+    const prisma = await requestHandler(token)
 
-      const collection = await prisma.collection.create({
-        data: {
-          name: name,
-          image: image,
-        },
-      })
-      return collection
-    }
-  )
+    const collection = await prisma.collection.create({
+      data: {
+        name: name,
+        image: image,
+      },
+    })
+    return collection
+  })
 
   /*
    * GET /collection

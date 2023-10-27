@@ -1,4 +1,5 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyRequest } from 'fastify'
+import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -10,9 +11,25 @@ export default async function (fastify: FastifyInstance) {
    * @param {Date} endDate
    * @returns {object} campaign
    */
-  fastify.post('/campaign', async () => {
-    return
-  })
+  fastify.post(
+    '/campaign',
+    async (req: FastifyRequest<{ Body: { name: string; image: string; startDate: Date; endDate: Date } }>) => {
+      const token = req.headers['authorization'] as string
+      const { name, image, startDate, endDate } = req.body
+      const prisma = await requestHandler(token)
+
+      const campaign = await prisma.campaign.create({
+        data: {
+          name: name,
+          image: image,
+          start: startDate,
+          end: endDate,
+          managers: { connect: { id: extractId(token) } },
+        },
+      })
+      return campaign
+    }
+  )
   /*
    * GET /campaign
    * Returns all campaigns

@@ -4,6 +4,7 @@ import { DashboardNavBar } from '@/components/ui/navbar/dashboard-navbar'
 import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Dashboard() {
   const images = [
@@ -35,12 +36,14 @@ export default function Dashboard() {
               return (
                 <div key={i} className="">
                   <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
-                    <Image
-                      src={src}
-                      layout="fill"
-                      className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                      alt="alt"
-                    />
+                    <Link href="/campaign">
+                      <Image
+                        src={src}
+                        layout="fill"
+                        className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                        alt="alt"
+                      />
+                    </Link>
                   </div>
                 </div>
               )
@@ -51,7 +54,7 @@ export default function Dashboard() {
 
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
-          <TypographyH2 text="Popular Collectibles" />
+          <TypographyH2 text="Popular Collectables" />
           <Carousel>
             {images.map((src, i) => {
               return (
