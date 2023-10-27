@@ -12,12 +12,10 @@ enum Role {
 }
 
 type Collectable = {
-  id: string
   name: string
-  collection: UserProfile[]
-  wishlist: UserProfile[]
-  wares: UserProfile[]
-  Trade: Trade[]
+  image: string
+  tags: string[]
+  // add later
 }
 
 type UserProfile = {

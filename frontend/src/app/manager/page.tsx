@@ -28,8 +28,6 @@ export default function Dashboard() {
 
     if (res?.ok) {
       return await res.json()
-    } else {
-      console.log('not pog')
     }
   }
 
@@ -38,13 +36,9 @@ export default function Dashboard() {
     fetcher
   )
 
-  //console.log(img)
-
   React.useEffect(() => {
     if (result) {
-      console.log('zzzzzzzzz')
-      console.log(result)
-      setCollections(result?.data)
+      setCollections(result)
     }
   }, [result])
 
@@ -63,13 +57,13 @@ export default function Dashboard() {
             </div>
           </div>
           <Carousel>
-            {img.map((src, i) => {
+            {collections.map(({ image }, i) => {
               return (
                 <div key={i} className="">
                   <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                     <Link href="/campaign">
                       <Image
-                        src={src}
+                        src={image}
                         layout="fill"
                         className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                         alt="alt"
@@ -83,7 +77,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
+      {/* <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <TypographyH2 text="Archived Campaigns" />
           <Carousel>
@@ -103,7 +97,7 @@ export default function Dashboard() {
             })}
           </Carousel>
         </div>
-      </section>
+      </section> */}
     </div>
   )
 }
