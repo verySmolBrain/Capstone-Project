@@ -63,9 +63,17 @@ const statuses: Status[] = [
   },
 ]
 
+type Collectable = {
+  name: string
+  image: string
+  tags: string[]
+}
+
 export function SearchButton() {
   const [open, setOpen] = React.useState(false)
   const [searchText, setSearchText] = React.useState<string>('')
+  const [collectables, setCollectables] = React.useState<Collectable[]>([])
+
   const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
     null
   )
@@ -74,6 +82,8 @@ export function SearchButton() {
     const supabase = createClientComponentClient<Database>()
     const session = (await supabase.auth.getSession()).data.session
     const token = session?.access_token
+
+    console.log(url)
 
     const res = await fetch(url, {
       method: 'GET',
@@ -88,6 +98,9 @@ export function SearchButton() {
     }
 
     // Add a toast later
+
+    // Add tag search
+    // Add collectable search
   }
 
   const { data } = useSWR(
@@ -97,6 +110,9 @@ export function SearchButton() {
   )
 
   React.useEffect(() => {
+    if (data) {
+      setCollectables(data)
+    }
     console.log(data)
   }, [data])
 
@@ -117,10 +133,10 @@ export function SearchButton() {
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup heading="Users">
-                {statuses.map((status) => (
+                {collectables.map((collectable) => (
                   <CommandItem
-                    key={status.value}
-                    value={status.value}
+                    key={collectable.name}
+                    value={collectable.name}
                     onSelect={(value) => {
                       setSelectedStatus(
                         statuses.find((priority) => priority.value === value) ||
@@ -129,12 +145,12 @@ export function SearchButton() {
                       setOpen(false)
                     }}
                   >
-                    <span>{status.label}</span>
+                    <span>{collectable.name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
 
-              <CommandGroup heading="Collectibles">
+              <CommandGroup heading="Collectables">
                 {statuses.map((status) => (
                   <CommandItem
                     key={status.value}

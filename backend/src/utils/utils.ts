@@ -4,6 +4,8 @@ import { requestHandler } from './supabaseUtils'
 
 const customConfig: Config = {
   dictionaries: [adjectives, colors, animals],
+  style: 'capital',
+  separator: '',
 }
 
 export type Id = {
