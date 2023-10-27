@@ -45,7 +45,7 @@ model Profile {
   achievements Achievement[]
   sales        Trade[]       @relation('seller')
   purchases    Trade[]       @relation('buyer')
-  reputation   Int           @default(0)
+  reputation   Float           @default(0)
 
   givenReviews Review[]     @relation('reviewer')
   receivedReviews Review[]  @relation('reviewee')

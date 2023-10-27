@@ -21,7 +21,6 @@ export default async function (fastify: FastifyInstance) {
         profile: {
           create: {
             name: username,
-            reputation: 69,
           },
         },
       },
