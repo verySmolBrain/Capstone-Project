@@ -59,7 +59,7 @@ export default function ChatList() {
                 <div className="relative w-20 h-20 rounded-full overflow-hidden ml-6 shrink-0">
                   <Image // make it so no crash if invalid source
                     src={chat.image}
-                    layout="fill"
+                    fill
                     className="object-cover w-full h-full"
                     alt="profile picture"
                   />
