@@ -20,10 +20,14 @@ export default async function (fastify: FastifyInstance) {
 
     const collectibles = await prisma.collectable.findMany({
       where: {
-        name: {
-          contains: collectible_name,
-          mode: 'insensitive',
-        },
+        OR: [
+          {
+            name: {
+              contains: collectible_name,
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
     })
 
