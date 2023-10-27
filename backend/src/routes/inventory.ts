@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
-import { collectableCount } from '@Source/utils/utils'
+import { collectableCount, collectableCountSelect } from '@Source/utils/types'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -17,7 +17,7 @@ export default async function (fastify: FastifyInstance) {
       where: {
         id: extractId(token),
       },
-      include: { inventory: true },
+      select: { inventory: { select: collectableCountSelect } },
     })
     return profile.inventory
   })
@@ -25,7 +25,7 @@ export default async function (fastify: FastifyInstance) {
   /*
    *  PUT /inventory
    *  Update the user's inventory
-   *  @param {Id[]} collectableIds
+   *  @param {collectableCount[]} collectables
    *  @returns {object} inventory
    */
   fastify.put('/inventory', async (req: FastifyRequest<{ Body: { collectables: collectableCount[] } }>) => {
@@ -38,7 +38,7 @@ export default async function (fastify: FastifyInstance) {
           create: req.body.collectables,
         },
       },
-      include: { inventory: true },
+      select: { inventory: { select: collectableCountSelect } },
     })
     return profile.inventory
   })
