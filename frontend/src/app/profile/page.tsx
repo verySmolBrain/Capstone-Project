@@ -74,6 +74,9 @@ export default function ProfilePage() {
     'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
   ]
 
+  const default_profile =
+    'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
+
   return (
     <>
       <GeneralNavBar />
@@ -81,7 +84,7 @@ export default function ProfilePage() {
         <div className="flex flex-row flex-wrap gap-4">
           <div className="container flex flex-row flex-wrap gap-4">
             <Image
-              src={!profile?.image ? '' : profile!.image}
+              src={profile?.image ?? default_profile}
               sizes="(max-width: 475px) 6rem"
               width={20}
               height={20}
