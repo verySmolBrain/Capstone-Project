@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { CreateCollectableForm } from '../form/create-collectable-form'
 
 export function AddCollectionButton() {
   return (
@@ -24,8 +25,7 @@ export function AddCollectionButton() {
           <DialogTitle>Add a collection to this campaign</DialogTitle>
         </DialogHeader>
         <div>
-          collection name, collection image, collectables(create new
-          collectable)
+          <CreateCollectableForm />
         </div>
       </DialogContent>
     </Dialog>
