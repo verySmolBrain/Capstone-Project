@@ -17,7 +17,8 @@ export default async function (fastify: FastifyInstance) {
     const collection = await prisma.collection.create({
       data: {
         name: name,
-        image: image,
+        image: 'https://archives.bulbagarden.net/media/upload/7/7e/SV4_Logo_EN.png',
+        tags: [],
       },
     })
     return collection
@@ -28,6 +29,13 @@ export default async function (fastify: FastifyInstance) {
    * Returns all collections
    * @returns {object} collections
    */
+  fastify.get('/collection', async (req) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+
+    const collections = await prisma.collection.findMany({})
+    return collections
+  })
   /*
    * GET /collection/:name
    * Returns a collection by name

@@ -22,6 +22,7 @@ export default function Dashboard() {
     'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
     'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
     'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
+    'https://archives.bulbagarden.net/media/upload/7/7e/SV4_Logo_EN.png',
   ]
 
   return (

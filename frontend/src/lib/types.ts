@@ -5,6 +5,12 @@ enum Status {
   DECLINED = 'DECLINED',
 }
 
+enum Role {
+  USER,
+  MANAGER,
+  ADMIN,
+}
+
 type Collectable = {
   id: string
   name: string
@@ -99,4 +105,31 @@ type Profile = {
   description: string | null
   image: string | null
   reputation: number
+}
+
+type Collection = {
+  name: string
+  image: string | null
+  tags: string[]
+  collectables: Collectable[]
+  collections: Campaign[]
+}
+
+type Campaign = {
+  id: number
+  name: string
+  image: string
+  tags: string[]
+  start: Date
+  end: Date
+  isActive: boolean
+  collections: Collection[]
+  managers: User[]
+}
+
+type User = {
+  id: string
+  role: Role
+  profile: Profile
+  campaigns: Campaign[]
 }
