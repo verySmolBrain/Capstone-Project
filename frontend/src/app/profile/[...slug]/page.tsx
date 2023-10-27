@@ -13,7 +13,7 @@ import { Carousel } from '@/components/ui/carousel'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { AddCollectionButton } from '@/components/ui/button/add-collection-button'
-import { AddFriendButton } from '@/components/ui/button/add-friend-button'
+import { ChatButton } from '@/components/ui/button/chat-button'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
@@ -114,7 +114,11 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 </Link>
                 <Rating className="overflow-hidden" value={4.37} readOnly />
               </div>
-              {isOwnProfile ? <ProfileEditButton /> : <AddFriendButton />}
+              {isOwnProfile ? (
+                <ProfileEditButton />
+              ) : (
+                <ChatButton user={profile?.name} />
+              )}
             </div>
           </div>
 
