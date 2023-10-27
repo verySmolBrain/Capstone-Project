@@ -10,7 +10,7 @@ import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 
 export function AvatarButton() {
-  const [image, setImage] = React.useState<string>('')
+  const [image, setImage] = React.useState<string | undefined>(undefined)
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -42,7 +42,7 @@ export function AvatarButton() {
   }, [data])
 
   return (
-    <Link href="/profile">
+    <Link rel="prefetch" href="/profile">
       {' '}
       <Button variant="outline" size="icon">
         <Avatar className="w-8 h-8">
