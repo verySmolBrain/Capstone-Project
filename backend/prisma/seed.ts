@@ -155,6 +155,7 @@ async function main() {
     await prisma.collection.create({
       data: {
         name: 'The Legendary Bird Trio',
+        image: 'https://archives.bulbagarden.net/media/upload/1/1e/SWSH9_Logo_EN.png',
         collectables: {
           connect: [{ name: 'Articuno' }, { name: 'Zapdos' }, { name: 'Moltres' }],
         },
@@ -164,6 +165,7 @@ async function main() {
     await prisma.collection.create({
       data: {
         name: 'The Lake Trio',
+        image: 'https://archives.bulbagarden.net/media/upload/4/4d/SWSH11_Logo_EN.png',
         collectables: {
           connect: [{ name: 'Uxie' }, { name: 'Mespirit' }, { name: 'Azelf' }],
         },
@@ -173,6 +175,7 @@ async function main() {
     await prisma.collection.create({
       data: {
         name: 'The Treasures of Ruin',
+        image: 'https://archives.bulbagarden.net/media/upload/7/72/SV1_Logo_EN.png',
         collectables: {
           connect: [{ name: 'Wo-Chien' }, { name: 'Chien-Pao' }, { name: 'Ting-Lu' }, { name: 'Chi-Yu' }],
         },
@@ -182,6 +185,7 @@ async function main() {
     await prisma.collection.create({
       data: {
         name: 'Bellsprout',
+        image: 'https://archives.bulbagarden.net/media/upload/d/d8/SV2_Logo_EN.png',
         collectables: {
           connect: [{ name: 'Bellsprout' }],
         },
@@ -191,6 +195,7 @@ async function main() {
     await prisma.collection.create({
       data: {
         name: 'Pikachu Clones',
+        image: 'https://archives.bulbagarden.net/media/upload/7/7e/SV4_Logo_EN.png',
         collectables: {
           connect: [
             { name: 'Pikachu' },
@@ -252,7 +257,7 @@ async function main() {
         create: {
           name: 'a',
           description: 'default description for a',
-          image: 'default image for a',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Mushroom_14.jpg/640px-Mushroom_14.jpg',
 
           inventory: {
             create: [
@@ -282,7 +287,8 @@ async function main() {
         create: {
           name: 'b',
           description: 'default description for b',
-          image: 'default image for b',
+          image:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Amanita_muscaria_%28fly_agaric%29.JPG/640px-Amanita_muscaria_%28fly_agaric%29.JPG',
 
           inventory: {
             create: [
@@ -312,7 +318,8 @@ async function main() {
         create: {
           name: 'c',
           description: 'default description for c',
-          image: 'default image for c',
+          image:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Lentinula_edodes_20101113_b.jpg/640px-Lentinula_edodes_20101113_b.jpg',
           inventory: {
             create: [
               {
@@ -345,7 +352,8 @@ async function main() {
         create: {
           name: 'd',
           description: 'default description for d',
-          image: 'default image for d',
+          image:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Morilla_-_Morchella_%288655750535%29.jpg/640px-Morilla_-_Morchella_%288655750535%29.jpg',
           inventory: {
             create: [
               {
@@ -367,6 +375,7 @@ async function main() {
     await prisma.campaign.create({
       data: {
         name: 'The Legendary Bird Trio',
+        image: 'https://archives.bulbagarden.net/media/upload/1/1e/SWSH9_Logo_EN.png',
         end: new Date(Date.now() + 12096e5), // now + 2 weeks
         tags: ['legendary', 'Pokemon', 'featured'],
         collections: { connect: { name: 'The Legendary Bird Trio' } },
@@ -376,6 +385,7 @@ async function main() {
     await prisma.campaign.create({
       data: {
         name: 'Just BellSprout',
+        image: 'https://archives.bulbagarden.net/media/upload/a/ac/SWSH7_Logo_EN.png',
         end: new Date(Date.now() + 12096e5), // now + 2 weeks
         tags: ['grass', 'poison', 'Pokemon', 'popular'],
         collections: { connect: { name: 'Bellsprout' } },
@@ -385,6 +395,7 @@ async function main() {
     await prisma.campaign.create({
       data: {
         name: 'Random Legendaries',
+        image: 'https://archives.bulbagarden.net/media/upload/6/63/Shining_Fates_Logo_EN.png',
         end: new Date(Date.now() + 12096e5), // now + 2 weeks
         tags: ['legendary', 'Pokemon'],
         collections: {
