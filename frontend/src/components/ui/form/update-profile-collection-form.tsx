@@ -144,10 +144,13 @@ export function UpdateProfileCollectionForm(props: {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Collectable Name</FormLabel>
+                <FormLabel>Collectable Count</FormLabel>
                 <FormControl>
                   <Input placeholder="Pikachu" {...field} />
                 </FormControl>
+                <FormDescription>
+                  How many of this collectable do you own?
+                </FormDescription>
               </FormItem>
             )}
           />
