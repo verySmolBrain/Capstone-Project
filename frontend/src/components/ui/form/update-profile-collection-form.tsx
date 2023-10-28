@@ -169,15 +169,17 @@ export function UpdateProfileCollectionForm(props: {
                       <SelectValue placeholder="Select a collectable to add" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    {collectables?.map((collectable) => (
-                      <SelectItem
-                        key={collectable.name}
-                        value={collectable.name}
-                      >
-                        {collectable.name}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="max-h-80">
+                    <ScrollArea>
+                      {collectables?.map((collectable) => (
+                        <SelectItem
+                          key={collectable.name}
+                          value={collectable.name}
+                        >
+                          {collectable.name}
+                        </SelectItem>
+                      ))}
+                    </ScrollArea>
                   </SelectContent>
                 </Select>
                 <FormDescription>
