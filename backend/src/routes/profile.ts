@@ -66,6 +66,24 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
+   *  GET /role
+   *  Returns the current user's role
+   *  @returns {string} role
+   */
+  fastify.get('/role', async (req) => {
+    const token = req.headers['authorization'] as string
+
+    const prisma = await requestHandler(token)
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: extractId(token),
+      },
+    })
+    console.log(user.role)
+    return user.role
+  })
+
+  /*
    *  PUT /profile/name
    *  Updates the user's name
    *  @param {string} name
