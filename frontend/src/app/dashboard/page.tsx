@@ -7,6 +7,10 @@ import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
 import useSWR from 'swr'
+import { Database } from '@/lib/database.types'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { CreateManagerForm } from '@/components/ui/form/create-manager-form'
+import Link from 'next/link'
 
 export default function Dashboard() {
   const [role, setRole] = React.useState<string>('')
@@ -70,9 +74,25 @@ export default function Dashboard() {
         <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
             <TypographyH2 text="Welcome Admin" />
-            <h3 className="text-2xl font-semibold">
-              Create a campaign manager
-            </h3>
+            <div className="container relative flex-col max-w-none">
+              <div className="mx-auto flex flex-col space-y-3 w-[400px]">
+                <div className="flex flex-col">
+                  <h1 className="text-2xl font-semibold tracking-tight">
+                    Create a Campaign Manager Account
+                  </h1>
+                  <p className="text-sm text-muted-foreground"></p>
+                </div>
+                <CreateManagerForm />
+                <p className="px-8 text-center text-sm text-muted-foreground">
+                  <Link
+                    href="/login"
+                    className="hover:text-brand underline underline-offset-4"
+                  >
+                    Have an account? Login here
+                  </Link>
+                </p>
+              </div>
+            </div>
           </div>
         </section>
       </div>
