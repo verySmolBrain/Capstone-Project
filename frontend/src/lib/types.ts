@@ -103,6 +103,9 @@ type Profile = {
   description: string | null
   image: string | null
   reputation: number
+  inventory: CollectableCount[]
+  wishlist: CollectableCount[]
+  wares: CollectableCount[]
 }
 
 type Collection = {
@@ -129,4 +132,14 @@ type User = {
   role: Role
   profile: Profile
   campaigns: Campaign[]
+}
+
+type CollectableCount = {
+  id: number
+  collectable: Collectable
+  name: string
+  count: number
+  inventory: Profile[]
+  wishlist: Profile[]
+  wares: Profile[]
 }

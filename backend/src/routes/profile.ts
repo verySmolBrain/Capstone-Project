@@ -41,6 +41,11 @@ export default async function (fastify: FastifyInstance) {
       where: {
         id: extractId(token),
       },
+      include: {
+        inventory: true,
+        wares: true,
+        wishlist: true,
+      },
     })
     return profile
   })
@@ -59,6 +64,11 @@ export default async function (fastify: FastifyInstance) {
     const profile = await prisma.profile.findUniqueOrThrow({
       where: {
         name: name,
+      },
+      include: {
+        inventory: true,
+        wares: true,
+        wishlist: true,
       },
     })
     return profile

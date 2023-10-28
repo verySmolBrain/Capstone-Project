@@ -51,35 +51,33 @@ export default function ManagerPage() {
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <div className="flex flex-row">
             <div className="grow">
-              <TypographyH2 text="Your Campaigns" />
+              <TypographyH2 text="All Your Campaigns" />
             </div>
           </div>
           <Carousel>
-            {campaigns
-              .filter((c) => !c.isActive)
-              .map(({ image, name }, i) => {
-                return (
-                  <div key={i} className="">
-                    <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
-                      <Link href={`/campaign/${name}`}>
-                        <Image
-                          src={image!}
-                          layout="fill"
-                          className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                          alt="alt"
-                        />
-                        <div
-                          onClick={(e) => {
-                            e.preventDefault()
-                          }}
-                        >
-                          <ArchiveCampaignButton></ArchiveCampaignButton>
-                        </div>
-                      </Link>
-                    </div>
+            {campaigns.map(({ image, name }, i) => {
+              return (
+                <div key={i} className="">
+                  <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                    <Link href={`/campaign/${name}`}>
+                      <Image
+                        src={image!}
+                        layout="fill"
+                        className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                        alt="alt"
+                      />
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault()
+                        }}
+                      >
+                        <ArchiveCampaignButton></ArchiveCampaignButton>
+                      </div>
+                    </Link>
                   </div>
-                )
-              })}
+                </div>
+              )
+            })}
           </Carousel>
         </div>
       </section>
@@ -87,7 +85,7 @@ export default function ManagerPage() {
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <div className="flex flex-row">
             <div className="grow">
-              <TypographyH2 text="Archvied Campaigns" />
+              <TypographyH2 text="Archived Campaigns" />
             </div>
           </div>
           <Carousel>
