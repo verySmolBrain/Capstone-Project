@@ -15,11 +15,11 @@ export const prisma = new PrismaClient()
 export async function requestHandler(token: string) {
   const { data: user } = await supabase().auth.getUser(token)
 
-  const { role } = await prisma.user.findUniqueOrThrow({
+  const { role } = (await prisma.user.findFirst({
     where: {
       id: extractId(token),
     },
-  })
+  })) ?? { role: 'USER' }
 
   /**
    *  This is ZenStack's implementation of RLS.
