@@ -15,11 +15,7 @@ import { Loader2 } from 'lucide-react'
 import { AddCollectionButton } from '@/components/ui/button/add-collection-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
 
-export default function CollectionPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
+export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
   const router = useRouter()
@@ -116,7 +112,11 @@ export default function CollectionPage({
                     Reputation
                   </h2>
                 </Link>
-                <Rating className="overflow-hidden" value={4.37} readOnly />
+                {isOwnProfile ? (
+                  <Rating className="overflow-hidden" value={4.37} readOnly />
+                ) : (
+                  <Rating className="overflow-hidden" value={0} />
+                )}
               </div>
               {isOwnProfile ? (
                 <ProfileEditButton />

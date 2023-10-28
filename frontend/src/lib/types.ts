@@ -11,11 +11,22 @@ enum Role {
   ADMIN,
 }
 
+type Collection = {
+  name: string
+  image?: string
+  tags: string[]
+}
+
 type Collectable = {
   name: string
-  image: string
+  image?: string
   tags: string[]
-  // add later
+}
+
+type Campaign = {
+  name: string
+  image?: string
+  tags: string[]
 }
 
 type UserProfile = {
@@ -106,25 +117,6 @@ type Profile = {
   inventory: CollectableCount[]
   wishlist: CollectableCount[]
   wares: CollectableCount[]
-}
-
-type Collection = {
-  name: string
-  image: string | null
-  tags: string[]
-  collectables: Collectable[]
-  collections: Campaign[]
-}
-
-type Campaign = {
-  name: string
-  image: string
-  tags: string[]
-  start: Date
-  end: Date
-  isActive: boolean
-  collections: Collection[]
-  managers: User[]
 }
 
 type User = {

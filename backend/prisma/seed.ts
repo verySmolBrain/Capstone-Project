@@ -24,8 +24,7 @@ import { PrismaClient } from '@prisma/client'
 
 // stuff should have tags ctrl+f 'tags' to find them
 
-// collections: 'The Legendary Bird Trio', 'The Lake Trio', 'The Treasures of Ruin', 'Bellsprout', 'Pikachu Clones'
-
+// collections: 'The Legendary Birds', 'The Lake Trio', 'The Treasures of Ruin', 'Bellsprout', 'Pikachu Clones'
 // campaigns: 'The Legendary Bird Trio', 'Just BellSprout', 'Random Legendaries'
 // 'The Legendary Bird Trio' has the 'featured' tag
 // 'Just BellSprout' has the 'popular' tag

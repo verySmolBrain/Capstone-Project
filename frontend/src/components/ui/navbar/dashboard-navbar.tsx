@@ -1,6 +1,7 @@
 import { AvatarButton } from '../button/avatar-button'
 import { ChatsButton } from '../button/chats-button'
 import { LogoutButton } from '../button/logout-button'
+import { SearchButton } from '../button/search-button'
 import { SettingsButton } from '../button/settings-button'
 import { ToggleDarkMode } from '../button/theme-toggle-button'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
@@ -20,6 +21,7 @@ export function DashboardNavBar() {
       <div className="container flex h-16 mr-0 items-center space-x-4 sm:justify-between sm:space-x-0">
         <div className="flex flex-1 items-center justify-end space-x-4">
           <ManagerButton />
+          <SearchButton />
           <ToggleDarkMode />
           <ChatsButton />
           <SettingsButton />

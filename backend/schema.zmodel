@@ -47,7 +47,7 @@ model Profile {
   purchases    Trade[]       @relation('buyer')
   reputation   Float           @default(0)
 
-  givenReviews Review[]     @relation('reviewer')
+  givenReviews    Review[]  @relation('reviewer')
   receivedReviews Review[]  @relation('reviewee')
   chats   Chat[]            @relation("ChatsUsers")
 
