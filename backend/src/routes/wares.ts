@@ -64,4 +64,85 @@ export default async function (fastify: FastifyInstance) {
     })
     return profile.wares
   })
+
+  /*
+   * PUT /wares/:collectable
+   * Update the user's wares
+   * @param {string} collectable
+   * @param {number} count
+   * @returns {object} wares
+   */
+  fastify.put(
+    '/wares/:collectable',
+    async (req: FastifyRequest<{ Params: { collectable: string }; Body: { count: number } }>) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
+
+      const { wares } = await prisma.profile.findUniqueOrThrow({
+        where: {
+          id: extractId(token),
+        },
+        select: { wares: { select: collectableCountSelect } },
+      })
+
+      const waresCollectable = wares.find((c) => c.name === req.params.collectable)
+
+      if (!waresCollectable) {
+        await prisma.profile.update({
+          where: { id: extractId(token) },
+          data: {
+            wares: {
+              create: {
+                name: req.params.collectable,
+                count: req.body.count,
+              },
+            },
+          },
+          select: { wares: { select: collectableCountSelect } },
+        })
+        return
+      }
+
+      prisma.collectableCount.update({
+        where: {
+          id: waresCollectable.id,
+        },
+        data: {
+          count: req.body.count,
+        },
+      })
+      return
+    }
+  )
+
+  /*
+   * DELETE /wares/:collectable
+   * Update the user's wares
+   * @param {string} collectable
+   * @returns {object} wares
+   */
+  fastify.delete('/wares/:collectable', async (req: FastifyRequest<{ Params: { collectable: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+
+    const { wares } = await prisma.profile.findUniqueOrThrow({
+      where: {
+        id: extractId(token),
+      },
+      select: { wares: { select: collectableCountSelect } },
+    })
+
+    const waresCollectable = wares.find((c) => c.name === req.params.collectable)
+
+    if (!waresCollectable) {
+      throwInvalidActionError('delete collectable', 'Collectable not found in wares')
+    }
+
+    prisma.collectableCount.delete({
+      where: {
+        id: waresCollectable!.id,
+      },
+    })
+    return
+  })
 }

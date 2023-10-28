@@ -16,9 +16,8 @@ export function AddCollectionProfileButton(props: { type: profileCollection }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Plus className="mr-2 h-4 w-4" />
-          Update your {props.type}
+        <Button variant="outline" className="p-2">
+          <Plus />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-auto">
