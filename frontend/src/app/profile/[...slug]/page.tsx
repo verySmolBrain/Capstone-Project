@@ -11,7 +11,6 @@ import { Rating } from '@smastrom/react-rating'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/carousel'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
 import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
 import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
@@ -24,6 +23,7 @@ enum profileCollection {
 
 const default_img =
   'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+import { LoadingScreen } from '@/components/ui/page/loading-page'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
@@ -358,11 +358,6 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
       </section>
     </>
   ) : (
-    <>
-      <GeneralNavBar />
-      <div className="w-full h-[calc(100vh-100px)] flex justify-center items-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    </>
+    <LoadingScreen />
   )
 }

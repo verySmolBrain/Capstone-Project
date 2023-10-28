@@ -95,7 +95,7 @@ async function main() {
       {
         name: 'Pikachu',
         image: 'https://archives.bulbagarden.net/media/upload/b/b2/PretendGyaradosPikachuXYPromo151.jpg',
-        tags: ['Electric', 'Kanto', 'Pokemon'],
+        tags: ['Electric', 'Kanto', 'Pokemon', 'Popular'],
       },
       {
         name: 'Marill',
@@ -105,42 +105,42 @@ async function main() {
       {
         name: 'Plusle',
         image: 'https://archives.bulbagarden.net/media/upload/f/fa/LaRoussePlusleMovieVSPack4.jpg',
-        tags: ['Electric', 'Hoenn', 'Pokemon'],
+        tags: ['Electric', 'Hoenn', 'Pokemon', 'Popular'],
       },
       {
         name: 'Minun',
         image: 'https://archives.bulbagarden.net/media/upload/c/c4/LaRousseMinunMovieVSPack5.jpg',
-        tags: ['Electric', 'Hoenn', 'Pokemon'],
+        tags: ['Electric', 'Hoenn', 'Pokemon', 'Popular'],
       },
       {
         name: 'Pachirisu',
         image: 'https://archives.bulbagarden.net/media/upload/a/a9/PachirisuScarletViolet208.jpg',
-        tags: ['Electric', 'Sinnoh', 'Pokemon'],
+        tags: ['Electric', 'Sinnoh', 'Pokemon', 'Popular'],
       },
       {
         name: 'Emolga',
         image: 'https://archives.bulbagarden.net/media/upload/b/b9/EmolgaEXXY143.jpg',
-        tags: ['Electric', 'Flying', 'Unova', 'Pokemon'],
+        tags: ['Electric', 'Flying', 'Unova', 'Pokemon', 'Popular'],
       },
       {
         name: 'Dedenne',
         image: 'https://archives.bulbagarden.net/media/upload/2/26/DedenneexPaldeaEvolved239.jpg',
-        tags: ['Electric', 'Fairy', 'Kalos', 'Pokemon'],
+        tags: ['Electric', 'Fairy', 'Kalos', 'Pokemon', 'Popular'],
       },
       {
         name: 'Togedemaru',
         image: 'https://archives.bulbagarden.net/media/upload/1/12/TogedemaruObsidianFlames151.jpg',
-        tags: ['Electric', 'Steel', 'Alola', 'Pokemon'],
+        tags: ['Electric', 'Steel', 'Alola', 'Pokemon', 'Popular'],
       },
       {
         name: 'Mimikyu',
         image: 'https://archives.bulbagarden.net/media/upload/3/3b/MimikyuVMAXBrilliantStarsTG17.jpg',
-        tags: ['Ghost', 'Fairy', 'Alola', 'Pokemon'],
+        tags: ['Ghost', 'Fairy', 'Alola', 'Pokemon', 'Popular'],
       },
       {
         name: 'Morpeko',
         image: 'https://archives.bulbagarden.net/media/upload/e/eb/MorpekoVMAXSwordShield204.jpg',
-        tags: ['Electric', 'Dark', 'Galar', 'Pokemon'],
+        tags: ['Electric', 'Dark', 'Galar', 'Pokemon', 'Popular'],
       },
       {
         name: 'Pawmi',
