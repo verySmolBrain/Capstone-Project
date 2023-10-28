@@ -8,6 +8,7 @@ import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import useSWR from 'swr'
 import {
   createCollectableSchema,
   updateProfileCollectionSchema,
@@ -22,23 +23,17 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
-
-import Cropper, { Area } from 'react-easy-crop'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from '@/components/ui/dialog'
-import { profilePictureUpdateSchema } from '@/lib/validation/update-details'
-import NextImage from 'next/image'
-import { Label } from '@radix-ui/react-label'
 
 type FormData = z.infer<typeof createCollectableSchema>
 
@@ -46,6 +41,7 @@ export function UpdateProfileCollectionForm(props: {
   type: profileCollection
 }) {
   const [isLoading, setIsLoading] = React.useState(false)
+  const [collectables, setCollectables] = React.useState<Collectable[]>()
   const form = useForm<FormData>({
     mode: 'onChange',
     resolver: zodResolver(updateProfileCollectionSchema),
@@ -56,45 +52,52 @@ export function UpdateProfileCollectionForm(props: {
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
+    let response
+
     if (props.type === profileCollection.INVENTORY) {
+      response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: token!,
+          },
+          body: JSON.stringify(data),
+        }
+      )
+    } else if (props.type === profileCollection.WARES) {
+      response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: token!,
+          },
+          body: JSON.stringify(data),
+        }
+      )
+    } else if (props.type === profileCollection.WISHLIST) {
+      response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: token!,
+          },
+          body: JSON.stringify(data),
+        }
+      )
     }
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/collectable/upload`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'update-type': 'image',
-          authorization: token!,
-        },
-        body: JSON.stringify({ image: image, name: data.name }),
-      }
-    )
-
-    const body = {
-      name: data.name,
-      image: (await response.json()).image,
-      tags: data.tags,
-    }
-
-    const createResult = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: token!,
-        },
-        body: JSON.stringify(body),
-      }
-    )
 
     setIsLoading(false)
 
-    if (!createResult?.ok) {
+    if (!response?.ok) {
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: createResult?.statusText,
+        description: response?.statusText,
         variant: 'destructive',
       })
     }
@@ -104,6 +107,33 @@ export function UpdateProfileCollectionForm(props: {
       variant: 'default',
     })
   }
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const session = (await supabase.auth.getSession()).data.session
+    const token = session?.access_token
+
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+
+    if (res?.ok) {
+      return await res.json()
+    }
+  }
+  const { data: collectableData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
+    fetcher
+  )
+
+  React.useEffect(() => {
+    if (collectableData) {
+      setCollectables(collectableData)
+    }
+  }, [collectableData])
 
   return (
     <Form {...form}>
@@ -121,8 +151,51 @@ export function UpdateProfileCollectionForm(props: {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Collectable Name</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a collectable to add" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {collectables?.map((collectable) => (
+                      <SelectItem
+                        key={collectable.name}
+                        value={collectable.name}
+                      >
+                        {collectable.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  Please only add collectables that you own. We have no way of
+                  checking!
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </form>
+      <Button
+        type="submit"
+        form="createCollectionForm"
+        disabled={isLoading}
+        className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
+      >
+        {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+        Submit
+      </Button>
     </Form>
   )
 }

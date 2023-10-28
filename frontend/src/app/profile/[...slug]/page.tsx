@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
-import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 
 enum profileCollection {
   INVENTORY,
@@ -239,7 +238,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                         <Link href={`/collectable/${collectable.name}`}>
                           <Image
                             src={
-                              collectable.collectable.image
+                              collectable.collectable?.image
                                 ? collectable.collectable.image
                                 : default_img
                             }
