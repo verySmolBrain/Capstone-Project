@@ -48,9 +48,7 @@ export default async function (fastify: FastifyInstance) {
     const prisma = await requestHandler(token)
 
     const collection = await prisma.collection.findFirstOrThrow({
-      where: {
-        name: name,
-      },
+      where: { name: name },
     })
     return collection
   })
@@ -64,10 +62,10 @@ export default async function (fastify: FastifyInstance) {
    */
   fastify.put(
     '/collection/:name',
-    async (req: FastifyRequest<{ Params: { name: string }; Body: { image: string; tags: string[] } }>) => {
+    async (req: FastifyRequest<{ Params: { name: string }; Body: { image: string } }>) => {
       const token = req.headers['authorization'] as string
       const { name } = req.params
-      const { image, tags } = req.body
+      const { image } = req.body
 
       const prisma = await requestHandler(token)
       const collection = await prisma.collection.update({
@@ -76,7 +74,6 @@ export default async function (fastify: FastifyInstance) {
         },
         data: {
           image: image,
-          tags: tags,
         },
       })
       return collection
