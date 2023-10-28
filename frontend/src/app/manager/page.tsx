@@ -11,7 +11,7 @@ import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function Dashboard() {
-  const [collections, setCollections] = React.useState<Collectable[]>([])
+  const [campaigns, setCampaigns] = React.useState<Campaign[]>([])
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -32,72 +32,83 @@ export default function Dashboard() {
   }
 
   const { data: result } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign`,
     fetcher
   )
 
   React.useEffect(() => {
     if (result) {
-      setCollections(result)
+      setCampaigns(result)
     }
   }, [result])
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* <GeneralNavBar /> */}
-
+      <GeneralNavBar />
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <div className="flex flex-row">
             <div className="grow">
-              <TypographyH2 text="Your Campaigns" />
+              <TypographyH2 text="Your Active Campaigns" />
             </div>
             <div>
               <AddCampaignButton></AddCampaignButton>
             </div>
           </div>
           <Carousel>
-            {collections.map(({ image }, i) => {
-              return (
-                <div key={i} className="">
-                  <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
-                    <Link href="/campaign">
-                      <Image
-                        src={image}
-                        layout="fill"
-                        className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                        alt="alt"
-                      />
-                    </Link>
+            {campaigns
+              .filter((c) => c.isActive)
+              .map(({ image, name }, i) => {
+                return (
+                  <div key={i} className="">
+                    <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                      <Link href={`/campaign/${name}`}>
+                        <Image
+                          src={image}
+                          layout="fill"
+                          className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                          alt="alt"
+                        />
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
           </Carousel>
         </div>
       </section>
-
-      {/* <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
+      <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
-          <TypographyH2 text="Archived Campaigns" />
+          <div className="flex flex-row">
+            <div className="grow">
+              <TypographyH2 text="Archvied Campaigns" />
+            </div>
+            <div>
+              <AddCampaignButton></AddCampaignButton>
+            </div>
+          </div>
           <Carousel>
-            {collections.map((src, i) => {
-              return (
-                <div key={i} className="">
-                  <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
-                    <Image
-                      src={src}
-                      layout="fill"
-                      className=" grayscale object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                      alt="alt"
-                    />
+            {campaigns
+              .filter((c) => !c.isActive)
+              .map(({ image, name }, i) => {
+                return (
+                  <div key={i} className="">
+                    <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                      <Link href={`/campaign/${name}`}>
+                        <Image
+                          src={image}
+                          layout="fill"
+                          className="grayscale object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                          alt="alt"
+                        />
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
           </Carousel>
         </div>
-      </section> */}
+      </section>
     </div>
   )
 }

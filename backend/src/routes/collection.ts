@@ -49,6 +49,9 @@ export default async function (fastify: FastifyInstance) {
 
     const collection = await prisma.collection.findFirstOrThrow({
       where: { name: name },
+      include: {
+        collectables: true,
+      },
     })
     return collection
   })

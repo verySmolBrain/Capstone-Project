@@ -18,7 +18,7 @@ CREATE TABLE "Profile" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "image" TEXT,
-    "reputation" INTEGER NOT NULL DEFAULT 0,
+    "reputation" DOUBLE PRECISION NOT NULL DEFAULT 0,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
 );
@@ -103,7 +103,6 @@ CREATE TABLE "Collection" (
 
 -- CreateTable
 CREATE TABLE "Campaign" (
-    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "image" TEXT,
     "tags" TEXT[],
@@ -111,7 +110,7 @@ CREATE TABLE "Campaign" (
     "end" TIMESTAMP(3) NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT false,
 
-    CONSTRAINT "Campaign_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Campaign_pkey" PRIMARY KEY ("name")
 );
 
 -- CreateTable
@@ -152,13 +151,13 @@ CREATE TABLE "_wares" (
 
 -- CreateTable
 CREATE TABLE "_CampaignToCollection" (
-    "A" INTEGER NOT NULL,
+    "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "_managers" (
-    "A" INTEGER NOT NULL,
+    "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
 
@@ -173,6 +172,9 @@ CREATE UNIQUE INDEX "Collectable_name_key" ON "Collectable"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Collection_name_key" ON "Collection"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Campaign_name_key" ON "Campaign"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_AchievementToProfile_AB_unique" ON "_AchievementToProfile"("A", "B");
@@ -283,13 +285,13 @@ ALTER TABLE "_wares" ADD CONSTRAINT "_wares_A_fkey" FOREIGN KEY ("A") REFERENCES
 ALTER TABLE "_wares" ADD CONSTRAINT "_wares_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_CampaignToCollection" ADD CONSTRAINT "_CampaignToCollection_A_fkey" FOREIGN KEY ("A") REFERENCES "Campaign"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_CampaignToCollection" ADD CONSTRAINT "_CampaignToCollection_A_fkey" FOREIGN KEY ("A") REFERENCES "Campaign"("name") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_CampaignToCollection" ADD CONSTRAINT "_CampaignToCollection_B_fkey" FOREIGN KEY ("B") REFERENCES "Collection"("name") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_managers" ADD CONSTRAINT "_managers_A_fkey" FOREIGN KEY ("A") REFERENCES "Campaign"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_managers" ADD CONSTRAINT "_managers_A_fkey" FOREIGN KEY ("A") REFERENCES "Campaign"("name") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_managers" ADD CONSTRAINT "_managers_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -15,7 +15,11 @@ import { Loader2 } from 'lucide-react'
 import { AddCollectionButton } from '@/components/ui/button/add-collection-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
 
-export default function ProfilePage({ params }: { params: { slug: string } }) {
+export default function CollectionPage({
+  params,
+}: {
+  params: { slug: string }
+}) {
   const [profile, setProfile] = React.useState<Profile>()
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
   const router = useRouter()
