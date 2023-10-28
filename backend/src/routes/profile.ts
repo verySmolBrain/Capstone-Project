@@ -15,13 +15,21 @@ export default async function (fastify: FastifyInstance) {
     const prisma = await requestHandler(token)
     const username = await generateUsername(token)
 
+    const userExists = await prisma.user.findFirst({
+      where: { id: extractId(token) },
+    })
+
+    if (userExists) {
+      return userExists
+    }
+
     const user = await prisma.user.create({
       data: {
         id: extractId(token),
         profile: {
           create: {
             name: username,
-            reputation: 69,
+            description: 'Nice to meet you!',
           },
         },
       },

@@ -1,6 +1,5 @@
 import { BackButton } from '../button/back-button'
 import { LogoutButton } from '../button/logout-button'
-import { SettingsButton } from '../button/settings-button'
 import { ToggleDarkMode } from '../button/theme-toggle-button'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
 import { ChatsButton } from '../button/chats-button'
@@ -20,7 +19,6 @@ export function GeneralNavBar() {
         <div className="flex flex-1 items-center justify-end space-x-4">
           <ToggleDarkMode />
           <ChatsButton />
-          <SettingsButton />
           <AvatarButton />
           <LogoutButton />
         </div>

@@ -51,7 +51,7 @@ model Profile {
     achievements Achievement[]
     sales Trade[] @relation("seller")
     purchases Trade[] @relation("buyer")
-    reputation Int @default(0)
+    reputation Float @default(0)
     givenReviews Review[] @relation("reviewer")
     receivedReviews Review[] @relation("reviewee")
     chats Chat[] @relation("ChatsUsers")
@@ -150,8 +150,7 @@ model Collection {
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Campaign {
-    id Int @id() @default(autoincrement())
-    name String
+    name String @id() @unique()
     image String?
     tags String[]
     start DateTime @default(now())

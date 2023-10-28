@@ -5,13 +5,22 @@ enum Status {
   DECLINED = 'DECLINED',
 }
 
+type Collection = {
+  name: string
+  image?: string
+  tags: string[]
+}
+
 type Collectable = {
   id: string
   name: string
-  collection: UserProfile[]
-  wishlist: UserProfile[]
-  wares: UserProfile[]
-  Trade: Trade[]
+  tags: string[]
+}
+
+type Campaign = {
+  name: string
+  image?: string
+  tags: string[]
 }
 
 type UserProfile = {
