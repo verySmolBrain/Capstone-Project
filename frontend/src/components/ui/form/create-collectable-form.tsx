@@ -101,6 +101,7 @@ export function CreateCollectableForm() {
     setIsLoading(true)
 
     const croppedImage = await getCroppedImg(image, croppedAreaPixels)
+    console.log(croppedImage)
     setImage(croppedImage ?? '')
 
     setIsLoading(false)
@@ -244,11 +245,22 @@ export function CreateCollectableForm() {
                             ) {
                               const dataTransfer = new DataTransfer()
                               dataTransfer.items.add(e.target.files[0])
-                              const file = URL.createObjectURL(
-                                dataTransfer.files[0]
-                              )
-                              setImageAvailable(true)
-                              setImage(file)
+
+                              const file = dataTransfer.files[0]
+
+                              if (file) {
+                                const reader = new FileReader()
+
+                                reader.onload = function () {
+                                  const base64Image =
+                                    (reader.result as string) ?? ''
+                                  setImageAvailable(true)
+                                  setImage(base64Image)
+                                  console.log(base64Image)
+                                }
+
+                                reader.readAsDataURL(file)
+                              }
                             }
                           }}
                         />
