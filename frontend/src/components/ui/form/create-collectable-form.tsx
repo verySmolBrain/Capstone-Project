@@ -37,6 +37,8 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { profilePictureUpdateSchema } from '@/lib/validation/update-details'
+import NextImage from 'next/image'
+import { Label } from '@radix-ui/react-label'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -75,7 +77,6 @@ type FormData = z.infer<typeof createCollectableSchema>
 export function CreateCollectableForm() {
   const [isLoading, setIsLoading] = React.useState(false)
 
-  // image variables
   const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
   const [image, setImage] = React.useState<string>('')
   const [crop, setCrop] = React.useState({ x: 0, y: 0 })
@@ -84,7 +85,6 @@ export function CreateCollectableForm() {
   )
   const [zoom, setZoom] = React.useState(1)
 
-  // tag variables
   const [tags, setTags] = React.useState<Tag[]>([])
 
   const form = useForm<FormData>({
@@ -99,51 +99,17 @@ export function CreateCollectableForm() {
   }
   async function onCropSubmit() {
     setIsLoading(true)
-    const supabase = createClientComponentClient<Database>()
-    const token = (await supabase.auth.getSession()).data.session?.access_token
 
     const croppedImage = await getCroppedImg(image, croppedAreaPixels)
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/collectable/upload`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'update-type': 'image',
-          authorization: token!,
-        },
-        body: JSON.stringify({ image: croppedImage }),
-      }
-    )
+    setImage(croppedImage ?? '')
 
     setIsLoading(false)
-
-    if (!response.ok) {
-      return toast({
-        title: 'Uh Oh! Something went wrong!',
-        description: response.statusText,
-        variant: 'destructive',
-      })
-    }
-
-    return toast({
-      title: 'Success!',
-      description: 'Your collectable image was successfully uploaded!',
-      variant: 'default',
-    })
   }
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
-    console.log('asd')
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
-
-    const dataTransfer = new DataTransfer()
-    dataTransfer.items.add(data.image)
-    const file = URL.createObjectURL(dataTransfer.files[0])
-    setImage(file)
 
     const createResult = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
@@ -176,8 +142,25 @@ export function CreateCollectableForm() {
   return (
     <div className="grid gap-6 w-fill">
       <Dialog>
+        {image && (
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm font-medium leading-none">Preview</Label>
+            <div className="container rounded-2xl border pt-3 pb-3 flex justify-center">
+              <NextImage
+                src={image}
+                className="rounded-2xl"
+                alt="Collection image"
+                width={200}
+                height={200}
+              />
+            </div>
+          </div>
+        )}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            id="createCollectionForm"
+          >
             <div className="grid gap-6">
               <FormField
                 control={form.control}
@@ -240,8 +223,13 @@ export function CreateCollectableForm() {
                                 image: e.target.files[0],
                               }).success
                             ) {
+                              const dataTransfer = new DataTransfer()
+                              dataTransfer.items.add(e.target.files[0])
+                              const file = URL.createObjectURL(
+                                dataTransfer.files[0]
+                              )
                               setImageAvailable(true)
-                              console.log(imageAvailable)
+                              setImage(file)
                             }
                           }}
                         />
@@ -254,36 +242,40 @@ export function CreateCollectableForm() {
                   </>
                 )}
               />
-              {imageAvailable ? (
-                <DialogTrigger asChild>
-                  <Button className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3">
-                    {isLoading && (
-                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Crop Image
-                  </Button>
-                </DialogTrigger>
-              ) : (
-                <Button className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3">
-                  {isLoading && (
-                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Crop Image
-                </Button>
-              )}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
-              >
-                {isLoading && (
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Submit
-              </Button>
             </div>
           </form>
         </Form>
+
+        {imageAvailable ? (
+          <DialogTrigger asChild>
+            <Button
+              type="submit"
+              className="w-auto justify-self-start transition-transform duration-300 transform active:translate-y-3"
+            >
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Crop Image
+            </Button>
+          </DialogTrigger>
+        ) : (
+          <Button
+            type="submit"
+            className="w-auto justify-self-start transition-transform duration-300 transform active:translate-y-3"
+          >
+            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            Crop Image
+          </Button>
+        )}
+        <Button
+          type="submit"
+          form="createCollectionForm"
+          disabled={isLoading}
+          className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
+        >
+          {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+          Submit
+        </Button>
 
         <DialogContent className="max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
           <DialogHeader>
