@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 
-export function RemoveCollectionButton() {
+export function RemoveCollectableFromCollectionButton() {
   return (
     <Dialog>
       <DialogTrigger asChild className="hidden group-hover:block">
@@ -22,7 +22,7 @@ export function RemoveCollectionButton() {
       <DialogContent className="w-auto">
         <DialogHeader>
           <DialogTitle>
-            Are you sure you want to remove this collection from the campaign?
+            Are you sure you want to move this item to the PC?
           </DialogTitle>
         </DialogHeader>
         <div>yes/no</div>

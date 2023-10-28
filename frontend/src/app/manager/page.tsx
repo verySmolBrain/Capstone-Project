@@ -10,7 +10,7 @@ import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-export default function Dashboard() {
+export default function ManagerPage() {
   const [campaigns, setCampaigns] = React.useState<Campaign[]>([])
 
   const fetcher = async (url: string) => {
@@ -46,13 +46,11 @@ export default function Dashboard() {
     <div className="flex flex-col min-h-screen">
       <GeneralNavBar />
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
+        <AddCampaignButton></AddCampaignButton>
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
           <div className="flex flex-row">
             <div className="grow">
               <TypographyH2 text="Your Active Campaigns" />
-            </div>
-            <div>
-              <AddCampaignButton></AddCampaignButton>
             </div>
           </div>
           <Carousel>
@@ -82,9 +80,6 @@ export default function Dashboard() {
           <div className="flex flex-row">
             <div className="grow">
               <TypographyH2 text="Archvied Campaigns" />
-            </div>
-            <div>
-              <AddCampaignButton></AddCampaignButton>
             </div>
           </div>
           <Carousel>

@@ -10,22 +10,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { CreateCampaignForm } from '../form/create-campaign-form'
 
-export function AddCampaignButton() {
+export function AddCollectableToCollection() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Plus className="mr-2 h-4 w-4" />
-          Create a campaign
+        <Button variant="outline" size="icon">
+          <Plus className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-auto">
         <DialogHeader>
-          <DialogTitle>We&apos;re letting you cook...</DialogTitle>
+          <DialogTitle>I choose you!</DialogTitle>
         </DialogHeader>
-        <CreateCampaignForm></CreateCampaignForm>
+        form for adding collectable to collection
       </DialogContent>
     </Dialog>
   )

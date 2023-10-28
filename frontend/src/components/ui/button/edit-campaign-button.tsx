@@ -23,7 +23,7 @@ export function EditCampaignButton() {
         <DialogHeader>
           <DialogTitle>Edit campaign details</DialogTitle>
         </DialogHeader>
-        <div>campaign name, campaign image</div>
+        campaign details form
       </DialogContent>
     </Dialog>
   )

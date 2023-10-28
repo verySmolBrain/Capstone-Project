@@ -8,8 +8,12 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Loader2 } from 'lucide-react'
 
-export default function CampaignPage({ params }: { params: { slug: string } }) {
-  const [campaign, setCampaign] = React.useState<Collectable>()
+export default function CollectablePage({
+  params,
+}: {
+  params: { slug: string }
+}) {
+  const [collectable, setCollectable] = React.useState<Collectable>()
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -36,22 +40,17 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
 
   React.useEffect(() => {
     if (result) {
-      setCampaign(result)
+      setCollectable(result)
     }
   }, [result, params.slug])
 
-  console.log('BB')
-  console.log(params.slug)
-  console.log(campaign)
-  console.log('CC')
-
-  return campaign ? (
+  return collectable ? (
     <>
       <GeneralNavBar />
       <section className="pt-6 md:pt-10">
         <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
           <Image
-            src={campaign.image}
+            src={collectable.image}
             width={500}
             height={500}
             className="object-cover w-full"
@@ -61,11 +60,11 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
         <div className="container flex flex-row flex-wrap gap-4">
           <div className="flex flex-col order-last gap-2 md:order-none w-screen md:w-fit">
             <h2 className="text-2xl font-semibold truncate">
-              {campaign?.name}
+              {collectable?.name}
             </h2>
             <hr />
             <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
-              Tags: {campaign?.tags.join(', ')}
+              Tags: {collectable?.tags.join(', ')}
             </p>
           </div>
           edit collectable details button

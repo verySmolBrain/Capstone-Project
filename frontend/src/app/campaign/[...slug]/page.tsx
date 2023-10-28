@@ -4,13 +4,14 @@ import * as React from 'react'
 import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import { Carousel } from '@/components/ui/carousel'
 import { EditCampaignButton } from '@/components/ui/button/edit-campaign-button'
-import { AddCollectionButton } from '@/components/ui/button/add-collection-button'
+import { AddCollectionToCampaignButton } from '@/components/ui/button/add-collection-to-campaign-button'
 import Image from 'next/image'
 import Link from 'next/link'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Loader2 } from 'lucide-react'
+import { RemoveCollectionFromCampaignButton } from '@/components/ui/button/remove-collection-from-campaign-button'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
@@ -80,13 +81,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               <h2 className="grow text-lg md:text-2xl font-semibold truncate">
                 Collections within &quot;{campaign.name}&quot;
               </h2>
-              <AddCollectionButton></AddCollectionButton>
+              <AddCollectionToCampaignButton></AddCollectionToCampaignButton>
             </div>
             <Carousel>
               {campaign.collections.map(({ image, name }, i) => {
                 return (
                   <div key={i} className="">
-                    <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                    <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                       <Link href={`/collection/${name}`}>
                         <Image
                           src={image}
@@ -94,6 +95,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
+                        <div
+                          onClick={(e) => {
+                            e.preventDefault()
+                          }}
+                        >
+                          <RemoveCollectionFromCampaignButton></RemoveCollectionFromCampaignButton>
+                        </div>
                       </Link>
                     </div>
                   </div>

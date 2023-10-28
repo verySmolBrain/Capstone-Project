@@ -1,6 +1,5 @@
 'use client'
 import * as React from 'react'
-
 import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
@@ -9,9 +8,16 @@ import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Loader2 } from 'lucide-react'
+import { AddCollectableToCollection } from '@/components/ui/button/add-collectable-to-collection-button'
+import { EditCollectionButton } from '@/components/ui/button/edit-collection-button'
+import { RemoveCollectableFromCollectionButton } from '@/components/ui/button/remove-collectable-from-collection-button'
 
-export default function CampaignPage({ params }: { params: { slug: string } }) {
-  const [campaign, setCampaign] = React.useState<Collection>()
+export default function CollectionPage({
+  params,
+}: {
+  params: { slug: string }
+}) {
+  const [collection, setCollection] = React.useState<Collection>()
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -38,17 +44,17 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
 
   React.useEffect(() => {
     if (result) {
-      setCampaign(result)
+      setCollection(result)
     }
   }, [result, params.slug])
 
-  return campaign ? (
+  return collection ? (
     <>
       <GeneralNavBar />
       <section className="pt-6 md:pt-10">
         <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
           <Image
-            src={campaign.image}
+            src={collection.image}
             width={500}
             height={500}
             className="object-cover w-full"
@@ -58,14 +64,14 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
         <div className="container flex flex-row flex-wrap gap-4">
           <div className="flex flex-col order-last gap-2 md:order-none w-screen md:w-fit">
             <h2 className="text-2xl font-semibold truncate">
-              {campaign?.name}
+              {collection?.name}
             </h2>
             <hr />
             <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
-              Tags: {campaign?.tags.join(', ')}
+              Tags: {collection?.tags.join(', ')}
             </p>
           </div>
-          edit collection details button
+          <EditCollectionButton></EditCollectionButton>
         </div>
 
         <div className="container gap-4 pb-6">
@@ -73,15 +79,15 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           <div className="container border rounded-2xl pt-3 pb-3">
             <div className="flex flex-row">
               <h2 className="grow text-lg md:text-2xl font-semibold truncate">
-                Collectables within &quot;{campaign.name}&quot;
+                Collectables within &quot;{collection.name}&quot;
               </h2>
-              add collectable button
+              <AddCollectableToCollection></AddCollectableToCollection>
             </div>
             <Carousel>
-              {campaign.collectables.map(({ image, name }, i) => {
+              {collection.collectables.map(({ image, name }, i) => {
                 return (
                   <div key={i} className="">
-                    <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                    <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                       <Link href={`/collectable/${name}`}>
                         <Image
                           src={image}
@@ -89,6 +95,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
+                        <div
+                          onClick={(e) => {
+                            e.preventDefault()
+                          }}
+                        >
+                          <RemoveCollectableFromCollectionButton></RemoveCollectableFromCollectionButton>
+                        </div>
                       </Link>
                     </div>
                   </div>
