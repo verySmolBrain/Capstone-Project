@@ -1,7 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
-// import { collectableCount, collectableCountSelect } from '@Source/utils/types'
-// import { throwInvalidActionError } from '@Source/utils/error'
+import { Id } from '@Source/utils/utils'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -23,44 +22,26 @@ export default async function (fastify: FastifyInstance) {
     return profile.wares
   })
 
-  // /*
-  //  *  PUT /wares
-  //  *  Update the user's wares
-  //  *  @param {collectableCount[]} collectables
-  //  *  @returns {object} wares
-  //  */
-  // fastify.put('/wares', async (req: FastifyRequest<{ Body: { collectables: collectableCount[] } }>) => {
-  //   const token = req.headers['authorization'] as string
-  //   const prisma = await requestHandler(token)
+  /*
+   *  PUT /wares
+   *  Update the user's wares
+   *  @param {Id[]} collectableIds
+   *  @returns {object} wares
+   */
+  fastify.put('/wares', async (req: FastifyRequest<{ Body: { collectableIds: Id[] } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
 
-  //   const { inventory } = await prisma.profile.findUniqueOrThrow({
-  //     where: {
-  //       id: extractId(token),
-  //     },
-  //     select: { inventory: { select: collectableCountSelect } },
-  //   })
-
-  //   for (const collectable of req.body.collectables) {
-  //     const inventoryCollectable = inventory.find((c) => c.name === collectable.name)
-
-  //     if (!inventoryCollectable) {
-  //       throwInvalidActionError('update wares', 'Collectable not found in inventory')
-  //     }
-
-  //     if (inventoryCollectable!.count < collectable.count) {
-  //       throwInvalidActionError('update wares', 'Not enough collectables in inventory')
-  //     }
-  //   }
-
-  //   const profile = await prisma.profile.update({
-  //     where: { id: extractId(token) },
-  //     data: {
-  //       wares: {
-  //         create: req.body.collectables,
-  //       },
-  //     },
-  //     select: { wares: { select: collectableCountSelect } },
-  //   })
-  //   return profile.wares
-  // })
+    // TODO: enforce wares are a subset of inventory
+    const profile = await prisma.profile.update({
+      where: { id: extractId(token) },
+      data: {
+        wares: {
+          set: req.body.collectableIds,
+        },
+      },
+      include: { wares: true },
+    })
+    return profile.wares
+  })
 }

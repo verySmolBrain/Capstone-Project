@@ -6,6 +6,15 @@ const customConfig: Config = {
   dictionaries: [adjectives, colors, animals],
 }
 
+export type Id = {
+  id: number
+}
+
+export type collectableCount = {
+  name: string
+  count: number
+}
+
 // get user id from name
 export async function getUserId(name: string, prisma: PrismaClient): Promise<string> {
   const user = await prisma.profile.findUniqueOrThrow({
