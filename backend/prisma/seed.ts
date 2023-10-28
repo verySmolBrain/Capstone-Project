@@ -472,7 +472,7 @@ async function main() {
   const campaigns = [
     await prisma.campaign.create({
       data: {
-        name: 'The Legendary Bird Trio',
+        name: 'Legendary Birds',
         image: 'https://archives.bulbagarden.net/media/upload/1/1e/SWSH9_Logo_EN.png',
         isActive: true,
         end: new Date(Date.now() + 12096e5), // now + 2 weeks
