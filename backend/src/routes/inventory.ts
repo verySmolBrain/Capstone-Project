@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
-import { collectableCount, collectableCountSelect } from '@Source/utils/types'
+import { collectableCountCreate, collectableCountSelect } from '@Source/utils/types'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -28,7 +28,7 @@ export default async function (fastify: FastifyInstance) {
    *  @param {collectableCount[]} collectables
    *  @returns {object} inventory
    */
-  fastify.put('/inventory', async (req: FastifyRequest<{ Body: { collectables: collectableCount[] } }>) => {
+  fastify.put('/inventory', async (req: FastifyRequest<{ Body: { collectables: collectableCountCreate[] } }>) => {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)
     const profile = await prisma.profile.update({

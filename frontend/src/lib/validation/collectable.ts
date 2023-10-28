@@ -31,3 +31,12 @@ export const createCollectableSchema = z.object({
     })
   ),
 })
+
+export const updateProfileCollectionSchema = z.object({
+  collectables: z.array(
+    z.object({
+      name: z.string(),
+      count: z.number().int().min(0),
+    })
+  ),
+})

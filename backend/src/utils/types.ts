@@ -13,6 +13,13 @@ export const collectableCountSelect = {
 
 export type collectableCount = Prisma.CollectableCountGetPayload<{ select: typeof collectableCountSelect }>
 
+export const collectableCountCreateSelect = {
+  name: true,
+  count: true,
+} satisfies Prisma.CollectableCountSelect
+
+export type collectableCountCreate = Prisma.CollectableCountGetPayload<{ select: typeof collectableCountCreateSelect }>
+
 export const collectionSelect = {
   name: true,
   image: true,
