@@ -80,7 +80,7 @@ export default async function (fastify: FastifyInstance) {
       },
     })
     console.log(user.role)
-    return user.role
+    return { role: user.role }
   })
 
   /*

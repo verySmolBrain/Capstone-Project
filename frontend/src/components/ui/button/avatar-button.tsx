@@ -50,13 +50,13 @@ export function AvatarButton() {
   )
 
   React.useEffect(() => {
-    if (roleData?.data) {
-      setRole(roleData?.data)
+    if (roleData.data) {
+      setRole(roleData.data.role)
     }
-    if (imageData?.data) {
+    if (imageData.data) {
       setImage(imageData?.data.image)
     }
-  }, [imageData?.data, roleData?.data])
+  }, [imageData.data, roleData.data])
 
   if (role === Roles.ADMIN || role == Roles.MANAGER) {
     return null
