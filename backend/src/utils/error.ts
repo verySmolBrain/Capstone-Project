@@ -29,7 +29,10 @@ export const throwInvalidFieldError = (field: string, message: string) => {
   throw new err()
 }
 
+
 export const throwInvalidActionError = (action: string, message: string) => {
   const err = createError('InvalidActionError', `${action} is invalid: ${message}`, 400)
   throw new err()
 }
+
+export const uploadError = createError('UploadError', 'Upload failed', 400)
