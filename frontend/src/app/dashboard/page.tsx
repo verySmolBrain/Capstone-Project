@@ -125,7 +125,7 @@ export default function Dashboard() {
                     <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                       <Link href={`/collectable/${name}`}>
                         <Image
-                          src={image}
+                          src={image!}
                           layout="fill"
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
