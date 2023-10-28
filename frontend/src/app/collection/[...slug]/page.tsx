@@ -54,7 +54,7 @@ export default function CollectionPage({
       <section className="pt-6 md:pt-10">
         <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
           <Image
-            src={collection.image}
+            src={collection.image!}
             width={500}
             height={500}
             className="object-cover w-full"
@@ -87,7 +87,7 @@ export default function CollectionPage({
               {collection.collectables.map(({ image, name }, i) => {
                 return (
                   <div key={i} className="">
-                    <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                    <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                       <Link href={`/collectable/${name}`}>
                         <Image
                           src={image}

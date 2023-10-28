@@ -90,7 +90,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                     <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                       <Link href={`/collection/${name}`}>
                         <Image
-                          src={image}
+                          src={image!}
                           layout="fill"
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"

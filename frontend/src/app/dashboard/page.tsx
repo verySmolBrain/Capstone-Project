@@ -11,12 +11,8 @@ import { Loader2 } from 'lucide-react'
 import useSWR from 'swr'
 
 export default function Dashboard() {
-  const tmp = [
-    'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
-    'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
-    'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
-  ]
-
+  const [active, setActive] = React.useState<Campaign[]>([])
+  const [trending, setTrending] = React.useState<Collection[]>()
   const [recommended, setRecommended] = React.useState<Collection>()
 
   const fetcher = async (url: string) => {
@@ -37,16 +33,32 @@ export default function Dashboard() {
     }
   }
 
-  const { data: result } = useSWR(
+  const { data: resActive } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign`,
+    fetcher
+  )
+
+  const { data: resTrending } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection`,
+    fetcher
+  )
+
+  const { data: resRecommended } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/Pikachu Clones`,
     fetcher
   )
 
   React.useEffect(() => {
-    if (result) {
-      setRecommended(result)
+    if (resActive) {
+      setActive(resActive)
     }
-  }, [result])
+    if (resTrending) {
+      setTrending(resTrending)
+    }
+    if (resRecommended) {
+      setRecommended(resRecommended)
+    }
+  }, [resActive, resTrending, resRecommended])
 
   return recommended ? (
     <>
@@ -57,21 +69,24 @@ export default function Dashboard() {
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
             <TypographyH2 text="Active Campaigns" />
             <Carousel>
-              {tmp.map((src, i) => {
-                return (
-                  <div key={i} className="">
-                    <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
-                      <Image
-                        src={src}
-                        sizes="(max-width: 475px) 6rem" // Fix this later
-                        fill
-                        className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                        alt="alt"
-                      />
+              {active
+                .filter((c) => !c.isActive)
+                .map(({ image, name }, i) => {
+                  return (
+                    <div key={i} className="">
+                      <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                        <Link href={`/campaign/${name}`}>
+                          <Image
+                            src={image!}
+                            layout="fill"
+                            className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                            alt="alt"
+                          />
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                })}
             </Carousel>
           </div>
         </section>
@@ -80,19 +95,19 @@ export default function Dashboard() {
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
             <TypographyH2 text="Trending Collections" />
             <Carousel>
-              {tmp.map((src, i) => {
+              {trending?.map(({ image, name }, i) => {
                 return (
-                  <div
-                    className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3"
-                    key={i}
-                  >
-                    <Image
-                      src={src}
-                      sizes="(max-width: 475px) 24rem" // Fix this later
-                      fill
-                      className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 rounded-2xl"
-                      alt="alt"
-                    />
+                  <div key={i} className="">
+                    <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                      <Link href={`/collection/${name}`}>
+                        <Image
+                          src={image!}
+                          layout="fill"
+                          className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                          alt="alt"
+                        />
+                      </Link>
+                    </div>
                   </div>
                 )
               })}
