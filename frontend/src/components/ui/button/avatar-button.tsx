@@ -31,7 +31,6 @@ export function AvatarButton() {
       },
     })
 
-    console.log(res, url)
     if (res?.ok) {
       return await res.json()
     }

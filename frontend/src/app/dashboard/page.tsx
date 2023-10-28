@@ -1,11 +1,16 @@
+'use client'
+
 import * as React from 'react'
 
 import { DashboardNavBar } from '@/components/ui/navbar/dashboard-navbar'
 import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
+import useSWR from 'swr'
 
 export default function Dashboard() {
+  const [role, setRole] = React.useState<string>('')
+
   const images = [
     'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_038_R_EN_LG.png',
     'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
@@ -22,6 +27,57 @@ export default function Dashboard() {
     'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
     'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
   ]
+
+  enum Roles {
+    USER = 'USER',
+    MANAGER = 'MANAGER',
+    ADMIN = 'ADMIN',
+  }
+
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
+
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+
+    if (res?.ok) {
+      return await res.json()
+    }
+  }
+
+  const roleData = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
+  React.useEffect(() => {
+    if (roleData.data) {
+      setRole(roleData.data.role)
+    }
+  }, [roleData.data])
+
+  if (role === Roles.ADMIN) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <DashboardNavBar />
+        <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
+          <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
+            <TypographyH2 text="Welcome Admin" />
+            <h3 className="text-2xl font-semibold">
+              Create a campaign manager
+            </h3>
+          </div>
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
