@@ -39,6 +39,7 @@ import {
 import { profilePictureUpdateSchema } from '@/lib/validation/update-details'
 import NextImage from 'next/image'
 import { Label } from '@radix-ui/react-label'
+import { daysInYear } from 'date-fns'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -111,6 +112,25 @@ export function CreateCollectableForm() {
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/collectable/upload`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'update-type': 'image',
+          authorization: token!,
+        },
+        body: JSON.stringify({ image: image, name: data.name }),
+      }
+    )
+
+    const body = {
+      name: data.name,
+      image: (await response.json()).image,
+      tags: data.tags,
+    }
+
     const createResult = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
       {
@@ -119,7 +139,7 @@ export function CreateCollectableForm() {
           'Content-Type': 'application/json',
           authorization: token!,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(body),
       }
     )
 

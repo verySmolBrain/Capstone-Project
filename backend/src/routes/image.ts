@@ -53,8 +53,7 @@ export default async function (fastify: FastifyInstance) {
    * @returns {string} url
    */
   fastify.post('/image/collectable/upload', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
-    const token = req.headers['authorization'] as string
-    const prisma = await requestHandler(token)
+    console.log(req.body.image)
 
     const upload_res = await cloudinary.uploader.upload(req.body.image, {
       resource_type: 'image',
@@ -67,12 +66,6 @@ export default async function (fastify: FastifyInstance) {
       throw new uploadError()
     }
 
-    const changedImage = await prisma.collectable.updateMany({
-      data: {
-        image: upload_res.url,
-      },
-    })
-
-    return changedImage
+    return { image: upload_res.url }
   })
 }
