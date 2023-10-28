@@ -24,19 +24,105 @@ import { Tag, TagInput } from '../tags'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 
+// image handling --------------------------------------------------------------
+
+import Cropper, { Area } from 'react-easy-crop'
+
+export const createImage = (url: string): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const image = new Image()
+    image.addEventListener('load', () => resolve(image))
+    image.addEventListener('error', (error) => reject(error))
+    image.src = url
+  })
+
+export default async function getCroppedImg(
+  imageSrc: string,
+  pixelCrop: Area | null
+) {
+  const image = await createImage(imageSrc)
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+
+  if (!ctx || !pixelCrop) {
+    return null
+  }
+
+  const { x, y, width, height } = pixelCrop
+
+  canvas.width = width
+  canvas.height = height
+
+  ctx.drawImage(image, x, y, width, height, 0, 0, width, height)
+
+  return canvas.toDataURL('image/png')
+}
+
+// -----------------------------------------------------------------------------
+
 type FormData = z.infer<typeof createCollectableSchema>
 
 export function CreateCollectableForm() {
   const [isLoading, setIsLoading] = React.useState(false)
 
+  // image variables
+  const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
+  const [image, setImage] = React.useState<string>('')
+  const [crop, setCrop] = React.useState({ x: 0, y: 0 })
+  const [croppedAreaPixels, setCroppedAreaPixels] = React.useState<Area | null>(
+    null
+  )
+  const [zoom, setZoom] = React.useState(1)
+
+  // tag variables
   const [tags, setTags] = React.useState<Tag[]>([])
+  const { setValue } = form
 
   const form = useForm<FormData>({
     mode: 'onChange',
     resolver: zodResolver(createCollectableSchema),
   })
 
-  const { setValue } = form
+  // image functions
+  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+    setCroppedAreaPixels(croppedAreaPixels)
+  }
+  async function onCropSubmit() {
+    setIsLoading(true)
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
+
+    const croppedImage = await getCroppedImg(image, croppedAreaPixels)
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/collectable/upload`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'update-type': 'image',
+          authorization: token!,
+        },
+        body: JSON.stringify({ image: croppedImage }),
+      }
+    )
+
+    setIsLoading(false)
+
+    if (!response.ok) {
+      return toast({
+        title: 'Uh Oh! Something went wrong!',
+        description: response.statusText,
+        variant: 'destructive',
+      })
+    }
+
+    return toast({
+      title: 'Success!',
+      description: 'Your collectable image was successfully uploaded!',
+      variant: 'default',
+    })
+  }
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
@@ -98,11 +184,11 @@ export function CreateCollectableForm() {
               name="tags"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start">
-                  <FormLabel className="text-left">Topics</FormLabel>
+                  <FormLabel className="text-left">Tags</FormLabel>
                   <FormControl>
                     <TagInput
                       {...field}
-                      placeholder="Enter a topic"
+                      placeholder="Enter a tag"
                       tags={tags}
                       className="sm:min-w-[450px]"
                       setTags={(newTags) => {
@@ -112,7 +198,8 @@ export function CreateCollectableForm() {
                     />
                   </FormControl>
                   <FormDescription>
-                    These are the topics that you&apos;re interested in.
+                    These are the keywords that will be used to categorize your
+                    new collectable.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
