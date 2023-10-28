@@ -20,6 +20,8 @@ export default function Dashboard() {
     const session = (await supabase.auth.getSession()).data.session
     const token = session?.access_token
 
+    console.log('aaaaaaaaaaaaaaaaa')
+
     const res = await fetch(url, {
       method: 'GET',
       headers: {
@@ -27,6 +29,8 @@ export default function Dashboard() {
         authorization: token!,
       },
     })
+
+    console.log('bbbbbbbbbbbbbbbbbbbbbbb')
 
     if (res?.ok) {
       return await res.json()
