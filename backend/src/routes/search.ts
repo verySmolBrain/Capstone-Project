@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler } from '@Source/utils/supabaseUtils'
-import { prisma } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -10,8 +9,8 @@ export default async function (fastify: FastifyInstance) {
    * @returns {object} collectibles
    */
   fastify.get('/search/collectable/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
-    // const token = req.headers['authorization'] as string
-    // const prisma = await requestHandler(token)
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
     const collectible_name = req.params.name
 
     if (!collectible_name) {

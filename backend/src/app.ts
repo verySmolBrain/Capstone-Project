@@ -40,19 +40,19 @@ export const build = async (opt: FastifyServerOptions) => {
 
   // checks if user is authenticated before every request
   // handlers are guaranteed to be given a valid user
-  //   fastify.addHook('onRequest', async (request) => {
-  //     const token = request.headers['authorization']
+  fastify.addHook('onRequest', async (request) => {
+    const token = request.headers['authorization']
 
-  //     if (!token) {
-  //       throw new InvalidIdError()
-  //     }
+    if (!token) {
+      throw new InvalidIdError()
+    }
 
-  //     const isValid = await validateUser(token)
+    const isValid = await validateUser(token)
 
-  //     if (!isValid) {
-  //       throw new InvalidIdError()
-  //     }
-  //   })
+    if (!isValid) {
+      throw new InvalidIdError()
+    }
+  })
 
   // see utils/error.ts for custom error handling
   fastify.setErrorHandler(async (error, request, reply) => {

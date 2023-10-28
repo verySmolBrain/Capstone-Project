@@ -31,8 +31,7 @@ export function AvatarButton() {
 
   const { data } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/profile`,
-    fetcher,
-    { refreshInterval: 3000 }
+    fetcher
   )
 
   React.useEffect(() => {

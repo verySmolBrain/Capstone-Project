@@ -105,8 +105,7 @@ export function SearchButton() {
 
   const { data } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collectable/${searchText}`,
-    fetcher,
-    { refreshInterval: 3000 }
+    fetcher
   )
 
   React.useEffect(() => {
