@@ -78,7 +78,8 @@ export default function Dashboard() {
                         <Link href={`/campaign/${name}`}>
                           <Image
                             src={image!}
-                            layout="fill"
+                            height={100}
+                            width={300}
                             className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                             alt="alt"
                           />
@@ -98,11 +99,12 @@ export default function Dashboard() {
               {trending?.map(({ image, name }, i) => {
                 return (
                   <div key={i} className="">
-                    <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                    <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 w-auto mr-3 ml-3">
                       <Link href={`/collection/${name}`}>
                         <Image
                           src={image!}
-                          layout="fill"
+                          height={528}
+                          width={702}
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
@@ -126,7 +128,8 @@ export default function Dashboard() {
                       <Link href={`/collectable/${name}`}>
                         <Image
                           src={image!}
-                          layout="fill"
+                          height={528}
+                          width={702}
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
