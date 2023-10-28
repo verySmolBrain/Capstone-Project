@@ -3,7 +3,6 @@
 import * as React from 'react'
 import { Loader2Icon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,6 +26,17 @@ import type { Database } from '@/lib/database.types'
 // image handling --------------------------------------------------------------
 
 import Cropper, { Area } from 'react-easy-crop'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from '@/components/ui/dialog'
+import { profilePictureUpdateSchema } from '@/lib/validation/update-details'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -76,7 +86,6 @@ export function CreateCollectableForm() {
 
   // tag variables
   const [tags, setTags] = React.useState<Tag[]>([])
-  const { setValue } = form
 
   const form = useForm<FormData>({
     mode: 'onChange',
@@ -84,6 +93,7 @@ export function CreateCollectableForm() {
   })
 
   // image functions
+  const { setValue } = form
   const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels)
   }
@@ -126,8 +136,14 @@ export function CreateCollectableForm() {
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
+    console.log('asd')
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
+
+    const dataTransfer = new DataTransfer()
+    dataTransfer.items.add(data.image)
+    const file = URL.createObjectURL(dataTransfer.files[0])
+    setImage(file)
 
     const createResult = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
@@ -159,66 +175,144 @@ export function CreateCollectableForm() {
 
   return (
     <div className="grid gap-6 w-fill">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="grid gap-3">
-            <div className="grid gap-2.5">
-              <Label htmlFor="name">Collectable Name</Label>
-              <Input
-                id="name"
-                type="name"
-                placeholder="Pick something cool and collectable!"
-                className="w-full"
-                autoCapitalize="none"
-                autoCorrect="off"
-                required
-                disabled={isLoading}
-                {...form.register('name')}
+      <Dialog>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Collectable Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Pikachu" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
               />
+
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-start">
+                    <FormLabel className="text-left">Tags</FormLabel>
+                    <FormControl>
+                      <TagInput
+                        {...field}
+                        placeholder="Enter a tag"
+                        tags={tags}
+                        className="w-full"
+                        setTags={(newTags) => {
+                          setTags(newTags)
+                          setValue('tags', newTags as [Tag, ...Tag[]])
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      These are the keywords that will be used to categorize
+                      your new collectable.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { onChange } }) => (
+                  <>
+                    <FormItem>
+                      <FormLabel>Collectable Image</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          disabled={form?.formState?.isSubmitting}
+                          onChange={(e) => {
+                            if (e.target.files) {
+                              onChange(e.target.files[0])
+                            }
+                            if (
+                              e.target.files &&
+                              profilePictureUpdateSchema.safeParse({
+                                image: e.target.files[0],
+                              }).success
+                            ) {
+                              setImageAvailable(true)
+                              console.log(imageAvailable)
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Choose an image for your collectable.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  </>
+                )}
+              />
+              {imageAvailable ? (
+                <DialogTrigger asChild>
+                  <Button className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3">
+                    {isLoading && (
+                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Crop Image
+                  </Button>
+                </DialogTrigger>
+              ) : (
+                <Button className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3">
+                  {isLoading && (
+                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Crop Image
+                </Button>
+              )}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
+              >
+                {isLoading && (
+                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Submit
+              </Button>
             </div>
+          </form>
+        </Form>
 
-            {/* TODO: image, tags */}
-
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem className="flex flex-col items-start">
-                  <FormLabel className="text-left">Tags</FormLabel>
-                  <FormControl>
-                    <TagInput
-                      {...field}
-                      placeholder="Enter a tag"
-                      tags={tags}
-                      className="sm:min-w-[450px]"
-                      setTags={(newTags) => {
-                        setTags(newTags)
-                        setValue('tags', newTags as [Tag, ...Tag[]])
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    These are the keywords that will be used to categorize your
-                    new collectable.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+        <DialogContent className="max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Crop Image</DialogTitle>
+            <DialogDescription>Crop your collectable here!</DialogDescription>
+          </DialogHeader>
+          <div className="min-h-[350px] sm:min-h-[425px] relative border-2">
+            <Cropper
+              image={image}
+              crop={crop}
+              zoom={zoom}
+              aspect={1 / 1}
+              onCropComplete={onCropComplete}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
             />
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
-            >
-              {isLoading && (
-                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Submit
-            </Button>
           </div>
-        </form>
-      </Form>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="submit" onClick={onCropSubmit}>
+                {isLoading && (
+                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Save changes
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

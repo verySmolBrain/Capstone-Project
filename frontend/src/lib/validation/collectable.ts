@@ -30,6 +30,4 @@ export const createCollectableSchema = z.object({
       text: z.string(),
     })
   ),
-  start: z.date(),
-  end: z.date(),
 })
