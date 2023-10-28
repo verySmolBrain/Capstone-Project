@@ -39,7 +39,6 @@ import {
 import { profilePictureUpdateSchema } from '@/lib/validation/update-details'
 import NextImage from 'next/image'
 import { Label } from '@radix-ui/react-label'
-import { daysInYear } from 'date-fns'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
