@@ -170,7 +170,7 @@ model Collection {
 }
 
 model Campaign {
-  name       String @id @unique
+  name       String   @id @unique
   image      String?
   tags       String[]
   start      DateTime @default(now())

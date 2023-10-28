@@ -29,6 +29,7 @@ export default async function (fastify: FastifyInstance) {
    *  @param {collectableCount[]} collectables
    *  @returns {object} wares
    */
+
   fastify.put('/wares', async (req: FastifyRequest<{ Body: { collectables: collectableCount[] } }>) => {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)

@@ -4,6 +4,7 @@ import { ToggleDarkMode } from '../button/theme-toggle-button'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
 import { ChatsButton } from '../button/chats-button'
 import { AvatarButton } from '../button/avatar-button'
+import { ManagerButton } from '../button/manager-button'
 
 export function GeneralNavBar() {
   return (
@@ -17,6 +18,7 @@ export function GeneralNavBar() {
       </div>
       <div className="container flex mr-0 h-16 space-x-4 sm:justify-between sm:space-x-0">
         <div className="flex flex-1 items-center justify-end space-x-4">
+          <ManagerButton />
           <ToggleDarkMode />
           <ChatsButton />
           <AvatarButton />
