@@ -15,6 +15,7 @@ type Collection = {
   name: string
   image?: string
   tags: string[]
+  collectables: Collectable[]
 }
 
 type Collectable = {
@@ -27,6 +28,11 @@ type Campaign = {
   name: string
   image?: string
   tags: string[]
+  collections: Collection[]
+  isActive: boolean
+  start: Date
+  end: Date
+  managers: User[]
 }
 
 type UserProfile = {
