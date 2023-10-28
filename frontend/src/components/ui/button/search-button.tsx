@@ -1,15 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import {
-  ArrowUpCircle,
-  CheckCircle2,
-  Circle,
-  HelpCircle,
-  LucideIcon,
-  XCircle,
-} from 'lucide-react'
-
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -28,62 +19,22 @@ import { Search } from 'lucide-react'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
-
-type Status = {
-  value: string
-  label: string
-  icon: LucideIcon
-}
-
-const statuses: Status[] = [
-  {
-    value: 'backlog',
-    label: 'Backlog',
-    icon: HelpCircle,
-  },
-  {
-    value: 'todo',
-    label: 'Todo',
-    icon: Circle,
-  },
-  {
-    value: 'in progress',
-    label: 'In Progress',
-    icon: ArrowUpCircle,
-  },
-  {
-    value: 'done',
-    label: 'Done',
-    icon: CheckCircle2,
-  },
-  {
-    value: 'canceled',
-    label: 'Canceled',
-    icon: XCircle,
-  },
-]
-
-type Collectable = {
-  name: string
-  image: string
-  tags: string[]
-}
+import { useRouter } from 'next/navigation'
 
 export function SearchButton() {
+  const router = useRouter()
   const [open, setOpen] = React.useState(false)
   const [searchText, setSearchText] = React.useState<string>('')
-  const [collectables, setCollectables] = React.useState<Collectable[]>([])
 
-  const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
-    null
-  )
+  const [collectables, setCollectables] = React.useState<Collectable[]>([])
+  const [users, setUsers] = React.useState<Profile[]>([])
+  const [collections, setCollections] = React.useState<Collection[]>([])
+  const [campaigns, setCampaigns] = React.useState<Campaign[]>([])
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
     const session = (await supabase.auth.getSession()).data.session
     const token = session?.access_token
-
-    console.log(url)
 
     const res = await fetch(url, {
       method: 'GET',
@@ -96,24 +47,45 @@ export function SearchButton() {
     if (res?.ok) {
       return await res.json()
     }
-
-    // Add a toast later
-
-    // Add tag search
-    // Add collectable search
   }
 
-  const { data } = useSWR(
+  const userData = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/user/${searchText}`,
+    fetcher
+  )
+  const collectableData = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collectable/${searchText}`,
+    fetcher
+  )
+  const collectionData = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collection/${searchText}`,
+    fetcher
+  )
+  const campaignData = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/campaign/${searchText}`,
     fetcher
   )
 
   React.useEffect(() => {
-    if (data) {
-      setCollectables(data)
+    if (collectableData?.data) {
+      setCollectables(collectableData?.data)
     }
-    console.log(data)
-  }, [data])
+    if (userData?.data) {
+      setUsers(userData?.data)
+    }
+    if (collectionData?.data) {
+      setCollections(collectionData?.data)
+    }
+    if (campaignData?.data) {
+      console.log(campaignData?.data)
+      setCampaigns(campaignData?.data)
+    }
+  }, [
+    collectableData?.data,
+    userData?.data,
+    collectionData?.data,
+    campaignData?.data,
+  ])
 
   return (
     <div className="flex items-center space-x-4">
@@ -123,8 +95,23 @@ export function SearchButton() {
             <Search className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0" side="right" align="start">
-          <Command>
+        <PopoverContent className="p-0 w-[325px]" side="right" align="start">
+          <Command
+            filter={(value, search) => {
+              const tags = [
+                ...collectables.map((collectable) => collectable.tags),
+                ...campaigns.map((campaign) => campaign.tags),
+                ...collections.map((collection) => collection.tags),
+              ].flat()
+
+              const matching_tags = tags.some((tag) => tag.includes(search))
+
+              return value.toLowerCase().includes(search.toLowerCase()) ||
+                matching_tags
+                ? 1
+                : 0
+            }}
+          >
             <CommandInput
               placeholder="Search..."
               onValueChange={setSearchText}
@@ -132,16 +119,26 @@ export function SearchButton() {
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup heading="Users">
+                {users.map((users) => (
+                  <CommandItem
+                    key={users.name}
+                    value={users.name}
+                    onSelect={(value) => {
+                      router.push(`/profile/${value}`)
+                    }}
+                  >
+                    <span>{users.name}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+
+              <CommandGroup heading="Collectables">
                 {collectables.map((collectable) => (
                   <CommandItem
                     key={collectable.name}
                     value={collectable.name}
                     onSelect={(value) => {
-                      setSelectedStatus(
-                        statuses.find((priority) => priority.value === value) ||
-                          null
-                      )
-                      setOpen(false)
+                      router.push(`/collectable/${value}`)
                     }}
                   >
                     <span>{collectable.name}</span>
@@ -149,38 +146,30 @@ export function SearchButton() {
                 ))}
               </CommandGroup>
 
-              <CommandGroup heading="Collectables">
-                {statuses.map((status) => (
+              <CommandGroup heading="Campaigns">
+                {campaigns.map((campaigns) => (
                   <CommandItem
-                    key={status.value}
-                    value={status.value}
+                    key={campaigns.name}
+                    value={campaigns.name}
                     onSelect={(value) => {
-                      setSelectedStatus(
-                        statuses.find((priority) => priority.value === value) ||
-                          null
-                      )
-                      setOpen(false)
+                      router.push(`/campaign/${value}`)
                     }}
                   >
-                    <span>{status.label}</span>
+                    <span>{campaigns.name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
 
               <CommandGroup heading="Collections">
-                {statuses.map((status) => (
+                {collections.map((collection) => (
                   <CommandItem
-                    key={status.value}
-                    value={status.value}
+                    key={collection.name}
+                    value={collection.name}
                     onSelect={(value) => {
-                      setSelectedStatus(
-                        statuses.find((priority) => priority.value === value) ||
-                          null
-                      )
-                      setOpen(false)
+                      router.push(`/collection/${value}`)
                     }}
                   >
-                    <span>{status.label}</span>
+                    <span>{collection.name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
