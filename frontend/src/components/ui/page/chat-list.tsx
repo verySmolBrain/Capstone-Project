@@ -7,21 +7,6 @@ import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 
-type FormattedChat = {
-  id: number
-  latestMessage?: Message | null | undefined
-  receiver: Receiver
-  image: string
-}
-
-type Receiver = {
-  description: string
-  id: string
-  image: string
-  name: string
-  reputation: number
-}
-
 export default function ChatList() {
   const [chats, setChats] = React.useState<FormattedChat[]>([])
 
