@@ -39,113 +39,113 @@ async function main() {
     data: [
       {
         name: 'Articuno',
-        image: 'https://archives.bulbagarden.net/media/upload/d/d0/0144Articuno.png',
-        tags: ['ice', 'flying', 'legendary', 'Kanto', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/e/e7/ArticunoEXPlasmaStorm132.jpg',
+        tags: ['Ice', 'Flying', 'Legendary', 'Kanto', 'Pokemon'],
       },
       {
         name: 'Zapdos',
-        image: 'https://archives.bulbagarden.net/media/upload/c/c6/0145Zapdos.png',
-        tags: ['electric', 'flying', 'legendary', 'Kanto', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/8/86/Zapdosex194Pok%C3%A9monCard151.jpg',
+        tags: ['Electric', 'Flying', 'Legendary', 'Kanto', 'Pokemon'],
       },
       {
         name: 'Moltres',
-        image: 'https://archives.bulbagarden.net/media/upload/2/21/0146Moltres.png',
-        tags: ['fire', 'flying', 'legendary', 'Kanto', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/d/dc/GalarianMoltresVChillingReign97.jpg',
+        tags: ['Fire', 'Flying', 'Legendary', 'Kanto', 'Pokemon'],
       },
       {
         name: 'Uxie',
-        image: 'https://archives.bulbagarden.net/media/upload/1/18/0480Uxie.png',
-        tags: ['psychic', 'legendary', 'knowledge', 'Sinnoh', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/6/60/UxieLVXLegendsAwakened146.jpg',
+        tags: ['Psychic', 'Legendary', 'Knowledge', 'Sinnoh', 'Pokemon'],
       },
       {
         name: 'Mespirit',
-        image: 'https://archives.bulbagarden.net/media/upload/2/24/0481Mesprit.png',
-        tags: ['psychic', 'legendary', 'emotion', 'Sinnoh', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/a/a7/MespritLVXLegendsAwakened143.jpg',
+        tags: ['Psychic', 'Legendary', 'Emotion', 'Sinnoh', 'Pokemon'],
       },
       {
         name: 'Azelf',
-        image: 'https://archives.bulbagarden.net/media/upload/a/ac/0482Azelf.png',
-        tags: ['psychic', 'legendary', 'willpower', 'Sinnoh', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/1/15/AzelfLVXLegendsAwakened140.jpg',
+        tags: ['Psychic', 'Legendary', 'Willpower', 'Sinnoh', 'Pokemon'],
       },
       {
         name: 'Wo-Chien',
-        image: 'https://archives.bulbagarden.net/media/upload/d/d4/1001Wo-Chien.png',
-        tags: ['dark', 'grass', 'legendary', 'Tablets of Ruin', 'Paldea', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/b/bf/Wo-ChienexPaldeaEvolved232.jpg',
+        tags: ['Dark', 'Grass', 'Legendary', 'Tablets of Ruin', 'Paldea', 'Pokemon'],
       },
       {
         name: 'Chien-Pao',
-        image: 'https://archives.bulbagarden.net/media/upload/1/17/1002Chien-Pao.png',
-        tags: ['dark', 'ice', 'legendary', 'Sword of Ruin', 'Paldea', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/a/a6/Chien-PaoexSVPPromo30.jpg',
+        tags: ['Dark', 'Ice', 'Legendary', 'Sword of Ruin', 'Paldea', 'Pokemon'],
       },
       {
         name: 'Ting-Lu',
-        image: 'https://archives.bulbagarden.net/media/upload/1/12/1003Ting-Lu.png',
-        tags: ['dark', 'ground', 'lengendary', 'Vessel of Ruin', 'Paldea', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/f/fd/Ting-LuexPaldeaEvolved275.jpg',
+        tags: ['Dark', 'Ground', 'Legendary', 'Vessel of Ruin', 'Paldea', 'Pokemon'],
       },
       {
         name: 'Chi-Yu',
-        image: 'https://archives.bulbagarden.net/media/upload/7/71/1004Chi-Yu.png',
-        tags: ['dark', 'fire', 'legendary', 'Beads of Ruin', 'Paldea', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/7/7c/Chi-YuexPaldeaEvolved234.jpg',
+        tags: ['Dark', 'Fire', 'Legendary', 'Beads of Ruin', 'Paldea', 'Pokemon'],
       },
       {
         name: 'Bellsprout',
-        image: 'https://archives.bulbagarden.net/media/upload/6/66/0069Bellsprout.png',
-        tags: ['grass', 'poison', 'Kanto', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/0/04/ErikaBellsproutGymChallenge38.jpg',
+        tags: ['Grass', 'Poison', 'Kanto', 'Pokemon'],
       },
       {
         name: 'Pikachu',
-        image: 'https://archives.bulbagarden.net/media/upload/4/4a/0025Pikachu.png',
-        tags: ['electric', 'Kanto', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/b/b2/PretendGyaradosPikachuXYPromo151.jpg',
+        tags: ['Electric', 'Kanto', 'Pokemon'],
       },
       {
-        name: 'Maril',
-        image: 'https://archives.bulbagarden.net/media/upload/8/8e/0183Marill.png',
-        tags: ['water', 'fairy', 'Johto', 'Pokemon'],
+        name: 'Marill',
+        image: 'https://archives.bulbagarden.net/media/upload/5/5d/MarillPaldeaEvolved204.jpg',
+        tags: ['Water', 'Fairy', 'Johto', 'Pokemon'],
       },
       {
         name: 'Plusle',
-        image: 'https://archives.bulbagarden.net/media/upload/3/3b/0311Plusle.png',
-        tags: ['electric', 'Hoenn', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/f/fa/LaRoussePlusleMovieVSPack4.jpg',
+        tags: ['Electric', 'Hoenn', 'Pokemon'],
       },
       {
         name: 'Minun',
-        image: 'https://archives.bulbagarden.net/media/upload/a/a9/0312Minun.png',
-        tags: ['electric', 'Hoenn', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/c/c4/LaRousseMinunMovieVSPack5.jpg',
+        tags: ['Electric', 'Hoenn', 'Pokemon'],
       },
       {
         name: 'Pachirisu',
-        image: 'https://archives.bulbagarden.net/media/upload/9/92/0417Pachirisu.png',
-        tags: ['electric', 'Sinnoh', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/a/a9/PachirisuScarletViolet208.jpg',
+        tags: ['Electric', 'Sinnoh', 'Pokemon'],
       },
       {
         name: 'Emolga',
-        image: 'https://archives.bulbagarden.net/media/upload/9/96/0587Emolga.png',
-        tags: ['electric', 'flying', 'Unova', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/b/b9/EmolgaEXXY143.jpg',
+        tags: ['Electric', 'Flying', 'Unova', 'Pokemon'],
       },
       {
         name: 'Dedenne',
-        image: 'https://archives.bulbagarden.net/media/upload/4/4f/0702Dedenne.png',
-        tags: ['electric', 'fairy', 'Kalos', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/2/26/DedenneexPaldeaEvolved239.jpg',
+        tags: ['Electric', 'Fairy', 'Kalos', 'Pokemon'],
       },
       {
         name: 'Togedemaru',
-        image: 'https://archives.bulbagarden.net/media/upload/8/8b/0777Togedemaru.png',
-        tags: ['electric', 'steel', 'Alola', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/1/12/TogedemaruObsidianFlames151.jpg',
+        tags: ['Electric', 'Steel', 'Alola', 'Pokemon'],
       },
       {
         name: 'Mimikyu',
-        image: 'https://archives.bulbagarden.net/media/upload/4/41/0778Mimikyu.png',
-        tags: ['ghost', 'fairy', 'Alola', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/3/3b/MimikyuVMAXBrilliantStarsTG17.jpg',
+        tags: ['Ghost', 'Fairy', 'Alola', 'Pokemon'],
       },
       {
         name: 'Morpeko',
-        image: 'https://archives.bulbagarden.net/media/upload/e/ef/0877Morpeko-Full.png',
-        tags: ['electric', 'dark', 'Galar', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/e/eb/MorpekoVMAXSwordShield204.jpg',
+        tags: ['Electric', 'Dark', 'Galar', 'Pokemon'],
       },
       {
         name: 'Pawmi',
-        image: 'https://archives.bulbagarden.net/media/upload/5/58/0921Pawmi.png',
-        tags: ['electric', 'Paldea', 'Pokemon'],
+        image: 'https://archives.bulbagarden.net/media/upload/f/fa/PawmiSVPPromo40.jpg',
+        tags: ['Electric', 'Paldea', 'Pokemon'],
       },
     ],
   })
@@ -154,51 +154,51 @@ async function main() {
     await prisma.collection.create({
       data: {
         name: 'The Legendary Bird Trio',
-        image: 'https://archives.bulbagarden.net/media/upload/1/1e/SWSH9_Logo_EN.png',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509727/collections/to9rbctzslsezy7lczhx.png',
         collectables: {
           connect: [{ name: 'Articuno' }, { name: 'Zapdos' }, { name: 'Moltres' }],
         },
-        tags: ['legendary', 'legendary birds', 'Kanto', 'Pokemon'],
+        tags: ['Legendary', 'Legendary Birds', 'Kanto', 'Pokemon'],
       },
     }),
     await prisma.collection.create({
       data: {
         name: 'The Lake Trio',
-        image: 'https://archives.bulbagarden.net/media/upload/4/4d/SWSH11_Logo_EN.png',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509765/collections/fix7ya1oyjulkhdbty3i.png',
         collectables: {
           connect: [{ name: 'Uxie' }, { name: 'Mespirit' }, { name: 'Azelf' }],
         },
-        tags: ['legendary', 'lake guardians', 'Sinnoh', 'Pokemon'],
+        tags: ['Legendary', 'Lake Guardians', 'Sinnoh', 'Pokemon'],
       },
     }),
     await prisma.collection.create({
       data: {
         name: 'The Treasures of Ruin',
-        image: 'https://archives.bulbagarden.net/media/upload/7/72/SV1_Logo_EN.png',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509773/collections/ttavlkmrv8br1ewctpjm.png',
         collectables: {
           connect: [{ name: 'Wo-Chien' }, { name: 'Chien-Pao' }, { name: 'Ting-Lu' }, { name: 'Chi-Yu' }],
         },
-        tags: ['legendary', 'treasures of ruin', 'Paldea', 'Pokemon'],
+        tags: ['Legendary', 'Treasures of Ruin', 'Paldea', 'Pokemon'],
       },
     }),
     await prisma.collection.create({
       data: {
         name: 'Bellsprout',
-        image: 'https://archives.bulbagarden.net/media/upload/d/d8/SV2_Logo_EN.png',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509900/collections/ih5adwceesev40ln8sfy.png',
         collectables: {
           connect: [{ name: 'Bellsprout' }],
         },
-        tags: ['grass', 'poison', 'Pokemon'],
+        tags: ['Grass', 'Poison', 'Pokemon'],
       },
     }),
     await prisma.collection.create({
       data: {
         name: 'Pikachu Clones',
-        image: 'https://archives.bulbagarden.net/media/upload/7/7e/SV4_Logo_EN.png',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509990/collections/twbw8c0guarkoio4x7qw.png',
         collectables: {
           connect: [
             { name: 'Pikachu' },
-            { name: 'Maril' },
+            { name: 'Marill' },
             { name: 'Plusle' },
             { name: 'Minun' },
             { name: 'Pachirisu' },
@@ -262,14 +262,42 @@ async function main() {
             create: [
               {
                 name: 'Articuno',
+                count: 2,
+              },
+              {
+                name: 'Zapdos',
+                count: 2,
+              },
+              {
+                name: 'Moltres',
+                count: 1,
+              },
+            ],
+          },
+          wishlist: {
+            create: [
+              {
+                name: 'Uxie',
+                count: 1,
+              },
+              {
+                name: 'Mespirit',
+                count: 1,
+              },
+              {
+                name: 'Azelf',
+                count: 1,
+              },
+            ],
+          },
+          wares: {
+            create: [
+              {
+                name: 'Articuno',
                 count: 1,
               },
               {
                 name: 'Zapdos',
-                count: 1,
-              },
-              {
-                name: 'Moltres',
                 count: 1,
               },
             ],
@@ -293,14 +321,44 @@ async function main() {
             create: [
               {
                 name: 'Uxie',
+                count: 2,
+              },
+              {
+                name: 'Mespirit',
+                count: 2,
+              },
+              {
+                name: 'Azelf',
+                count: 1,
+              },
+            ],
+          },
+
+          wishlist: {
+            create: [
+              {
+                name: 'Articuno',
+                count: 1,
+              },
+              {
+                name: 'Zapdos',
+                count: 1,
+              },
+              {
+                name: 'Moltres',
+                count: 1,
+              },
+            ],
+          },
+
+          wares: {
+            create: [
+              {
+                name: 'Uxie',
                 count: 1,
               },
               {
                 name: 'Mespirit',
-                count: 1,
-              },
-              {
-                name: 'Azelf',
                 count: 1,
               },
             ],
@@ -339,6 +397,34 @@ async function main() {
               },
             ],
           },
+          wishlist: {
+            create: [
+              {
+                name: 'Articuno',
+                count: 1,
+              },
+              {
+                name: 'Zapdos',
+                count: 1,
+              },
+              {
+                name: 'Moltres',
+                count: 1,
+              },
+              {
+                name: 'Uxie',
+                count: 1,
+              },
+              {
+                name: 'Mespirit',
+                count: 1,
+              },
+              {
+                name: 'Azelf',
+                count: 1,
+              },
+            ],
+          },
         },
       },
     },
@@ -361,7 +447,20 @@ async function main() {
               },
               {
                 name: 'Pikachu',
+                count: 99,
+              },
+            ],
+          },
+
+          wares: {
+            create: [
+              {
+                name: 'Bellsprout',
                 count: 1,
+              },
+              {
+                name: 'Pikachu',
+                count: 50,
               },
             ],
           },
@@ -373,10 +472,11 @@ async function main() {
   const campaigns = [
     await prisma.campaign.create({
       data: {
-        name: 'The Legendary Bird Trio',
+        name: 'Legendary Birds',
         image: 'https://archives.bulbagarden.net/media/upload/1/1e/SWSH9_Logo_EN.png',
+        isActive: true,
         end: new Date(Date.now() + 12096e5), // now + 2 weeks
-        tags: ['legendary', 'Pokemon', 'featured'],
+        tags: ['Legendary', 'Pokemon', 'Featured'],
         collections: { connect: { name: 'The Legendary Bird Trio' } },
         managers: { connect: { id: manager.id } },
       },
@@ -385,8 +485,9 @@ async function main() {
       data: {
         name: 'Just BellSprout',
         image: 'https://archives.bulbagarden.net/media/upload/a/ac/SWSH7_Logo_EN.png',
+        isActive: true,
         end: new Date(Date.now() + 12096e5), // now + 2 weeks
-        tags: ['grass', 'poison', 'Pokemon', 'popular'],
+        tags: ['Grass', 'Poison', 'Pokemon', 'Popular'],
         collections: { connect: { name: 'Bellsprout' } },
         managers: { connect: { id: manager.id } },
       },
@@ -394,9 +495,10 @@ async function main() {
     await prisma.campaign.create({
       data: {
         name: 'Random Legendaries',
-        image: 'https://archives.bulbagarden.net/media/upload/6/63/Shining_Fates_Logo_EN.png',
+        image: 'https://archives.bulbagarden.net/media/upload/d/d8/SV2_Logo_EN.png',
+        isActive: false,
         end: new Date(Date.now() + 12096e5), // now + 2 weeks
-        tags: ['legendary', 'Pokemon'],
+        tags: ['Legendary', 'Pokemon'],
         collections: {
           connect: [{ name: 'The Lake Trio' }, { name: 'The Treasures of Ruin' }],
         },

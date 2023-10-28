@@ -10,7 +10,7 @@ datasource db {
 
 generator client {
     provider = "prisma-client-js"
-    previewFeatures = ["multiSchema","fullTextSearch"]
+    previewFeatures = ["fullTextSearch"]
 }
 
 enum Role {

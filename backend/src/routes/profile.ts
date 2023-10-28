@@ -15,12 +15,13 @@ export default async function (fastify: FastifyInstance) {
     const prisma = await requestHandler(token)
     const username = await generateUsername(token)
 
-    const userExists = await prisma.user.findFirst({
+    const userExists = await prisma.user.findMany({
       where: { id: extractId(token) },
     })
 
-    if (userExists) {
-      return userExists
+    if (userExists?.length > 0) {
+      console.log(userExists[0])
+      return userExists[0]
     }
 
     const user = await prisma.user.create({
@@ -44,6 +45,8 @@ export default async function (fastify: FastifyInstance) {
    */
   fastify.get('/profile', async (req) => {
     const token = req.headers['authorization'] as string
+
+    console.log('prrroooffillle')
 
     const prisma = await requestHandler(token)
     const profile = await prisma.profile.findUniqueOrThrow({
