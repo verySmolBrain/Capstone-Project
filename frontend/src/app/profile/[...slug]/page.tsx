@@ -12,7 +12,7 @@ import Link from 'next/link'
 import { Carousel } from '@/components/ui/carousel'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { AddCollectionButton } from '@/components/ui/button/add-collection-button'
+import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
@@ -131,7 +131,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-lg md:text-2xl font-semibold truncate">
                 My collections
               </h2>
-              {isOwnProfile && <AddCollectionButton />}
+              {isOwnProfile && <AddCollectionProfileButton />}
             </div>
             <div className="container border rounded-2xl pt-3 pb-3">
               <Carousel>
@@ -156,7 +156,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-lg md:text-2xl font-semibold truncate">
                 Looking for
               </h2>
-              {isOwnProfile && <AddCollectionButton />}
+              {isOwnProfile && <AddCollectionProfileButton />}
             </div>
             <div className="container border rounded-2xl pt-6 pb-6">
               <Carousel>
@@ -182,7 +182,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-lg md:text-2xl font-semibold truncate">
                 Willing to trade
               </h2>
-              {isOwnProfile && <AddCollectionButton />}
+              {isOwnProfile && <AddCollectionProfileButton />}
             </div>
             <div className="container border rounded-2xl pt-6 pb-6">
               <Carousel>
