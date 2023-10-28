@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
-import { Id } from '@Source/utils/utils'
+import { collectableCount, collectableCountSelect } from '@Source/utils/types'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -8,46 +8,38 @@ export default async function (fastify: FastifyInstance) {
    *  Returns the user's wishlist
    *  @returns {object} wishlist
    */
-  fastify.get(
-    '/wishlist',
-    async (req: FastifyRequest<{ Body: { collectableId: string } }>) => {
-      const token = req.headers['authorization'] as string
+  fastify.get('/wishlist', async (req: FastifyRequest<{ Body: { collectableId: string } }>) => {
+    const token = req.headers['authorization'] as string
 
-      const prisma = await requestHandler(token)
+    const prisma = await requestHandler(token)
 
-      const profile = await prisma.profile.findUniqueOrThrow({
-        where: {
-          id: extractId(token),
-        },
-        include: { wishlist: true },
-      })
-      return profile.wishlist
-    }
-  )
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        id: extractId(token),
+      },
+      select: { wishlist: { select: collectableCountSelect } },
+    })
+    return profile.wishlist
+  })
 
   /*
    *  PUT /wishlist
    *  Update the user's wishlist
-   *  @param {Id[]} collectableIds
+   *  @param {collectableCount[]} collectables
    *  @returns {object} wishlist
    */
-  fastify.put(
-    '/wishlist',
-    async (req: FastifyRequest<{ Body: { collectableIds: Id[] } }>) => {
-      const token = req.headers['authorization'] as string
-      const prisma = await requestHandler(token)
-
-      // TODO: enforce wishlist is a subset of inventory
-      const profile = await prisma.profile.update({
-        where: { id: extractId(token) },
-        data: {
-          wishlist: {
-            set: req.body.collectableIds,
-          },
+  fastify.put('/wishlist', async (req: FastifyRequest<{ Body: { collectables: collectableCount[] } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const profile = await prisma.profile.update({
+      where: { id: extractId(token) },
+      data: {
+        wishlist: {
+          create: req.body.collectables,
         },
-        include: { wishlist: true },
-      })
-      return profile.wishlist
-    }
-  )
+      },
+      select: { wishlist: { select: collectableCountSelect } },
+    })
+    return profile.wishlist
+  })
 }
