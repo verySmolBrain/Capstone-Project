@@ -1,111 +1,417 @@
-// import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
-// // Brain owns 4 pieces of Exodia
-// // Jin owns the final piece of Exodia
-// // Goomba owns Blue-Eyes White Dragon and Bellsprout
+// ALL PASSWORDS ARE 'password'
 
-// const prisma = new PrismaClient()
+// admin : admin@test.com.au : 564620f7-f07c-49a0-b421-99e365b03b24
+// manager : manager@test.com : c6f5c8d1-c7e4-4ace-a053-920f82656950
 
-// async function main() {
-//   // linked to brains token
-//   const brain = await prisma.user.create({
-//     data: {
-//       id: '4be5aa5e-4245-46e6-84ed-ed2c410e7c83',
-//       profile: {
-//         create: {
-//           name: 'brain',
-//           description: 'im such a goomba',
-//           image: 'thisisaurl',
-//           collection: {
-//             create: [
-//               {
-//                 id: '1',
-//                 name: 'Right Arm Of The Forbidden One',
-//               },
-//               {
-//                 id: '2',
-//                 name: 'Left Arm Of The Forbidden One',
-//               },
-//               {
-//                 id: '3',
-//                 name: 'Right Leg Of The Forbidden One',
-//               },
-//               {
-//                 id: '4',
-//                 name: 'Left Leg Of The Forbidden One',
-//               },
-//             ],
-//           },
-//           achievements: {},
-//           sales: {},
-//           purchases: {},
-//           reputation: 0,
-//         },
-//       },
-//     },
-//   })
-//   // linked to rums token
-//   const goomba = await prisma.user.create({
-//     data: {
-//       id: '50f678ab-e4a2-4066-83ee-f87d2156adbf',
-//       profile: {
-//         create: {
-//           name: 'goomba',
-//           description: 'im such a brain',
-//           image: 'thisisaurlaswell',
-//           collection: {
-//             create: [
-//               {
-//                 id: '6',
-//                 name: 'Blue-Eyes White Dragon',
-//               },
-//               {
-//                 id: '69',
-//                 name: 'Bellsprout',
-//               },
-//             ],
-//           },
-//           achievements: {},
-//           sales: {},
-//           purchases: {},
-//           reputation: 69,
-//         },
-//       },
-//     },
-//   })
-//   // linked to teewins token
-//   const jin = await prisma.user.create({
-//     data: {
-//       id: '6e4fbc17-c6f5-431b-8a97-565d671cfb88',
-//       profile: {
-//         create: {
-//           name: 'jin',
-//           description: 'inktober',
-//           image: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-//           collection: {
-//             create: [
-//               {
-//                 id: '5',
-//                 name: 'Exodia The Forbidden One',
-//               },
-//             ],
-//           },
-//           achievements: {},
-//           sales: {},
-//           purchases: {},
-//           reputation: 5,
-//         },
-//       },
-//     },
-//   })
-//   console.log(brain, goomba, jin)
-// }
-// main()
-//   .then(async () => {
-//     await prisma.$disconnect()
-//   })
-//   .catch(async (e) => {
-//     console.error(e)
-//     await prisma.$disconnect()
-//     process.exit(1)
-//   })
+// user A : a@test.com : f3d0c820-eb35-4edc-89d1-913a6a9b87cc
+// user B : b@test.com : 1bd1afa6-4b79-4888-bcaa-dfd2f4bf35f5
+// user C : c@test.com : 104d0ebb-558d-47fe-8c52-f257c6a238a8
+// user D : d@test.com : 618b9ac1-92e8-48d1-9552-b290553828a9
+
+// admin and manager do not have profiles
+// the manager has both campaigns
+
+// user A has all 3 legendary birds
+// user B has all 3 lake guardians
+// user C has all 4 treasures of ruin
+// user D has bellsprout and pikachu
+
+// not assigned to anyone are the pikachu clones
+
+// no user has duplicates of any collectable
+
+// stuff should have tags ctrl+f 'tags' to find them
+
+// collections: 'The Legendary Birds', 'The Lake Trio', 'The Treasures of Ruin', 'Bellsprout', 'Pikachu Clones'
+// campaigns: 'The Legendary Bird Trio', 'Just BellSprout', 'Random Legendaries'
+// 'The Legendary Bird Trio' has the 'featured' tag
+// 'Just BellSprout' has the 'popular' tag
+
+// there are 4 achievements:
+// 'The Legendary Birds', 'The Lake Guardians', 'The Treasures of Ruin', 'Pikachu Clones'
+
+const prisma = new PrismaClient()
+
+async function main() {
+  const collectables = await prisma.collectable.createMany({
+    data: [
+      {
+        name: 'Articuno',
+        image: 'https://archives.bulbagarden.net/media/upload/d/d0/0144Articuno.png',
+        tags: ['ice', 'flying', 'legendary', 'Kanto', 'Pokemon'],
+      },
+      {
+        name: 'Zapdos',
+        image: 'https://archives.bulbagarden.net/media/upload/c/c6/0145Zapdos.png',
+        tags: ['electric', 'flying', 'legendary', 'Kanto', 'Pokemon'],
+      },
+      {
+        name: 'Moltres',
+        image: 'https://archives.bulbagarden.net/media/upload/2/21/0146Moltres.png',
+        tags: ['fire', 'flying', 'legendary', 'Kanto', 'Pokemon'],
+      },
+      {
+        name: 'Uxie',
+        image: 'https://archives.bulbagarden.net/media/upload/1/18/0480Uxie.png',
+        tags: ['psychic', 'legendary', 'knowledge', 'Sinnoh', 'Pokemon'],
+      },
+      {
+        name: 'Mespirit',
+        image: 'https://archives.bulbagarden.net/media/upload/2/24/0481Mesprit.png',
+        tags: ['psychic', 'legendary', 'emotion', 'Sinnoh', 'Pokemon'],
+      },
+      {
+        name: 'Azelf',
+        image: 'https://archives.bulbagarden.net/media/upload/a/ac/0482Azelf.png',
+        tags: ['psychic', 'legendary', 'willpower', 'Sinnoh', 'Pokemon'],
+      },
+      {
+        name: 'Wo-Chien',
+        image: 'https://archives.bulbagarden.net/media/upload/d/d4/1001Wo-Chien.png',
+        tags: ['dark', 'grass', 'legendary', 'Tablets of Ruin', 'Paldea', 'Pokemon'],
+      },
+      {
+        name: 'Chien-Pao',
+        image: 'https://archives.bulbagarden.net/media/upload/1/17/1002Chien-Pao.png',
+        tags: ['dark', 'ice', 'legendary', 'Sword of Ruin', 'Paldea', 'Pokemon'],
+      },
+      {
+        name: 'Ting-Lu',
+        image: 'https://archives.bulbagarden.net/media/upload/1/12/1003Ting-Lu.png',
+        tags: ['dark', 'ground', 'lengendary', 'Vessel of Ruin', 'Paldea', 'Pokemon'],
+      },
+      {
+        name: 'Chi-Yu',
+        image: 'https://archives.bulbagarden.net/media/upload/7/71/1004Chi-Yu.png',
+        tags: ['dark', 'fire', 'legendary', 'Beads of Ruin', 'Paldea', 'Pokemon'],
+      },
+      {
+        name: 'Bellsprout',
+        image: 'https://archives.bulbagarden.net/media/upload/6/66/0069Bellsprout.png',
+        tags: ['grass', 'poison', 'Kanto', 'Pokemon'],
+      },
+      {
+        name: 'Pikachu',
+        image: 'https://archives.bulbagarden.net/media/upload/4/4a/0025Pikachu.png',
+        tags: ['electric', 'Kanto', 'Pokemon'],
+      },
+      {
+        name: 'Maril',
+        image: 'https://archives.bulbagarden.net/media/upload/8/8e/0183Marill.png',
+        tags: ['water', 'fairy', 'Johto', 'Pokemon'],
+      },
+      {
+        name: 'Plusle',
+        image: 'https://archives.bulbagarden.net/media/upload/3/3b/0311Plusle.png',
+        tags: ['electric', 'Hoenn', 'Pokemon'],
+      },
+      {
+        name: 'Minun',
+        image: 'https://archives.bulbagarden.net/media/upload/a/a9/0312Minun.png',
+        tags: ['electric', 'Hoenn', 'Pokemon'],
+      },
+      {
+        name: 'Pachirisu',
+        image: 'https://archives.bulbagarden.net/media/upload/9/92/0417Pachirisu.png',
+        tags: ['electric', 'Sinnoh', 'Pokemon'],
+      },
+      {
+        name: 'Emolga',
+        image: 'https://archives.bulbagarden.net/media/upload/9/96/0587Emolga.png',
+        tags: ['electric', 'flying', 'Unova', 'Pokemon'],
+      },
+      {
+        name: 'Dedenne',
+        image: 'https://archives.bulbagarden.net/media/upload/4/4f/0702Dedenne.png',
+        tags: ['electric', 'fairy', 'Kalos', 'Pokemon'],
+      },
+      {
+        name: 'Togedemaru',
+        image: 'https://archives.bulbagarden.net/media/upload/8/8b/0777Togedemaru.png',
+        tags: ['electric', 'steel', 'Alola', 'Pokemon'],
+      },
+      {
+        name: 'Mimikyu',
+        image: 'https://archives.bulbagarden.net/media/upload/4/41/0778Mimikyu.png',
+        tags: ['ghost', 'fairy', 'Alola', 'Pokemon'],
+      },
+      {
+        name: 'Morpeko',
+        image: 'https://archives.bulbagarden.net/media/upload/e/ef/0877Morpeko-Full.png',
+        tags: ['electric', 'dark', 'Galar', 'Pokemon'],
+      },
+      {
+        name: 'Pawmi',
+        image: 'https://archives.bulbagarden.net/media/upload/5/58/0921Pawmi.png',
+        tags: ['electric', 'Paldea', 'Pokemon'],
+      },
+    ],
+  })
+
+  const collections = [
+    await prisma.collection.create({
+      data: {
+        name: 'The Legendary Bird Trio',
+        image: 'https://archives.bulbagarden.net/media/upload/1/1e/SWSH9_Logo_EN.png',
+        collectables: {
+          connect: [{ name: 'Articuno' }, { name: 'Zapdos' }, { name: 'Moltres' }],
+        },
+        tags: ['legendary', 'legendary birds', 'Kanto', 'Pokemon'],
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'The Lake Trio',
+        image: 'https://archives.bulbagarden.net/media/upload/4/4d/SWSH11_Logo_EN.png',
+        collectables: {
+          connect: [{ name: 'Uxie' }, { name: 'Mespirit' }, { name: 'Azelf' }],
+        },
+        tags: ['legendary', 'lake guardians', 'Sinnoh', 'Pokemon'],
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'The Treasures of Ruin',
+        image: 'https://archives.bulbagarden.net/media/upload/7/72/SV1_Logo_EN.png',
+        collectables: {
+          connect: [{ name: 'Wo-Chien' }, { name: 'Chien-Pao' }, { name: 'Ting-Lu' }, { name: 'Chi-Yu' }],
+        },
+        tags: ['legendary', 'treasures of ruin', 'Paldea', 'Pokemon'],
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'Bellsprout',
+        image: 'https://archives.bulbagarden.net/media/upload/d/d8/SV2_Logo_EN.png',
+        collectables: {
+          connect: [{ name: 'Bellsprout' }],
+        },
+        tags: ['grass', 'poison', 'Pokemon'],
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'Pikachu Clones',
+        image: 'https://archives.bulbagarden.net/media/upload/7/7e/SV4_Logo_EN.png',
+        collectables: {
+          connect: [
+            { name: 'Pikachu' },
+            { name: 'Maril' },
+            { name: 'Plusle' },
+            { name: 'Minun' },
+            { name: 'Pachirisu' },
+            { name: 'Emolga' },
+            { name: 'Dedenne' },
+            { name: 'Togedemaru' },
+            { name: 'Mimikyu' },
+            { name: 'Morpeko' },
+            { name: 'Pawmi' },
+          ],
+        },
+      },
+    }),
+  ]
+
+  const achievements = await prisma.achievement.createMany({
+    data: [
+      {
+        name: 'The Legendary Birds',
+        description: 'Collect all three legendary birds',
+      },
+      {
+        name: 'The Lake Guardians',
+        description: 'Collect all three lake guardians',
+      },
+      {
+        name: 'The Treasures of Ruin',
+        description: 'Collect all four treasures of ruin',
+      },
+      {
+        name: 'Pikachu Clones',
+        description: 'Collect all eleven pikachu clones',
+      },
+    ],
+  })
+
+  const admin = await prisma.user.create({
+    data: {
+      id: '564620f7-f07c-49a0-b421-99e365b03b24',
+      role: 'ADMIN',
+    },
+  })
+
+  const manager = await prisma.user.create({
+    data: {
+      id: 'c6f5c8d1-c7e4-4ace-a053-920f82656950',
+      role: 'MANAGER',
+    },
+  })
+
+  const a = await prisma.user.create({
+    data: {
+      id: 'f3d0c820-eb35-4edc-89d1-913a6a9b87cc',
+      profile: {
+        create: {
+          name: 'a',
+          description: 'default description for a',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Mushroom_14.jpg/640px-Mushroom_14.jpg',
+
+          inventory: {
+            create: [
+              {
+                name: 'Articuno',
+                count: 1,
+              },
+              {
+                name: 'Zapdos',
+                count: 1,
+              },
+              {
+                name: 'Moltres',
+                count: 1,
+              },
+            ],
+          },
+        },
+      },
+    },
+  })
+
+  const b = await prisma.user.create({
+    data: {
+      id: '1bd1afa6-4b79-4888-bcaa-dfd2f4bf35f5',
+      profile: {
+        create: {
+          name: 'b',
+          description: 'default description for b',
+          image:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Amanita_muscaria_%28fly_agaric%29.JPG/640px-Amanita_muscaria_%28fly_agaric%29.JPG',
+
+          inventory: {
+            create: [
+              {
+                name: 'Uxie',
+                count: 1,
+              },
+              {
+                name: 'Mespirit',
+                count: 1,
+              },
+              {
+                name: 'Azelf',
+                count: 1,
+              },
+            ],
+          },
+        },
+      },
+    },
+  })
+
+  const c = await prisma.user.create({
+    data: {
+      id: '104d0ebb-558d-47fe-8c52-f257c6a238a8',
+      profile: {
+        create: {
+          name: 'c',
+          description: 'default description for c',
+          image:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Lentinula_edodes_20101113_b.jpg/640px-Lentinula_edodes_20101113_b.jpg',
+          inventory: {
+            create: [
+              {
+                name: 'Wo-Chien',
+                count: 1,
+              },
+              {
+                name: 'Chien-Pao',
+                count: 1,
+              },
+              {
+                name: 'Ting-Lu',
+                count: 1,
+              },
+              {
+                name: 'Chi-Yu',
+                count: 1,
+              },
+            ],
+          },
+        },
+      },
+    },
+  })
+
+  const d = await prisma.user.create({
+    data: {
+      id: '59b43561-7e65-418c-8531-972bbf1fd2a4',
+      profile: {
+        create: {
+          name: 'd',
+          description: 'default description for d',
+          image:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Morilla_-_Morchella_%288655750535%29.jpg/640px-Morilla_-_Morchella_%288655750535%29.jpg',
+          inventory: {
+            create: [
+              {
+                name: 'Bellsprout',
+                count: 1,
+              },
+              {
+                name: 'Pikachu',
+                count: 1,
+              },
+            ],
+          },
+        },
+      },
+    },
+  })
+
+  const campaigns = [
+    await prisma.campaign.create({
+      data: {
+        name: 'The Legendary Bird Trio',
+        image: 'https://archives.bulbagarden.net/media/upload/1/1e/SWSH9_Logo_EN.png',
+        end: new Date(Date.now() + 12096e5), // now + 2 weeks
+        tags: ['legendary', 'Pokemon', 'featured'],
+        collections: { connect: { name: 'The Legendary Bird Trio' } },
+        managers: { connect: { id: manager.id } },
+      },
+    }),
+    await prisma.campaign.create({
+      data: {
+        name: 'Just BellSprout',
+        image: 'https://archives.bulbagarden.net/media/upload/a/ac/SWSH7_Logo_EN.png',
+        end: new Date(Date.now() + 12096e5), // now + 2 weeks
+        tags: ['grass', 'poison', 'Pokemon', 'popular'],
+        collections: { connect: { name: 'Bellsprout' } },
+        managers: { connect: { id: manager.id } },
+      },
+    }),
+    await prisma.campaign.create({
+      data: {
+        name: 'Random Legendaries',
+        image: 'https://archives.bulbagarden.net/media/upload/6/63/Shining_Fates_Logo_EN.png',
+        end: new Date(Date.now() + 12096e5), // now + 2 weeks
+        tags: ['legendary', 'Pokemon'],
+        collections: {
+          connect: [{ name: 'The Lake Trio' }, { name: 'The Treasures of Ruin' }],
+        },
+      },
+    }),
+  ]
+
+  console.log(admin, manager, a, b, c, d, collectables, collections, achievements, campaigns)
+}
+main()
+  .then(async () => {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })

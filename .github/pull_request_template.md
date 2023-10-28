@@ -10,3 +10,4 @@
 
 - [ ] I have noted down any breaking changes that can affect other team members.
 - [ ] I have noted down any changes required to the wiki.
+- [ ] I will remember to rename the merge commit.

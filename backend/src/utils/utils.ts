@@ -1,26 +1,15 @@
 import { PrismaClient } from '@prisma/client'
-import {
-  uniqueNamesGenerator,
-  Config,
-  adjectives,
-  colors,
-  animals,
-} from 'unique-names-generator'
+import { uniqueNamesGenerator, Config, adjectives, colors, animals } from 'unique-names-generator'
 import { requestHandler } from './supabaseUtils'
 
 const customConfig: Config = {
   dictionaries: [adjectives, colors, animals],
-}
-
-export type Id = {
-  id: number
+  style: 'capital',
+  separator: '',
 }
 
 // get user id from name
-export async function getUserId(
-  name: string,
-  prisma: PrismaClient
-): Promise<string> {
+export async function getUserId(name: string, prisma: PrismaClient): Promise<string> {
   const user = await prisma.profile.findUniqueOrThrow({
     where: {
       name: name,
@@ -49,7 +38,6 @@ export async function generateUsername(token: string) {
   return username
 }
 
-export const defaultImage =
-  'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG' // deprecate later
+export const defaultImage = 'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG' // deprecate later
 
 export const defaultDescription = 'im such a goomba' // deprecate later
