@@ -70,7 +70,7 @@ export default function Dashboard() {
             <TypographyH2 text="Active Campaigns" />
             <Carousel>
               {active
-                .filter((c) => !c.isActive)
+                .filter((c) => c.isActive)
                 .map(({ image, name }, i) => {
                   return (
                     <div key={i} className="">
