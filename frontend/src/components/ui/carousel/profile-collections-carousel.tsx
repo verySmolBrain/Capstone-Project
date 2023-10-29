@@ -127,7 +127,7 @@ export function ProfileCollectionCarousel({
                         return (
                           <div
                             key={i}
-                            className="aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 max-w-[300px]"
+                            className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 max-w-[300px]"
                           >
                             <TooltipProvider>
                               <Tooltip>
