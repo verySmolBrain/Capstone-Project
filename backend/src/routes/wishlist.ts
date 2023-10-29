@@ -57,42 +57,34 @@ export default async function (fastify: FastifyInstance) {
       const token = req.headers['authorization'] as string
       const prisma = await requestHandler(token)
 
-      const { wishlist } = await prisma.profile.findUniqueOrThrow({
+      const collectableCount = await prisma.collectableCount.findFirst({
         where: {
-          id: extractId(token),
+          name: req.params.collectable,
+          wishlistId: extractId(token),
         },
-        select: { wishlist: { select: collectableCountSelect } },
       })
 
-      const collectable = wishlist.find((c) => c.name === req.params.collectable)
-
-      if (!collectable) {
-        await prisma.profile.update({
-          where: { id: extractId(token) },
+      if (!collectableCount) {
+        console.log('hi')
+        await prisma.collectableCount.create({
           data: {
-            wishlist: {
-              create: {
-                name: req.params.collectable,
-                count: req.body.count,
-              },
-            },
+            name: req.params.collectable,
+            count: req.body.count,
+            wishlistId: extractId(token),
           },
-          select: { wishlist: { select: collectableCountSelect } },
         })
         return
       }
 
-      const updatedCollectable = await prisma.collectableCount.update({
+      prisma.collectableCount.update({
         where: {
-          id: collectable.id,
+          id: collectableCount.id,
         },
         data: {
           count: req.body.count,
         },
-        select: collectableCountSelect,
       })
-
-      return updatedCollectable
+      return
     }
   )
 
@@ -106,22 +98,20 @@ export default async function (fastify: FastifyInstance) {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)
 
-    const { wishlist } = await prisma.profile.findUniqueOrThrow({
+    const collectableCount = await prisma.collectableCount.findFirst({
       where: {
-        id: extractId(token),
+        name: req.params.collectable,
+        wishlistId: extractId(token),
       },
-      select: { wishlist: { select: collectableCountSelect } },
     })
 
-    const wishlistCollectable = wishlist.find((c) => c.name === req.params.collectable)
-
-    if (!wishlistCollectable) {
+    if (!collectableCount) {
       throwInvalidActionError('delete collectable', 'Collectable not found in wishlist')
     }
 
     prisma.collectableCount.delete({
       where: {
-        id: wishlistCollectable!.id,
+        id: collectableCount!.id,
       },
     })
     return

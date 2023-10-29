@@ -57,34 +57,28 @@ export default async function (fastify: FastifyInstance) {
       const token = req.headers['authorization'] as string
       const prisma = await requestHandler(token)
 
-      const { inventory } = await prisma.profile.findUniqueOrThrow({
+      const collectableCount = await prisma.collectableCount.findFirst({
         where: {
-          id: extractId(token),
+          name: req.params.collectable,
+          inventoryId: extractId(token),
         },
-        select: { inventory: { select: collectableCountSelect } },
       })
 
-      const inventoryCollectable = inventory.find((c) => c.name === req.params.collectable)
-
-      if (!inventoryCollectable) {
-        await prisma.profile.update({
-          where: { id: extractId(token) },
+      if (!collectableCount) {
+        console.log('hi')
+        await prisma.collectableCount.create({
           data: {
-            inventory: {
-              create: {
-                name: req.params.collectable,
-                count: req.body.count,
-              },
-            },
+            name: req.params.collectable,
+            count: req.body.count,
+            inventoryId: extractId(token),
           },
-          select: { inventory: { select: collectableCountSelect } },
         })
         return
       }
 
       prisma.collectableCount.update({
         where: {
-          id: inventoryCollectable.id,
+          id: collectableCount.id,
         },
         data: {
           count: req.body.count,
@@ -104,22 +98,20 @@ export default async function (fastify: FastifyInstance) {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)
 
-    const { inventory } = await prisma.profile.findUniqueOrThrow({
+    const collectableCount = await prisma.collectableCount.findFirst({
       where: {
-        id: extractId(token),
+        name: req.params.collectable,
+        inventoryId: extractId(token),
       },
-      select: { inventory: { select: collectableCountSelect } },
     })
 
-    const inventoryCollectable = inventory.find((c) => c.name === req.params.collectable)
-
-    if (!inventoryCollectable) {
+    if (!collectableCount) {
       throwInvalidActionError('delete collectable', 'Collectable not found in inventory')
     }
 
     prisma.collectableCount.delete({
       where: {
-        id: inventoryCollectable!.id,
+        id: collectableCount!.id,
       },
     })
     return
