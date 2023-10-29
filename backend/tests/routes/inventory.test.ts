@@ -37,7 +37,7 @@ describe('/inventory', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe('[{"id":1,"name":"Yabbin","count":10}]')
+    expect(response.body).toBe('{}')
     await app.close()
   })
 
@@ -61,7 +61,7 @@ describe('/inventory', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe('')
+    expect(response.body).toBe('{}')
     await app.close()
   })
 

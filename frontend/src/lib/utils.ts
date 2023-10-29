@@ -11,3 +11,9 @@ export const enum Role {
   ADMIN = 'ADMIN',
   NULL = '',
 }
+
+export const enum profileCollection {
+  INVENTORY,
+  WISHLIST,
+  WARES,
+}
