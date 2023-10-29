@@ -29,6 +29,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
+import { DialogClose } from '../dialog'
 
 type FormData = z.infer<typeof addCollectableCollectionSchema>
 
@@ -144,15 +145,17 @@ export function AddCollectableCollectionForm(props: {
             )}
           />
         </div>
-        <Button
-          type="submit"
-          form="createCollectionForm"
-          disabled={isLoading}
-          className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3 mt-2"
-        >
-          {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}I
-          choose you!
-        </Button>
+        <DialogClose>
+          <Button
+            type="submit"
+            form="createCollectionForm"
+            disabled={isLoading}
+            className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3 mt-2"
+          >
+            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            I choose you!
+          </Button>
+        </DialogClose>
       </form>
     </Form>
   )
