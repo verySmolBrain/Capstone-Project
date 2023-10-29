@@ -63,7 +63,7 @@ export default function CollectionPage({
   return collection ? (
     <>
       <GeneralNavBar />
-      <section className="container flex flex-col lg:flex-row max-w-screen pt-3">
+      <section className="container flex flex-col lg:flex-row pt-3 max-w-full">
         <div className="container flex flex-col gap-2 w-fit">
           <div className="flex flex-row">
             <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 w-auto mr-3 ml-3">
@@ -104,8 +104,8 @@ export default function CollectionPage({
           </div>
         </div>
 
-        <div className="container border rounded-2xl pt-3 lg:max-w-[calc(100vw-600px)]">
-          <div className="flex flex-row">
+        <div className="container border rounded-2xl pt-3 lg:w-[60%] xl:w-[70%]">
+          <div className="flex flex-row pb-3">
             <h2 className="grow text-lg md:text-2xl font-semibold break-word">
               Collections Within {collection.name}
             </h2>

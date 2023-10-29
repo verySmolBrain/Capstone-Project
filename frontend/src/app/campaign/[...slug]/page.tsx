@@ -59,7 +59,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   return campaign ? (
     <>
       <GeneralNavBar />
-      <section className="container flex flex-col lg:flex-row">
+      <section className="container flex flex-col lg:flex-row max-w-full">
         <div className="container flex flex-col gap-2 w-fit">
           <div className="flex flex-row">
             <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
@@ -96,7 +96,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               )
             })}
           </div>
-          <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
+          <p className="text-sm font-normal break-words lg:w-[60%] xl:w-[70%]">
             Status: {campaign.isActive ? 'Active' : 'Inactive'}
           </p>
         </div>
