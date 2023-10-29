@@ -2,7 +2,6 @@ import { AvatarButton } from '../button/avatar-button'
 import { ChatsButton } from '../button/chats-button'
 import { LogoutButton } from '../button/logout-button'
 import { SearchButton } from '../button/search-button'
-import { SettingsButton } from '../button/settings-button'
 import { ToggleDarkMode } from '../button/theme-toggle-button'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
 import { ManagerButton } from '../button/manager-button'
@@ -24,7 +23,6 @@ export function GeneralNavBar() {
           <SearchButton />
           <ToggleDarkMode />
           <ChatsButton />
-          <SettingsButton />
           <AvatarButton />
           <LogoutButton />
         </div>

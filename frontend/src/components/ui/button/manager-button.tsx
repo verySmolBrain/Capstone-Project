@@ -4,10 +4,10 @@ import * as React from 'react'
 import { Megaphone } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Role } from '@/lib/types'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
+import { Role } from '@/lib/utils'
 
 export function ManagerButton() {
   const [role, setRole] = React.useState<Role>(Role.NULL)
@@ -36,7 +36,7 @@ export function ManagerButton() {
   )
 
   React.useEffect(() => {
-    if (roleData?.role === 'MANAGER') {
+    if (roleData?.role === Role.MANAGER.valueOf()) {
       setRole(Role.MANAGER)
     }
   }, [roleData])

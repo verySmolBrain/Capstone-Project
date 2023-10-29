@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
 import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
+import { Role } from '@/lib/utils'
 
 enum profileCollection {
   INVENTORY,
@@ -27,6 +28,7 @@ import { LoadingScreen } from '@/components/ui/page/loading-page'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
+  const [role, setRole] = React.useState<Role>(Role.NULL)
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
   const [inventory, setInventory] = React.useState<CollectableCount[]>()
   const [wares, setWares] = React.useState<CollectableCount[]>()
@@ -84,6 +86,12 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     { refreshInterval: 3000 }
   )
 
+  const { data: roleData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role/${params.slug}`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
   React.useEffect(() => {
     if (profileData?.data) {
       setProfile(profileData?.data)
@@ -101,6 +109,9 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     if (wishlistData) {
       setWishlist(wishlistData)
     }
+    if (roleData) {
+      setRole((roleData?.role as Role) ?? Role.NULL)
+    }
   }, [
     profileData?.data,
     ownProfileData?.data,
@@ -108,6 +119,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     inventoryData,
     waresData,
     wishlistData,
+    roleData,
   ])
 
   const default_profile =
@@ -131,6 +143,16 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-2xl font-semibold truncate">
                 {profile?.name}
               </h2>
+              {role === Role.MANAGER && (
+                <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-secondary rounded-2xl max-w-fit min-w-[100px]">
+                  Manager
+                </p>
+              )}
+              {role === Role.ADMIN && (
+                <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-destructive rounded-2xl max-w-fit min-w-[100px]">
+                  Admin
+                </p>
+              )}
               <hr />
               <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
                 {profile?.description}
