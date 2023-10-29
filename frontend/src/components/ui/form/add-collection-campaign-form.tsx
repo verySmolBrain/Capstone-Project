@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import useSWR from 'swr'
-import { addCollectableCollectionSchema } from '@/lib/validation/collectable'
+import { addCollectionCampaignSchema } from '@/lib/validation/collection'
 import {
   Form,
   FormControl,
@@ -29,20 +29,19 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
-import { DialogClose } from '../dialog'
 
-type FormData = z.infer<typeof addCollectableCollectionSchema>
+type FormData = z.infer<typeof addCollectionCampaignSchema>
 
-export function AddCollectableCollectionForm(props: {
-  collection: string
+export function AddCollectionCampaignForm(props: {
+  campaign: string
   setOpen: (a: boolean) => void
   mutate: () => void
 }) {
   const [isLoading, setIsLoading] = React.useState(false)
-  const [collectables, setCollectables] = React.useState<Collectable[]>()
+  const [collection, setCollection] = React.useState<Collection[]>()
   const form = useForm<FormData>({
     mode: 'onChange',
-    resolver: zodResolver(addCollectableCollectionSchema),
+    resolver: zodResolver(addCollectionCampaignSchema),
   })
 
   async function onSubmit(data: FormData) {
@@ -51,7 +50,7 @@ export function AddCollectableCollectionForm(props: {
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/${props.collection}/${data.name}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${props.campaign}/${data.name}`,
       {
         method: 'PUT',
         headers: {
@@ -76,7 +75,7 @@ export function AddCollectableCollectionForm(props: {
 
     return toast({
       title: 'Success!',
-      description: 'The collectable was successfully added to the collection!',
+      description: 'The collection was successfully added to the campaign!',
       variant: 'default',
     })
   }
@@ -97,44 +96,44 @@ export function AddCollectableCollectionForm(props: {
       return await res.json()
     }
   }
-  const { data: collectableData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
+  const { data: collectionData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection`,
     fetcher
   )
 
   React.useEffect(() => {
-    if (collectableData) {
-      setCollectables(collectableData)
+    if (collectionData) {
+      setCollection(collectionData)
     }
-  }, [collectableData])
+  }, [collectionData])
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} id="createCollectionForm">
-        <div className="grid gap-6 max-h-[600px]">
+        <div className="grid gap-6">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Collectable Name</FormLabel>
+                <FormLabel>Collection Name</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="Select a collectable to add" />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a collection to add" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="max-h-80">
                     <ScrollArea>
-                      {collectables?.map((collectable) => (
+                      {collection?.map((collection) => (
                         <SelectItem
-                          key={collectable.name}
-                          value={collectable.name}
+                          key={collection.name}
+                          value={collection.name}
                         >
-                          {collectable.name}
+                          {collection.name}
                         </SelectItem>
                       ))}
                     </ScrollArea>
@@ -145,17 +144,15 @@ export function AddCollectableCollectionForm(props: {
             )}
           />
         </div>
-        <DialogClose>
-          <Button
-            type="submit"
-            form="createCollectionForm"
-            disabled={isLoading}
-            className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3 mt-2"
-          >
-            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-            I choose you!
-          </Button>
-        </DialogClose>
+        <Button
+          type="submit"
+          form="createCollectionForm"
+          disabled={isLoading}
+          className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3 mt-2"
+        >
+          {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}I
+          choose you!
+        </Button>
       </form>
     </Form>
   )

@@ -124,6 +124,38 @@ export default async function (fastify: FastifyInstance) {
   )
 
   /*
+   * PUT /collection/:collectionName/:collectableName
+   * Adds a collection to a campaign by name
+   * @param {string} name
+   * @param {string} image
+   * @returns {object} campaign
+   */
+  fastify.put(
+    '/campaign/:campaignName/:collectionName',
+    async (req: FastifyRequest<{ Params: { campaignName: string; collectionName: string } }>) => {
+      const token = req.headers['authorization'] as string
+      const { campaignName, collectionName } = req.params
+
+      const prisma = await requestHandler(token)
+
+      const campaign = await prisma.campaign.update({
+        where: {
+          name: campaignName,
+        },
+        data: {
+          collections: {
+            connect: { name: collectionName },
+          },
+        },
+      })
+
+      console.log(campaign)
+
+      return campaign
+    }
+  )
+
+  /*
    * DELETE /campaign/:name
    * Deletes a campaign by name
    * @param {string} name

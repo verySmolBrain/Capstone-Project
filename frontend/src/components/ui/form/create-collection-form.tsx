@@ -74,7 +74,7 @@ export default async function getCroppedImg(
 
 type FormData = z.infer<typeof createCollectableSchema>
 
-export function CreateCollectableForm({
+export function CreateCollectionForm({
   setOpen,
   mutate,
 }: {
@@ -171,7 +171,7 @@ export function CreateCollectableForm({
   }
 
   return (
-    <div className="grid gap-6 w-fill overflow-y-auto max-h-[600px] no-scrollbar">
+    <div className="grid gap-6 w-fill">
       <Dialog>
         {image && (
           <div className="flex flex-col gap-2">
