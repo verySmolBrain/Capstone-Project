@@ -12,6 +12,9 @@ import { AddCollectableToCollection } from '@/components/ui/button/add-collectab
 import { EditCollectionButton } from '@/components/ui/button/edit-collection-button'
 import { RemoveCollectableFromCollectionButton } from '@/components/ui/button/remove-collectable-from-collection-button'
 
+const default_img =
+  'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+
 export default function CollectionPage({
   params,
 }: {
@@ -54,7 +57,7 @@ export default function CollectionPage({
       <section className="pt-6 md:pt-10">
         <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
           <Image
-            src={collection.image!}
+            src={collection.image ? collection.image : default_img}
             width={500}
             height={500}
             className="object-cover w-full"
@@ -79,7 +82,7 @@ export default function CollectionPage({
           <div className="container border rounded-2xl pt-3 pb-3">
             <div className="flex flex-row">
               <h2 className="grow text-lg md:text-2xl font-semibold truncate">
-                Collectables within &quot;{collection.name}&quot;
+                Collectables apart of &quot;{collection.name}&quot;
               </h2>
               <AddCollectableToCollection></AddCollectableToCollection>
             </div>
@@ -90,7 +93,7 @@ export default function CollectionPage({
                     <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                       <Link href={`/collectable/${name}`}>
                         <Image
-                          src={image}
+                          src={image ? image : default_img}
                           layout="fill"
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"

@@ -12,9 +12,13 @@ import {
 } from '../dialog'
 import { UpdateProfileCollectionForm } from '../form/update-profile-collection-form'
 
-export function AddCollectionProfileButton(props: { type: profileCollection }) {
+export function AddCollectionProfileButton(props: {
+  type: profileCollection
+  mutate: () => void
+}) {
+  const [open, setOpen] = React.useState(false)
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="p-2">
           <Plus />
@@ -24,7 +28,11 @@ export function AddCollectionProfileButton(props: { type: profileCollection }) {
         <DialogHeader>
           <DialogTitle>Add or modify a collectable</DialogTitle>
         </DialogHeader>
-        <UpdateProfileCollectionForm type={props.type} />
+        <UpdateProfileCollectionForm
+          type={props.type}
+          setOpen={setOpen}
+          mutate={props.mutate}
+        />
       </DialogContent>
     </Dialog>
   )
