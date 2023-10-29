@@ -44,3 +44,9 @@ export type CollectionCollectable = {
     collectables: collectableCount[]
   }
 }
+
+export const collectionConnectSelect = {
+  name: true,
+} satisfies Prisma.CollectionSelect
+
+export type collectionConnect = Prisma.CollectionGetPayload<{ select: typeof collectionConnectSelect }>

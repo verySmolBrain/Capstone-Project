@@ -57,26 +57,56 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   * PUT /collection/:name
-   * Updates a collection by name
+   * PUT /collection/:collectionName/:collectableName
+   * Adds a collectable to a collection by name
    * @param {string} name
    * @param {string} image
    * @returns {object} collection
    */
   fastify.put(
-    '/collection/:name',
-    async (req: FastifyRequest<{ Params: { name: string }; Body: { image: string } }>) => {
+    '/collection/:collectionName/:collectableName',
+    async (req: FastifyRequest<{ Params: { collectionName: string; collectableName: string } }>) => {
       const token = req.headers['authorization'] as string
-      const { name } = req.params
-      const { image } = req.body
+      const { collectionName, collectableName } = req.params
+      console.log('AAAAAAAAA')
+      console.log(collectionName)
+      const prisma = await requestHandler(token)
+      const collection = await prisma.collection.update({
+        where: {
+          name: collectionName,
+        },
+        data: {
+          collectables: {
+            connect: { name: collectableName },
+          },
+        },
+      })
+      return collection
+    }
+  )
+
+  /*
+   * DELETE /collection/:collectionName/:collectableName
+   * Removes a collectable from a collection by name
+   * @param {string} collection
+   * @param {string} collectable
+   * @returns {object} collection
+   */
+  fastify.delete(
+    '/collection/:collectionName/:collectableName',
+    async (req: FastifyRequest<{ Params: { collectionName: string; collectableName: string } }>) => {
+      const token = req.headers['authorization'] as string
+      const { collectionName, collectableName } = req.params
 
       const prisma = await requestHandler(token)
       const collection = await prisma.collection.update({
         where: {
-          name: name,
+          name: collectionName,
         },
         data: {
-          image: image,
+          collectables: {
+            disconnect: { name: collectableName },
+          },
         },
       })
       return collection

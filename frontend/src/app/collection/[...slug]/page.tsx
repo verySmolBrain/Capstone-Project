@@ -8,12 +8,12 @@ import Link from 'next/link'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
-import { RemoveCollectableFromCollectionButton } from '@/components/ui/button/remove-collectable-from-collection-button'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EditCampaignButton } from '@/components/ui/button/edit-campaign-button'
-import { AddCollectionToCampaignButton } from '@/components/ui/button/add-collection-to-campaign-button'
 import { Role } from '@/lib/utils'
+import { AddCollectableCollectionButton } from '@/components/ui/button/add-collectable-collection-button'
+import { RemoveCollectableCollectionButton } from '@/components/ui/button/remove-collectable-from-collection-button'
 
 export default function CollectionPage({
   params,
@@ -41,9 +41,10 @@ export default function CollectionPage({
     }
   }
 
-  const { data: collectionResult } = useSWR(
+  const { data: collectionData, mutate: collectionMutate } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/${params.slug}`,
-    fetcher
+    fetcher,
+    { refreshInterval: 3000 }
   )
 
   const { data: roleResult } = useSWR(
@@ -52,13 +53,13 @@ export default function CollectionPage({
   )
 
   React.useEffect(() => {
-    if (collectionResult) {
-      setCollection(collectionResult)
+    if (collectionData) {
+      setCollection(collectionData)
     }
     if (roleResult?.role) {
       setRole((roleResult?.role as Role) ?? Role.NULL)
     }
-  }, [collectionResult, roleResult, params.slug])
+  }, [collectionData, roleResult, params.slug])
 
   return collection ? (
     <>
@@ -107,10 +108,13 @@ export default function CollectionPage({
         <div className="container border rounded-2xl pt-3 lg:w-[60%] xl:w-[70%]">
           <div className="flex flex-row pb-3">
             <h2 className="grow text-lg md:text-2xl font-semibold break-word">
-              Collections Within {collection.name}
+              Collectables Within {collection.name}
             </h2>
             {role === Role.MANAGER && (
-              <AddCollectionToCampaignButton></AddCollectionToCampaignButton>
+              <AddCollectableCollectionButton
+                collection={collection.name}
+                mutate={collectionMutate}
+              />
             )}
           </div>
           <Carousel>
@@ -131,7 +135,11 @@ export default function CollectionPage({
                             e.preventDefault()
                           }}
                         >
-                          <RemoveCollectableFromCollectionButton></RemoveCollectableFromCollectionButton>
+                          <RemoveCollectableCollectionButton
+                            collection={collection.name}
+                            collectable={name}
+                            mutate={collectionMutate}
+                          />
                         </div>
                       )}
                     </Link>

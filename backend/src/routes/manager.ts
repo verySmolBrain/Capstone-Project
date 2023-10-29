@@ -1,5 +1,6 @@
 import { throwInvalidActionError } from '@Source/utils/error'
 import { requestHandler } from '@Source/utils/supabaseUtils'
+import { generateUsername } from '@Source/utils/utils'
 import { FastifyInstance, FastifyRequest } from 'fastify'
 
 export default async function (fastify: FastifyInstance) {
@@ -7,10 +8,11 @@ export default async function (fastify: FastifyInstance) {
    * POST /manager
    * Creates a campaign manager user
    */
-  fastify.post('/manager', async (req: FastifyRequest<{ Body: { id: string; name: string; description: string } }>) => {
+  fastify.post('/manager', async (req: FastifyRequest<{ Body: { id: string } }>) => {
     const token = req.headers['authorization'] as string
-    const { id, name, description } = req.body
-
+    const { id } = req.body
+    const name = await generateUsername(token)
+    console.log(id, name)
     const prisma = await requestHandler(token)
     await prisma.user.create({
       data: {
@@ -19,7 +21,7 @@ export default async function (fastify: FastifyInstance) {
         profile: {
           create: {
             name: name,
-            description: description,
+            description: `Hi I'm campaign manager ${name}`,
           },
         },
       },
