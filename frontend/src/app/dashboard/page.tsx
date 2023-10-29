@@ -23,8 +23,6 @@ export default function Dashboard() {
     const session = (await supabase.auth.getSession()).data.session
     const token = session?.access_token
 
-    console.log('aaaaaaaaaaaaaaaaa')
-
     const res = await fetch(url, {
       method: 'GET',
       headers: {
@@ -32,8 +30,6 @@ export default function Dashboard() {
         authorization: token!,
       },
     })
-
-    console.log('bbbbbbbbbbbbbbbbbbbbbbb')
 
     if (res?.ok) {
       return await res.json()
@@ -92,6 +88,11 @@ export default function Dashboard() {
                           />
                         </Link>
                       </div>
+                      <div className="flex pl-10 pr-10 place-items-center">
+                        <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                          {name}
+                        </h2>
+                      </div>
                     </div>
                   )
                 })}
@@ -117,6 +118,11 @@ export default function Dashboard() {
                         />
                       </Link>
                     </div>
+                    <div className="flex pl-10 pr-10 place-items-center">
+                      <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                        {name}
+                      </h2>
+                    </div>
                   </div>
                 )
               })}
@@ -141,6 +147,11 @@ export default function Dashboard() {
                           alt="alt"
                         />
                       </Link>
+                    </div>
+                    <div className="flex pl-10 pr-10 place-items-center">
+                      <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                        {name}
+                      </h2>
                     </div>
                   </div>
                 )

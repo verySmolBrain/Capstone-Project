@@ -83,7 +83,6 @@ export function UpdateProfileCollectionForm(props: {
         }
       )
     } else if (props.type === profileCollection.WISHLIST) {
-      console.log('wishlist')
       response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist/${data.name}`,
         {
