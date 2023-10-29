@@ -11,10 +11,10 @@ import { Rating } from '@smastrom/react-rating'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/carousel'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
 import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
 import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
+import { Role } from '@/lib/utils'
 
 enum profileCollection {
   INVENTORY,
@@ -24,13 +24,16 @@ enum profileCollection {
 
 const default_img =
   'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+import { LoadingScreen } from '@/components/ui/page/loading-page'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
+  const [role, setRole] = React.useState<Role>(Role.NULL)
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
   const [inventory, setInventory] = React.useState<CollectableCount[]>()
   const [wares, setWares] = React.useState<CollectableCount[]>()
   const [wishlist, setWishlist] = React.useState<CollectableCount[]>()
+
   const router = useRouter()
 
   const fetcher = async (url: string) => {
@@ -65,20 +68,26 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     { refreshInterval: 3000 }
   )
 
-  const { data: inventoryData } = useSWR(
+  const { data: inventoryData, mutate: inventoryMutate } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory/${params.slug}`,
     fetcher,
     { refreshInterval: 3000 }
   )
 
-  const { data: waresData } = useSWR(
+  const { data: waresData, mutate: waresMutate } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares/${params.slug}`,
     fetcher,
     { refreshInterval: 3000 }
   )
 
-  const { data: wishlistData } = useSWR(
+  const { data: wishlistData, mutate: wishlistMutate } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist/${params.slug}`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
+  const { data: roleData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role/${params.slug}`,
     fetcher,
     { refreshInterval: 3000 }
   )
@@ -100,6 +109,9 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     if (wishlistData) {
       setWishlist(wishlistData)
     }
+    if (roleData) {
+      setRole((roleData?.role as Role) ?? Role.NULL)
+    }
   }, [
     profileData?.data,
     ownProfileData?.data,
@@ -107,6 +119,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     inventoryData,
     waresData,
     wishlistData,
+    roleData,
   ])
 
   const default_profile =
@@ -130,6 +143,16 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-2xl font-semibold truncate">
                 {profile?.name}
               </h2>
+              {role === Role.MANAGER && (
+                <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-secondary rounded-2xl max-w-fit min-w-[100px]">
+                  Manager
+                </p>
+              )}
+              {role === Role.ADMIN && (
+                <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-destructive rounded-2xl max-w-fit min-w-[100px]">
+                  Admin
+                </p>
+              )}
               <hr />
               <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
                 {profile?.description}
@@ -158,178 +181,205 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
           <div className="container gap-4 pb-6">
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
-                My Collectables
+                {isOwnProfile ? 'My' : 'Their'} Collectables
               </h2>
               {isOwnProfile && (
                 <AddCollectionProfileButton
                   type={profileCollection.INVENTORY}
+                  mutate={inventoryMutate}
                 />
               )}
             </div>
             <div className="container border rounded-2xl pt-3 pb-3">
-              <Carousel>
-                {inventory?.map((collectable, i) => {
-                  return (
-                    <div key={i} className="flex-row space-y-1">
-                      <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
-                        <Link href={`/collectable/${collectable.name}`}>
-                          <Image
-                            src={
-                              collectable.collectable.image
-                                ? collectable.collectable.image
-                                : default_img
-                            }
-                            sizes="(max-width: 475px) 6rem" // Fix this later
-                            fill
-                            className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                            alt={collectable.name}
-                          />
-                          <div
-                            onClick={(e) => {
-                              e.preventDefault()
-                            }}
-                          >
-                            <RemoveCollectableFromProfileButton
-                              type={profileCollection.INVENTORY}
-                              collectable={collectable.name}
-                            />
-                          </div>
-                        </Link>
+              {inventory?.length ? (
+                <Carousel>
+                  {inventory?.map((collectable, i) => {
+                    return (
+                      <div key={i} className="flex-row space-y-1">
+                        <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                          <Link href={`/collectable/${collectable.name}`}>
+                            <Image
+                              src={
+                                collectable.collectable.image
+                                  ? collectable.collectable.image
+                                  : default_img
+                              }
+                              sizes="(max-width: 475px) 6rem" // Fix this later
+                              fill
+                              className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                              alt={collectable.name}
+                            />{' '}
+                            {isOwnProfile && (
+                              <div
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                }}
+                              >
+                                <RemoveCollectableFromProfileButton
+                                  type={profileCollection.INVENTORY}
+                                  collectable={collectable.name}
+                                  mutate={inventoryMutate}
+                                />
+                              </div>
+                            )}
+                          </Link>
+                        </div>
+                        <div className="flex pl-10 pr-10">
+                          <h2 className="font-mono text-lg md:text-2xl w-full">
+                            {collectable.name}
+                          </h2>
+                          <h2 className="font-mono text-lg md:text-2xl p2">
+                            x{collectable.count}
+                          </h2>
+                        </div>
                       </div>
-                      <div className="flex pl-10 pr-10">
-                        <h2 className="font-mono text-lg md:text-2xl w-full">
-                          {collectable.name}
-                        </h2>
-                        <h2 className="font-mono text-lg md:text-2xl p2">
-                          x{collectable.count}
-                        </h2>
-                      </div>
-                    </div>
-                  )
-                })}
-              </Carousel>
+                    )
+                  })}
+                </Carousel>
+              ) : (
+                <div className="flex flex-col justify-center items-center h-[464px]">
+                  <h2 className="place-self-center">
+                    {isOwnProfile ? 'You' : 'I'} have no collectables. &#128533;
+                  </h2>
+                </div>
+              )}
             </div>
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
                 Looking for
               </h2>
               {isOwnProfile && (
-                <AddCollectionProfileButton type={profileCollection.WISHLIST} />
+                <AddCollectionProfileButton
+                  type={profileCollection.WISHLIST}
+                  mutate={wishlistMutate}
+                />
               )}
             </div>
             <div className="container border rounded-2xl pt-6 pb-6">
-              <Carousel>
-                {wishlist?.map((collectable, i) => {
-                  return (
-                    <div key={i} className="">
-                      <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
-                        <Link href={`/collectable/${collectable.name}`}>
-                          <Image
-                            src={
-                              collectable.collectable.image
-                                ? collectable.collectable.image
-                                : default_img
-                            }
-                            sizes="(max-width: 475px) 6rem" // Fix this later
-                            fill
-                            className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                            alt={collectable.name}
-                          />
-                          <div
-                            onClick={(e) => {
-                              e.preventDefault()
-                            }}
-                          >
-                            <RemoveCollectableFromProfileButton
-                              type={profileCollection.WISHLIST}
-                              collectable={collectable.name}
+              {wishlist?.length ? (
+                <Carousel>
+                  {wishlist?.map((collectable, i) => {
+                    return (
+                      <div key={i} className="">
+                        <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                          <Link href={`/collectable/${collectable.name}`}>
+                            <Image
+                              src={
+                                collectable.collectable.image
+                                  ? collectable.collectable.image
+                                  : default_img
+                              }
+                              sizes="(max-width: 475px) 6rem" // Fix this later
+                              fill
+                              className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                              alt={collectable.name}
                             />
-                          </div>
-                        </Link>
+                            {isOwnProfile && (
+                              <div
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                }}
+                              >
+                                <RemoveCollectableFromProfileButton
+                                  type={profileCollection.WISHLIST}
+                                  collectable={collectable.name}
+                                  mutate={wishlistMutate}
+                                />
+                              </div>
+                            )}
+                          </Link>
+                        </div>
+                        <div className="flex pl-10 pr-10">
+                          <h2 className="font-mono text-lg md:text-2xl w-full">
+                            {collectable.name}
+                          </h2>
+                          <h2 className="font-mono text-lg md:text-2xl p2">
+                            x{collectable.count}
+                          </h2>
+                        </div>
                       </div>
-                      <div className="flex pl-10 pr-10">
-                        <h2 className="font-mono text-lg md:text-2xl w-full">
-                          {collectable.name}
-                        </h2>
-                        <h2 className="font-mono text-lg md:text-2xl p2">
-                          x{collectable.count}
-                        </h2>
-                      </div>
-                    </div>
-                  )
-                })}
-              </Carousel>
+                    )
+                  })}
+                </Carousel>
+              ) : (
+                <div className="flex flex-col justify-center items-center h-[464px]">
+                  <h2 className="place-self-center">
+                    {isOwnProfile ? 'You' : 'I'} want no collectables. &#128533;
+                  </h2>
+                </div>
+              )}
             </div>
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
                 Willing to trade
               </h2>
               {isOwnProfile && (
-                <AddCollectionProfileButton type={profileCollection.WARES} />
+                <AddCollectionProfileButton
+                  type={profileCollection.WARES}
+                  mutate={waresMutate}
+                />
               )}
             </div>
             <div className="container border rounded-2xl pt-6 pb-6">
-              <Carousel>
-                {wares?.map((collectable, i) => {
-                  return (
-                    <div key={i} className="">
-                      <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
-                        <Link href={`/collectable/${collectable.name}`}>
-                          <Image
-                            src={
-                              collectable.collectable?.image
-                                ? collectable.collectable.image
-                                : default_img
-                            }
-                            sizes="(max-width: 475px) 6rem" // Fix this later
-                            fill
-                            className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                            alt={collectable.name}
-                          />
-                          <div
-                            onClick={(e) => {
-                              e.preventDefault()
-                            }}
-                          >
-                            <RemoveCollectableFromProfileButton
-                              type={profileCollection.WARES}
-                              collectable={collectable.name}
+              {wares?.length ? (
+                <Carousel>
+                  {wares?.map((collectable, i) => {
+                    return (
+                      <div key={i} className="">
+                        <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                          <Link href={`/collectable/${collectable.name}`}>
+                            <Image
+                              src={
+                                collectable.collectable?.image
+                                  ? collectable.collectable.image
+                                  : default_img
+                              }
+                              sizes="(max-width: 475px) 6rem" // Fix this later
+                              fill
+                              className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                              alt={collectable.name}
                             />
-                          </div>
-                        </Link>
+                            {isOwnProfile && (
+                              <div
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                }}
+                              >
+                                <RemoveCollectableFromProfileButton
+                                  type={profileCollection.WARES}
+                                  collectable={collectable.name}
+                                  mutate={waresMutate}
+                                />
+                              </div>
+                            )}
+                          </Link>
+                        </div>
+                        <div className="flex pl-10 pr-10">
+                          <h2 className="font-mono text-lg md:text-2xl w-full">
+                            {collectable.name}
+                          </h2>
+                          <h2 className="font-mono text-lg md:text-2xl p2">
+                            x{collectable.count}
+                          </h2>
+                        </div>
                       </div>
-                      <div className="flex pl-10 pr-10">
-                        <h2 className="font-mono text-lg md:text-2xl w-full">
-                          {collectable.name}
-                        </h2>
-                        <h2 className="font-mono text-lg md:text-2xl p2">
-                          x{collectable.count}
-                        </h2>
-                      </div>
-                    </div>
-                  )
-                })}
-              </Carousel>
+                    )
+                  })}
+                </Carousel>
+              ) : (
+                <div className="flex flex-col justify-center items-center h-[464px]">
+                  <h2 className="place-self-center">
+                    {isOwnProfile ? 'You are' : 'I am'} selling no collectables.
+                    &#128533;
+                  </h2>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </section>
     </>
   ) : (
-    <>
-      <GeneralNavBar />
-      <div className="w-full h-[calc(100vh-100px)] flex justify-center items-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    </>
+    <LoadingScreen />
   )
 }
-
-/**
- * Todo later:
- *
- * - Move to smaller components. Shouldn't put everything client side
- * - Add skeleton so we don't get NaN errors
- * - Profile getting is buggy right now
- * - Stars should be out of 5
- */

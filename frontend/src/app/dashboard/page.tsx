@@ -1,14 +1,18 @@
 'use client'
+
 import * as React from 'react'
-import { DashboardNavBar } from '@/components/ui/navbar/dashboard-navbar'
+import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
-import { Loader2 } from 'lucide-react'
 import useSWR from 'swr'
+import { LoadingScreen } from '@/components/ui/page/loading-page'
+
+const default_img =
+  'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
 
 export default function Dashboard() {
   const [active, setActive] = React.useState<Campaign[]>([])
@@ -66,7 +70,7 @@ export default function Dashboard() {
   return recommended ? (
     <>
       <div className="flex flex-col min-h-screen">
-        <DashboardNavBar />
+        <GeneralNavBar />
 
         <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
@@ -80,13 +84,18 @@ export default function Dashboard() {
                       <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                         <Link href={`/campaign/${name}`}>
                           <Image
-                            src={image!}
+                            src={image ? image : default_img}
                             height={100}
                             width={300}
                             className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                             alt="alt"
                           />
                         </Link>
+                      </div>
+                      <div className="flex pl-10 pr-10 place-items-center">
+                        <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                          {name}
+                        </h2>
                       </div>
                     </div>
                   )
@@ -105,13 +114,18 @@ export default function Dashboard() {
                     <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 w-auto mr-3 ml-3">
                       <Link href={`/collection/${name}`}>
                         <Image
-                          src={image!}
+                          src={image ? image : default_img}
                           height={528}
                           width={702}
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
                       </Link>
+                    </div>
+                    <div className="flex pl-10 pr-10 place-items-center">
+                      <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                        {name}
+                      </h2>
                     </div>
                   </div>
                 )
@@ -130,13 +144,18 @@ export default function Dashboard() {
                     <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                       <Link href={`/collectable/${name}`}>
                         <Image
-                          src={image!}
+                          src={image ? image : default_img}
                           height={528}
                           width={702}
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
                       </Link>
+                    </div>
+                    <div className="flex pl-10 pr-10 place-items-center">
+                      <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                        {name}
+                      </h2>
                     </div>
                   </div>
                 )
@@ -147,11 +166,6 @@ export default function Dashboard() {
       </div>
     </>
   ) : (
-    <>
-      <DashboardNavBar />
-      <div className="w-full h-[calc(100vh-100px)] flex justify-center items-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    </>
+    <LoadingScreen />
   )
 }

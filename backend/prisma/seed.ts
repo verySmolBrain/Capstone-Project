@@ -95,7 +95,7 @@ async function main() {
       {
         name: 'Pikachu',
         image: 'https://archives.bulbagarden.net/media/upload/b/b2/PretendGyaradosPikachuXYPromo151.jpg',
-        tags: ['Electric', 'Kanto', 'Pokemon'],
+        tags: ['Electric', 'Kanto', 'Pokemon', 'Popular'],
       },
       {
         name: 'Marill',
@@ -105,42 +105,42 @@ async function main() {
       {
         name: 'Plusle',
         image: 'https://archives.bulbagarden.net/media/upload/f/fa/LaRoussePlusleMovieVSPack4.jpg',
-        tags: ['Electric', 'Hoenn', 'Pokemon'],
+        tags: ['Electric', 'Hoenn', 'Pokemon', 'Popular'],
       },
       {
         name: 'Minun',
         image: 'https://archives.bulbagarden.net/media/upload/c/c4/LaRousseMinunMovieVSPack5.jpg',
-        tags: ['Electric', 'Hoenn', 'Pokemon'],
+        tags: ['Electric', 'Hoenn', 'Pokemon', 'Popular'],
       },
       {
         name: 'Pachirisu',
         image: 'https://archives.bulbagarden.net/media/upload/a/a9/PachirisuScarletViolet208.jpg',
-        tags: ['Electric', 'Sinnoh', 'Pokemon'],
+        tags: ['Electric', 'Sinnoh', 'Pokemon', 'Popular'],
       },
       {
         name: 'Emolga',
         image: 'https://archives.bulbagarden.net/media/upload/b/b9/EmolgaEXXY143.jpg',
-        tags: ['Electric', 'Flying', 'Unova', 'Pokemon'],
+        tags: ['Electric', 'Flying', 'Unova', 'Pokemon', 'Popular'],
       },
       {
         name: 'Dedenne',
         image: 'https://archives.bulbagarden.net/media/upload/2/26/DedenneexPaldeaEvolved239.jpg',
-        tags: ['Electric', 'Fairy', 'Kalos', 'Pokemon'],
+        tags: ['Electric', 'Fairy', 'Kalos', 'Pokemon', 'Popular'],
       },
       {
         name: 'Togedemaru',
         image: 'https://archives.bulbagarden.net/media/upload/1/12/TogedemaruObsidianFlames151.jpg',
-        tags: ['Electric', 'Steel', 'Alola', 'Pokemon'],
+        tags: ['Electric', 'Steel', 'Alola', 'Pokemon', 'Popular'],
       },
       {
         name: 'Mimikyu',
         image: 'https://archives.bulbagarden.net/media/upload/3/3b/MimikyuVMAXBrilliantStarsTG17.jpg',
-        tags: ['Ghost', 'Fairy', 'Alola', 'Pokemon'],
+        tags: ['Ghost', 'Fairy', 'Alola', 'Pokemon', 'Popular'],
       },
       {
         name: 'Morpeko',
         image: 'https://archives.bulbagarden.net/media/upload/e/eb/MorpekoVMAXSwordShield204.jpg',
-        tags: ['Electric', 'Dark', 'Galar', 'Pokemon'],
+        tags: ['Electric', 'Dark', 'Galar', 'Pokemon', 'Popular'],
       },
       {
         name: 'Pawmi',
@@ -239,6 +239,58 @@ async function main() {
     data: {
       id: '564620f7-f07c-49a0-b421-99e365b03b24',
       role: 'ADMIN',
+      profile: {
+        create: {
+          name: 'AdminAccountOfficerAdam',
+          description: 'I administrate this website. DM me for any evildoers.',
+          image: 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Asaf_Bartov_006_-_Wikimedia_Foundation_Oct11.jpg',
+
+          inventory: {
+            create: [
+              {
+                name: 'Articuno',
+                count: 2,
+              },
+              {
+                name: 'Zapdos',
+                count: 2,
+              },
+              {
+                name: 'Moltres',
+                count: 1,
+              },
+            ],
+          },
+          wishlist: {
+            create: [
+              {
+                name: 'Uxie',
+                count: 1,
+              },
+              {
+                name: 'Mespirit',
+                count: 1,
+              },
+              {
+                name: 'Azelf',
+                count: 1,
+              },
+            ],
+          },
+          wares: {
+            create: [
+              {
+                name: 'Articuno',
+                count: 1,
+              },
+              {
+                name: 'Zapdos',
+                count: 1,
+              },
+            ],
+          },
+        },
+      },
     },
   })
 
@@ -246,6 +298,59 @@ async function main() {
     data: {
       id: 'c6f5c8d1-c7e4-4ace-a053-920f82656950',
       role: 'MANAGER',
+      profile: {
+        create: {
+          name: 'SwordShieldManagerAccount',
+          description:
+            'We create Pokemon Card Campaigns! Managed by the Official Pokemon Company (For legal purposes this is for testing)',
+          image: 'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/SSH/SSH_138_R_EN.png',
+
+          inventory: {
+            create: [
+              {
+                name: 'Articuno',
+                count: 2,
+              },
+              {
+                name: 'Zapdos',
+                count: 2,
+              },
+              {
+                name: 'Moltres',
+                count: 1,
+              },
+            ],
+          },
+          wishlist: {
+            create: [
+              {
+                name: 'Uxie',
+                count: 1,
+              },
+              {
+                name: 'Mespirit',
+                count: 1,
+              },
+              {
+                name: 'Azelf',
+                count: 1,
+              },
+            ],
+          },
+          wares: {
+            create: [
+              {
+                name: 'Articuno',
+                count: 1,
+              },
+              {
+                name: 'Zapdos',
+                count: 1,
+              },
+            ],
+          },
+        },
+      },
     },
   })
 

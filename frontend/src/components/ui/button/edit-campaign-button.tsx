@@ -15,7 +15,11 @@ export function EditCampaignButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button
+          className="h-10 w-10 flex-shrink-0"
+          variant="outline"
+          size="icon"
+        >
           <Pencil className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
         </Button>
       </DialogTrigger>
