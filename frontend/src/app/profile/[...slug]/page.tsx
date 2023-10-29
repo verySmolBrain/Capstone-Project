@@ -15,9 +15,21 @@ import { Loader2 } from 'lucide-react'
 import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
 
+enum profileCollection {
+  INVENTORY,
+  WISHLIST,
+  WARES,
+}
+
+const default_img =
+  'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
+  const [inventory, setInventory] = React.useState<CollectableCount[]>()
+  const [wares, setWares] = React.useState<CollectableCount[]>()
+  const [wishlist, setWishlist] = React.useState<CollectableCount[]>()
   const router = useRouter()
 
   const fetcher = async (url: string) => {
@@ -52,6 +64,21 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     { refreshInterval: 3000 }
   )
 
+  const { data: inventoryData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory`,
+    fetcher
+  )
+
+  const { data: waresData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares`,
+    fetcher
+  )
+
+  const { data: wishlistData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist`,
+    fetcher
+  )
+
   React.useEffect(() => {
     if (profileData?.data) {
       setProfile(profileData?.data)
@@ -60,24 +87,23 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
         setIsOwnProfile(true)
       }
     }
-  }, [profileData?.data, ownProfileData?.data, params.slug])
-
-  const images = [
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_038_R_EN_LG.png',
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
-    'https://limitlesstcg.nyc3.digitaloceanspaces.com/tpci/MEW/MEW_034_R_EN_LG.png',
-  ]
-
-  const collections = [
-    'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
-    'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
-    'https://archives.bulbagarden.net/media/upload/thumb/e/e0/SWSH10_Logo_EN.png/300px-SWSH10_Logo_EN.png',
-  ]
+    if (inventoryData) {
+      setInventory(inventoryData)
+    }
+    if (waresData) {
+      setWares(waresData)
+    }
+    if (wishlistData) {
+      setWishlist(wishlistData)
+    }
+  }, [
+    profileData?.data,
+    ownProfileData?.data,
+    params.slug,
+    inventoryData,
+    waresData,
+    wishlistData,
+  ])
 
   const default_profile =
     'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
@@ -131,21 +157,31 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-lg md:text-2xl font-semibold truncate">
                 My collections
               </h2>
-              {isOwnProfile && <AddCollectionProfileButton />}
+              {isOwnProfile && (
+                <AddCollectionProfileButton
+                  type={profileCollection.INVENTORY}
+                />
+              )}
             </div>
             <div className="container border rounded-2xl pt-3 pb-3">
               <Carousel>
-                {collections.map((src, i) => {
+                {inventory?.map((collectable, i) => {
                   return (
                     <div key={i} className="">
-                      <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
-                        <Image
-                          src={src}
-                          sizes="(max-width: 475px) 6rem" // Fix this later
-                          fill
-                          className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                          alt="alt"
-                        />
+                      <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                        <Link href={`/collectable/${collectable.name}`}>
+                          <Image
+                            src={
+                              collectable.collectable.image
+                                ? collectable.collectable.image
+                                : default_img
+                            }
+                            sizes="(max-width: 475px) 6rem" // Fix this later
+                            fill
+                            className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                            alt="alt"
+                          />
+                        </Link>
                       </div>
                     </div>
                   )
@@ -156,23 +192,30 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-lg md:text-2xl font-semibold truncate">
                 Looking for
               </h2>
-              {isOwnProfile && <AddCollectionProfileButton />}
+              {isOwnProfile && (
+                <AddCollectionProfileButton type={profileCollection.WISHLIST} />
+              )}
             </div>
             <div className="container border rounded-2xl pt-6 pb-6">
               <Carousel>
-                {images.map((src, i) => {
+                {wishlist?.map((collectable, i) => {
                   return (
-                    <div
-                      className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto"
-                      key={i}
-                    >
-                      <Image
-                        src={src}
-                        sizes="(max-width: 475px) 24rem" // Fix this later
-                        fill
-                        className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 rounded-2xl"
-                        alt="alt"
-                      />
+                    <div key={i} className="">
+                      <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                        <Link href={`/collectable/${collectable.name}`}>
+                          <Image
+                            src={
+                              collectable.collectable.image
+                                ? collectable.collectable.image
+                                : default_img
+                            }
+                            sizes="(max-width: 475px) 6rem" // Fix this later
+                            fill
+                            className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                            alt="alt"
+                          />
+                        </Link>
+                      </div>
                     </div>
                   )
                 })}
@@ -182,23 +225,30 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <h2 className="text-lg md:text-2xl font-semibold truncate">
                 Willing to trade
               </h2>
-              {isOwnProfile && <AddCollectionProfileButton />}
+              {isOwnProfile && (
+                <AddCollectionProfileButton type={profileCollection.WARES} />
+              )}
             </div>
             <div className="container border rounded-2xl pt-6 pb-6">
               <Carousel>
-                {images.map((src, i) => {
+                {wares?.map((collectable, i) => {
                   return (
-                    <div
-                      className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto"
-                      key={i}
-                    >
-                      <Image
-                        src={src}
-                        sizes="(max-width: 475px) 24rem" // Fix this later
-                        fill
-                        className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 rounded-2xl"
-                        alt="alt"
-                      />
+                    <div key={i} className="">
+                      <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                        <Link href={`/collectable/${collectable.name}`}>
+                          <Image
+                            src={
+                              collectable.collectable?.image
+                                ? collectable.collectable.image
+                                : default_img
+                            }
+                            sizes="(max-width: 475px) 6rem" // Fix this later
+                            fill
+                            className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
+                            alt="alt"
+                          />
+                        </Link>
+                      </div>
                     </div>
                   )
                 })}
