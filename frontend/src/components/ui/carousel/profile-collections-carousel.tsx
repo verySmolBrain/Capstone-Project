@@ -116,13 +116,10 @@ export function ProfileCollectionCarousel({
                     <div className="w-full flex flex-row flex-wrap items-center justify-center gap-4">
                       {activeCollection?.collectables.map((collectable, i) => {
                         console.log(collectable)
-                        const count =
-                          inventory[key]?.collectables.find(
-                            (inventoryCollectable) =>
-                              inventoryCollectable.name === collectable.name
-                          )?.count ?? 0
-
-                        console.log(count)
+                        const count = inventory[key]?.collectables.find(
+                          (inventoryCollectable) =>
+                            inventoryCollectable.name === collectable.name
+                        )?.count
 
                         return (
                           <div
@@ -141,24 +138,25 @@ export function ProfileCollectionCarousel({
                                       width={300}
                                       className={
                                         'object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl' +
-                                        (count === 0 ? ' grayscale' : '')
+                                        (!count ? ' grayscale' : '')
                                       }
                                       alt="alt"
                                     />
-                                    {isOwnProfile && (
-                                      <div
-                                        onClick={(e) => {
-                                          e.preventDefault()
-                                          console.log(collectable.name)
-                                        }}
-                                      >
-                                        <RemoveCollectableFromProfileButton
-                                          type={profileCollection.INVENTORY}
-                                          collectable={collectable.name}
-                                          mutate={inventoryMutate}
-                                        />
-                                      </div>
-                                    )}
+                                    {isOwnProfile &&
+                                      Number.isInteger(count) && (
+                                        <div
+                                          onClick={(e) => {
+                                            e.preventDefault()
+                                            console.log(collectable.name)
+                                          }}
+                                        >
+                                          <RemoveCollectableFromProfileButton
+                                            type={profileCollection.INVENTORY}
+                                            collectable={collectable.name}
+                                            mutate={inventoryMutate}
+                                          />
+                                        </div>
+                                      )}
                                   </Link>
                                 </TooltipTrigger>
                                 <TooltipContent>
@@ -167,7 +165,7 @@ export function ProfileCollectionCarousel({
                               </Tooltip>
                             </TooltipProvider>
                             <p className="text-center rounded-2xl bg-secondary mt-3">
-                              {collectable.name} x{count}
+                              {collectable.name} x{count ?? 0}
                             </p>
                           </div>
                         )
