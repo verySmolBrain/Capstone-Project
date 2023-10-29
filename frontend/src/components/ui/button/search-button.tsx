@@ -80,14 +80,14 @@ export function SearchButton() {
   }, 250)
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-6">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="icon">
             <Search className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0 w-[325px]" side="right" align="start">
+        <PopoverContent className="p-0 w-[325px]" side="bottom" align="center">
           <Command
             filter={(value, search) => {
               const tags = [
