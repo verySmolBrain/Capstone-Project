@@ -31,3 +31,9 @@ export const collectionSelect = {
 } satisfies Prisma.CollectionSelect
 
 export type collection = Prisma.CollectionGetPayload<{ select: typeof collectionSelect }>
+
+export const collectionConnectSelect = {
+  name: true,
+} satisfies Prisma.CollectionSelect
+
+export type collectionConnect = Prisma.CollectionGetPayload<{ select: typeof collectionConnectSelect }>

@@ -120,7 +120,7 @@ const FormSchema = z.object({
   isActive: z.boolean().default(false).optional(),
 })
 
-export function CreateCampaignForm() {
+export function DatePickerForm() {
   const [isLoading, setIsLoading] = React.useState(false)
   const [collections, setCollections] = React.useState<Collectable[]>()
   const [date] = React.useState<DateRange | undefined>({
@@ -209,18 +209,10 @@ export function CreateCampaignForm() {
         variant: 'destructive',
       })
     }
-    // return toast({
-    //   title: 'Success!',
-    //   description: 'The campaign was successfully created!',
-    //   variant: 'default',
-    // })
     return toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      title: 'Success!',
+      description: 'The campaign was successfully created!',
+      variant: 'default',
     })
   }
   React.useEffect(() => {
