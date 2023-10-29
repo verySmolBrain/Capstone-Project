@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { throwNotUniqueError } from '@Source/utils/error'
-import { generateUsername } from '@Source/utils/utils'
+import { generateUsername, getUserId } from '@Source/utils/utils'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -39,14 +39,49 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
+   *  GET /role
+   *  Returns the current user's role
+   *  @returns {string} role
+   */
+  fastify.get('/role', async (req) => {
+    const token = req.headers['authorization'] as string
+
+    const prisma = await requestHandler(token)
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: extractId(token),
+      },
+    })
+    return { role: user.role }
+  })
+
+  /*
+   *  GET /role
+   *  Returns the given user's role
+   *  @returns {string} role
+   */
+  fastify.get('/role/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+
+    const prisma = await requestHandler(token)
+    const id = await getUserId(name, prisma)
+
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: id,
+      },
+    })
+    return { role: user.role }
+  })
+
+  /*
    *  GET /profile
    *  Returns the current user's profile
    *  @returns {object} user
    */
   fastify.get('/profile', async (req) => {
     const token = req.headers['authorization'] as string
-
-    console.log('prrroooffillle')
 
     const prisma = await requestHandler(token)
     const profile = await prisma.profile.findUniqueOrThrow({

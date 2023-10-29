@@ -149,11 +149,11 @@ model CollectableCount {
   name        String      
   count       Int         @default(0)
 
-  inventory   Profile?   @relation('inventory', fields: [inventoryId], references: [id])
+  inventory   Profile?    @relation('inventory', fields: [inventoryId], references: [id])
   inventoryId String?    
-  wishlist    Profile?   @relation('wishlist', fields: [wishlistId], references: [id])
+  wishlist    Profile?    @relation('wishlist', fields: [wishlistId], references: [id])
   wishlistId  String?
-  wares       Profile?   @relation('wares', fields: [waresId], references: [id])
+  wares       Profile?    @relation('wares', fields: [waresId], references: [id])
   waresId     String?
 
   @@allow('all', true)
