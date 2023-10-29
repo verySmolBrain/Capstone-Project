@@ -83,15 +83,25 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
           <h2 className="text-2xl font-semibold truncate">{campaign?.name}</h2>
           <hr />
-          <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
-            Tags: {campaign?.tags.join(', ')}
-          </p>
+          <div className="flex flex-row flex-wrap gap-2">
+            <p className="text-sm font-normal break-words pt-1">Tags:</p>
+            {campaign?.tags.map((tag, i) => {
+              return (
+                <p
+                  key={i}
+                  className="bg-secondary pl-2 pr-2 pb-1 pt-1 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                >
+                  {tag}
+                </p>
+              )
+            })}
+          </div>
           <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
             Status: {campaign.isActive ? 'Active' : 'Inactive'}
           </p>
         </div>
 
-        <div className="container gap-4 pb-3 md:pb-6 pt-3 md:pt-6">
+        <div className="container gap-4 pb-3 md:pb-6 pt-3 md:pt-6 lg:max-w-[calc(100vw-600px)]">
           <div className="container border rounded-2xl pt-3 pb-3">
             <div className="flex flex-row">
               <h2 className="grow text-lg md:text-2xl font-semibold break-word">
