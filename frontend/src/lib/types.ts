@@ -5,6 +5,12 @@ enum Status {
   DECLINED = 'DECLINED',
 }
 
+enum profileCollection {
+  INVENTORY,
+  WISHLIST,
+  WARES,
+}
+
 enum Role {
   USER,
   MANAGER,

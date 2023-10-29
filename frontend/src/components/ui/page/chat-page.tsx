@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form'
 import LinkParser from 'react-link-parser'
 import * as z from 'zod'
 import useSWR from 'swr'
+import { Loader2 } from 'lucide-react'
 
 enum MessageType {
   USER,
@@ -31,7 +32,7 @@ type Props = {
 type FormData = z.infer<typeof messageSchema>
 
 export function ChatPage({ receiver }: Props) {
-  const [messages, setMessages] = React.useState<Message[]>([])
+  const [messages, setMessages] = React.useState<Message[]>()
   const { register, reset, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(messageSchema),
   })
@@ -70,14 +71,24 @@ export function ChatPage({ receiver }: Props) {
   }, [data])
 
   async function onSubmit(data: FormData) {
-    setMessages([
-      ...messages,
-      {
-        type: MessageType.USER,
-        content: data.message,
-        timestamp: new Date(),
-      },
-    ])
+    if (messages) {
+      setMessages([
+        ...messages,
+        {
+          type: MessageType.USER,
+          content: data.message,
+          timestamp: new Date(),
+        },
+      ])
+    } else {
+      setMessages([
+        {
+          type: MessageType.USER,
+          content: data.message,
+          timestamp: new Date(),
+        },
+      ])
+    }
 
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
@@ -131,7 +142,7 @@ export function ChatPage({ receiver }: Props) {
     },
   ]
 
-  return (
+  return messages ? (
     <div className="container flex w-screen pt-4 pb-24 min-w-full flex-grow overflow-x-hidden">
       <div className="space-y-4 min-w-full flex-grow">
         {messages.map((message, index) => (
@@ -150,6 +161,23 @@ export function ChatPage({ receiver }: Props) {
         ))}
         <div ref={messagesEndRef} />
       </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4 z-10">
+          <Input
+            id="message"
+            placeholder="Type your message..."
+            className="w-full"
+            autoComplete="off"
+            {...register('message')}
+          />
+          <SendMessageButton />
+        </div>
+      </form>
+      <div className="bg-primary-foreground fixed inset-x-1 bottom-0 h-20 z-0"></div>
+    </div>
+  ) : (
+    <div className="w-full h-[calc(100vh-100px)] flex justify-center items-center">
+      <Loader2 className="h-10 w-10 animate-spin" />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-row gap-2 min-w-full pt-4 fixed inset-x-0 bottom-8 pr-4 pl-4 z-10">
           <Input

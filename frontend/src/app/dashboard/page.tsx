@@ -11,6 +11,9 @@ import { Loader2 } from 'lucide-react'
 import useSWR from 'swr'
 import { CreateManagerForm } from '@/components/ui/form/create-manager-form'
 
+const default_img =
+  'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+
 export default function Dashboard() {
   const [active, setActive] = React.useState<Campaign[]>([])
   const [trending, setTrending] = React.useState<Collection[]>()
@@ -128,12 +131,18 @@ export default function Dashboard() {
                       <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                         <Link href={`/campaign/${name}`}>
                           <Image
-                            src={image!}
-                            layout="fill"
+                            src={image ? image : default_img}
+                            height={100}
+                            width={300}
                             className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                             alt="alt"
                           />
                         </Link>
+                      </div>
+                      <div className="flex pl-10 pr-10 place-items-center">
+                        <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                          {name}
+                        </h2>
                       </div>
                     </div>
                   )
@@ -149,15 +158,21 @@ export default function Dashboard() {
               {trending?.map(({ image, name }, i) => {
                 return (
                   <div key={i} className="">
-                    <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                    <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 w-auto mr-3 ml-3">
                       <Link href={`/collection/${name}`}>
                         <Image
-                          src={image!}
-                          layout="fill"
+                          src={image ? image : default_img}
+                          height={528}
+                          width={702}
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
                       </Link>
+                    </div>
+                    <div className="flex pl-10 pr-10 place-items-center">
+                      <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                        {name}
+                      </h2>
                     </div>
                   </div>
                 )
@@ -176,12 +191,18 @@ export default function Dashboard() {
                     <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                       <Link href={`/collectable/${name}`}>
                         <Image
-                          src={image!}
-                          layout="fill"
+                          src={image ? image : default_img}
+                          height={528}
+                          width={702}
                           className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />
                       </Link>
+                    </div>
+                    <div className="flex pl-10 pr-10 place-items-center">
+                      <h2 className="font-mono text-lg md:text-2xl w-full text-center">
+                        {name}
+                      </h2>
                     </div>
                   </div>
                 )

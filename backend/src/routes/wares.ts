@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
-import { collectableCount, collectableCountSelect } from '@Source/utils/types'
+import { collectableCountCreate, collectableCountSelect } from '@Source/utils/types'
 import { throwInvalidActionError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
@@ -9,7 +9,7 @@ export default async function (fastify: FastifyInstance) {
    *  Returns the user's wares
    *  @returns {object} wares
    */
-  fastify.get('/wares', async (req: FastifyRequest<{ Body: { collectableId: string } }>) => {
+  fastify.get('/wares', async (req: FastifyRequest) => {
     const token = req.headers['authorization'] as string
 
     const prisma = await requestHandler(token)
@@ -18,7 +18,28 @@ export default async function (fastify: FastifyInstance) {
       where: {
         id: extractId(token),
       },
-      include: { wares: true },
+      include: { wares: { select: collectableCountSelect } },
+    })
+    return profile.wares
+  })
+
+  /*
+   *  GET /wares/:name
+   *  Returns the given users wares
+   *  @param {string} name
+   *  @returns {object} wares
+   */
+  fastify.get('/wares/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+
+    const prisma = await requestHandler(token)
+
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        name: name,
+      },
+      include: { wares: { select: collectableCountSelect } },
     })
     return profile.wares
   })
@@ -30,7 +51,7 @@ export default async function (fastify: FastifyInstance) {
    *  @returns {object} wares
    */
 
-  fastify.put('/wares', async (req: FastifyRequest<{ Body: { collectables: collectableCount[] } }>) => {
+  fastify.put('/wares', async (req: FastifyRequest<{ Body: { collectables: collectableCountCreate[] } }>) => {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)
 
@@ -63,5 +84,78 @@ export default async function (fastify: FastifyInstance) {
       select: { wares: { select: collectableCountSelect } },
     })
     return profile.wares
+  })
+
+  /*
+   * PUT /wares/:collectable
+   * Update the user's wares
+   * @param {string} collectable
+   * @param {number} count
+   * @returns {object} wares
+   */
+  fastify.put(
+    '/wares/:collectable',
+    async (req: FastifyRequest<{ Params: { collectable: string }; Body: { count: number } }>) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
+
+      const collectableCount = await prisma.collectableCount.findFirst({
+        where: {
+          name: req.params.collectable,
+          waresId: extractId(token),
+        },
+      })
+
+      if (!collectableCount) {
+        console.log('hi')
+        await prisma.collectableCount.create({
+          data: {
+            name: req.params.collectable,
+            count: req.body.count,
+            waresId: extractId(token),
+          },
+        })
+        return
+      }
+
+      prisma.collectableCount.update({
+        where: {
+          id: collectableCount.id,
+        },
+        data: {
+          count: req.body.count,
+        },
+      })
+      return
+    }
+  )
+
+  /*
+   * DELETE /wares/:collectable
+   * Update the user's wares
+   * @param {string} collectable
+   * @returns {object} wares
+   */
+  fastify.delete('/wares/:collectable', async (req: FastifyRequest<{ Params: { collectable: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+
+    const collectableCount = await prisma.collectableCount.findFirst({
+      where: {
+        name: req.params.collectable,
+        waresId: extractId(token),
+      },
+    })
+
+    if (!collectableCount) {
+      throwInvalidActionError('delete collectable', 'Collectable not found in inventory')
+    }
+
+    prisma.collectableCount.delete({
+      where: {
+        id: collectableCount!.id,
+      },
+    })
+    return
   })
 }

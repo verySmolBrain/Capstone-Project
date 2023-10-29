@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 export const collectableCountSelect = {
+  id: true,
   name: true,
   collectable: {
     select: {
@@ -12,6 +13,13 @@ export const collectableCountSelect = {
 } satisfies Prisma.CollectableCountSelect
 
 export type collectableCount = Prisma.CollectableCountGetPayload<{ select: typeof collectableCountSelect }>
+
+export const collectableCountCreateSelect = {
+  name: true,
+  count: true,
+} satisfies Prisma.CollectableCountSelect
+
+export type collectableCountCreate = Prisma.CollectableCountGetPayload<{ select: typeof collectableCountCreateSelect }>
 
 export const collectionSelect = {
   name: true,

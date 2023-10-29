@@ -31,3 +31,15 @@ export const createCollectableSchema = z.object({
     })
   ),
 })
+
+export const updateProfileCollectionSchema = z.object({
+  name: z.string(),
+  count: z
+    .string()
+    .refine((val) => !isNaN(Number(val)), 'Count should be a number')
+    .refine((val) => Number(val) >= 0, 'Count should be a positive number')
+    .refine(
+      (val) => Number.isInteger(Number(val)),
+      'Count should be an integer'
+    ),
+})
