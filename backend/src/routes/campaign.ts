@@ -31,6 +31,7 @@ export default async function (fastify: FastifyInstance) {
       const token = req.headers['authorization'] as string
       const { name, image, startDate, endDate, collection, tags, isActive } = req.body
       const prisma = await requestHandler(token)
+      console.log(collection)
 
       const campaign = await prisma.campaign.create({
         data: {

@@ -109,7 +109,12 @@ const FormSchema = z.object({
       (file) => ALLOWED_IMAGE_TYPES.includes(file.type),
       'Only these types are allowed .jpg, .jpeg, .png, .svg and .webp'
     ),
-  range: z.custom<DateRange>(isDateRange, 'Please select a valid date range'),
+  range: z
+    .custom<DateRange>(isDateRange, 'Please select a valid date range')
+    .default({
+      from: new Date(),
+      to: addDays(new Date(), 14),
+    }),
   tags: z.array(
     z.object({
       id: z.string(),
@@ -120,13 +125,12 @@ const FormSchema = z.object({
   isActive: z.boolean().default(false).optional(),
 })
 
-export function CreateCampaignForm() {
+export function CreateCampaignForm(props: {
+  setOpen: (a: boolean) => void
+  mutate: () => void
+}) {
   const [isLoading, setIsLoading] = React.useState(false)
   const [collections, setCollections] = React.useState<Collectable[]>()
-  const [date] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 14),
-  })
   const [tags, setTags] = React.useState<Tag[]>([])
   const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
   const [image, setImage] = React.useState<string>('')
@@ -190,10 +194,11 @@ export function CreateCampaignForm() {
           authorization: token!,
         },
         body: JSON.stringify({
-          image: image,
           name: data.name,
+          image: image,
           startDate: data.range.from,
           endDate: data.range.to,
+          collection: [{ name: data.collection }],
           tags: data.tags.map((tag) => tag.text),
           isActive: data.isActive,
         }),
@@ -209,18 +214,13 @@ export function CreateCampaignForm() {
         variant: 'destructive',
       })
     }
-    // return toast({
-    //   title: 'Success!',
-    //   description: 'The campaign was successfully created!',
-    //   variant: 'default',
-    // })
+
+    props.mutate()
+    props.setOpen(false)
     return toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      title: 'Success!',
+      description: 'The campaign was successfully created!',
+      variant: 'default',
     })
   }
   React.useEffect(() => {
@@ -243,8 +243,8 @@ export function CreateCampaignForm() {
                   src={image}
                   className="rounded-2xl"
                   alt="Collection image"
-                  width={200}
-                  height={200}
+                  width={300}
+                  height={100}
                 />
               </div>
             </div>
@@ -274,14 +274,14 @@ export function CreateCampaignForm() {
                 name="collection"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Collectable Name</FormLabel>
+                    <FormLabel>Campaign Collection</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a collectable to add" />
+                          <SelectValue placeholder="Select a collection to add" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="max-h-80">
@@ -325,7 +325,7 @@ export function CreateCampaignForm() {
                     </FormControl>
                     <FormDescription>
                       These are the keywords that will be used to categorize
-                      your new collectable.
+                      your new campaign. Try featured or popular!
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -345,21 +345,24 @@ export function CreateCampaignForm() {
                             variant={'outline'}
                             className={cn(
                               'w-[300px] justify-start text-left font-normal',
-                              !date && 'text-muted-foreground'
+                              !field.value && 'text-muted-foreground'
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {date?.from ? (
-                              date.to ? (
+                            {field.value?.from ? (
+                              field.value?.to ? (
                                 <>
-                                  {format(date.from, 'LLL dd, y')} -{' '}
-                                  {format(date.to, 'LLL dd, y')}
+                                  {format(field.value.from, 'LLL dd, y')} -{' '}
+                                  {format(field.value.to, 'LLL dd, y')}
                                 </>
                               ) : (
-                                format(date.from, 'LLL dd, y')
+                                format(field.value.from, 'LLL dd, y')
                               )
                             ) : (
-                              <span>Pick a date</span>
+                              <>
+                                {format(new Date(), 'LLL dd, y')} -{' '}
+                                {format(addDays(new Date(), 7), 'LLL dd, y')}
+                              </>
                             )}
                           </Button>
                         </FormControl>
@@ -368,7 +371,7 @@ export function CreateCampaignForm() {
                         <Calendar
                           initialFocus
                           mode="range"
-                          defaultMonth={date?.from}
+                          defaultMonth={field.value?.from}
                           selected={field.value}
                           onSelect={field.onChange}
                           numberOfMonths={2}
@@ -484,15 +487,17 @@ export function CreateCampaignForm() {
             )}
           </div>
         </ScrollArea>
-        <Button
-          type="submit"
-          form="createCampaignForm"
-          disabled={isLoading}
-          className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
-        >
-          {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-          Submit
-        </Button>
+        <DialogClose asChild>
+          <Button
+            type="submit"
+            form="createCampaignForm"
+            disabled={isLoading}
+            className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
+          >
+            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            Submit
+          </Button>
+        </DialogClose>
         <DialogContent className="max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Crop Image</DialogTitle>
@@ -505,7 +510,7 @@ export function CreateCampaignForm() {
               image={image}
               crop={crop}
               zoom={zoom}
-              aspect={1 / 1}
+              aspect={3 / 1}
               onCropComplete={onCropComplete}
               onCropChange={setCrop}
               onZoomChange={setZoom}
