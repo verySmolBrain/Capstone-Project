@@ -68,7 +68,7 @@ export default function CollectablePage({
               {collectable?.name}
             </h2>
             <hr />
-            <div className="flex flex-row flex-wrap gap-2">
+            <div className="flex flex-row flex-wrap gap-2 pb-3">
               <p className="text-sm font-normal break-words pt-1">Tags:</p>
               {collectable?.tags.map((tag, i) => {
                 return (

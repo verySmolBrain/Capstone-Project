@@ -83,7 +83,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
           <h2 className="text-2xl font-semibold truncate">{campaign?.name}</h2>
           <hr />
-          <div className="flex flex-row flex-wrap gap-2">
+          <div className="flex flex-row flex-wrap gap-2  pb-3">
             <p className="text-sm font-normal break-words pt-1">Tags:</p>
             {campaign?.tags.map((tag, i) => {
               return (
