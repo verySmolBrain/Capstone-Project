@@ -68,4 +68,52 @@ export default async function (fastify: FastifyInstance) {
 
     return { image: upload_res.url }
   })
+
+  /*
+   * POST /image/collection/upload
+   * Uploads a collection image
+   * @param {string} name
+   * @param {Base64} image
+   * @returns {string} url
+   */
+  fastify.post('/image/collection/upload', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
+    console.log(req.body.image)
+
+    const upload_res = await cloudinary.uploader.upload(req.body.image, {
+      resource_type: 'image',
+      public_id: `collection/${req.body.name}`,
+      overwrite: true,
+      invalidate: true,
+    })
+
+    if (!upload_res?.secure_url) {
+      throw new uploadError()
+    }
+
+    return { image: upload_res.url }
+  })
+
+  /*
+   * POST /image/campaign/upload
+   * Uploads a campaign image
+   * @param {string} name
+   * @param {Base64} image
+   * @returns {string} url
+   */
+  fastify.post('/image/campaign/upload', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
+    console.log(req.body.image)
+
+    const upload_res = await cloudinary.uploader.upload(req.body.image, {
+      resource_type: 'image',
+      public_id: `campaign/${req.body.name}`,
+      overwrite: true,
+      invalidate: true,
+    })
+
+    if (!upload_res?.secure_url) {
+      throw new uploadError()
+    }
+
+    return { image: upload_res.url }
+  })
 }
