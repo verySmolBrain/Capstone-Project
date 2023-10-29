@@ -6,12 +6,6 @@ import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import Image from 'next/image'
-<<<<<<< HEAD
-import { ProfileChatButton } from '@/components/ui/button/profile-chat-button'
-
-export default function ProfilePage({ params }: { params: { slug: string } }) {
-  const [profile, setProfile] = React.useState<Profile>()
-=======
 import { ProfileEditButton } from '@/components/ui/button/profile-edit-button'
 import { Rating } from '@smastrom/react-rating'
 import Link from 'next/link'
@@ -25,16 +19,11 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
   const router = useRouter()
->>>>>>> 10e17bd2a2fc69d4f069e7ed769b3e50af53f7b7
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
     const session = (await supabase.auth.getSession()).data.session
     const token = session?.access_token
-<<<<<<< HEAD
-=======
-
->>>>>>> 10e17bd2a2fc69d4f069e7ed769b3e50af53f7b7
     const res = await fetch(url, {
       method: 'GET',
       headers: {
@@ -45,14 +34,6 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
 
     if (res?.ok) {
       return await res.json()
-<<<<<<< HEAD
-    }
-  }
-  const username = params?.slug[0]
-
-  const { data } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/profile/${username}`,
-=======
     } else {
       router.push('/dashboard')
     }
@@ -66,71 +47,11 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
 
   const ownProfileData = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/profile`,
->>>>>>> 10e17bd2a2fc69d4f069e7ed769b3e50af53f7b7
     fetcher,
     { refreshInterval: 3000 }
   )
 
   React.useEffect(() => {
-<<<<<<< HEAD
-    if (data) {
-      setProfile(data)
-    }
-  }, [data])
-
-  return (
-    <>
-      <GeneralNavBar />
-      <section className="space pb-8 pt-6 md:pt-10 container flex gap-4">
-        <div className="container gap-4 border rounded-2xl pt-6 pb-6">
-          <div className="flex items-center gap-4 pt-6 pb-6">
-            <div className="relative w-20 h-20 rounded-full overflow-hidden shrink-0">
-              <Image
-                src={!profile?.image ? '' : profile!.image}
-                layout="fill"
-                className="object-cover w-full h-full"
-                alt="profile picture"
-              />
-            </div>
-            <div className="flex flex-col gap-4">
-              <div className="truncate">
-                <h2 className="text-2xl font-semibold">{profile?.name}</h2>
-                <hr />
-                <p className="text-sm font-normal">Goomba since PLACEHOLDER</p>
-              </div>
-            </div>
-            <ProfileChatButton params={!profile?.name ? '' : profile!.name} />
-
-            <div className="container flex-col">
-              <a href="/reputation">
-                <div className="text-right">
-                  <h2 className="text-xl font-semibold">Reputation</h2>
-                  <p className="text-xl">{profile?.reputation}</p>
-                </div>
-              </a>
-            </div>
-          </div>
-          <div className="">
-            <p className="text-sm truncate">{profile?.description}</p>
-
-            <h2 className="text-2xl font-semibold truncate pt-6 pb-6">
-              My collections
-            </h2>
-            <div className="container gap-4 border rounded-2xl pt-6 pb-6">
-              PLACEHOLDER
-            </div>
-            <h2 className="text-2xl font-semibold truncate pt-6 pb-6">
-              Looking for
-            </h2>
-            <div className="container gap-4 border rounded-2xl pt-6 pb-6">
-              PLACEHOLDER
-            </div>
-            <h2 className="text-2xl font-semibold truncate pt-6 pb-6">
-              Willing to trade
-            </h2>
-            <div className="container gap-4 border rounded-2xl pt-6 pb-6">
-              PLACEHOLDER
-=======
     if (profileData?.data) {
       setProfile(profileData?.data)
 
@@ -281,17 +202,11 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                   )
                 })}
               </Carousel>
->>>>>>> 10e17bd2a2fc69d4f069e7ed769b3e50af53f7b7
             </div>
           </div>
         </div>
       </section>
     </>
-<<<<<<< HEAD
-  )
-  // Maybe change this to redirect to profile/name later
-}
-=======
   ) : (
     <>
       <GeneralNavBar />
@@ -310,4 +225,3 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
  * - Profile getting is buggy right now
  * - Stars should be out of 5
  */
->>>>>>> 10e17bd2a2fc69d4f069e7ed769b3e50af53f7b7
