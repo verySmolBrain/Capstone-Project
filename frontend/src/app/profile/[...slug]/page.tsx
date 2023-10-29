@@ -159,7 +159,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
           <div className="container gap-4 pb-6">
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
-                My Collectables
+                {isOwnProfile ? 'My' : 'Their'} Collectables
               </h2>
               {isOwnProfile && (
                 <AddCollectionProfileButton
@@ -186,18 +186,20 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                               fill
                               className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                               alt={collectable.name}
-                            />
-                            <div
-                              onClick={(e) => {
-                                e.preventDefault()
-                              }}
-                            >
-                              <RemoveCollectableFromProfileButton
-                                type={profileCollection.INVENTORY}
-                                collectable={collectable.name}
-                                mutate={inventoryMutate}
-                              />
-                            </div>
+                            />{' '}
+                            {isOwnProfile && (
+                              <div
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                }}
+                              >
+                                <RemoveCollectableFromProfileButton
+                                  type={profileCollection.INVENTORY}
+                                  collectable={collectable.name}
+                                  mutate={inventoryMutate}
+                                />
+                              </div>
+                            )}
                           </Link>
                         </div>
                         <div className="flex pl-10 pr-10">
@@ -250,17 +252,19 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                               className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                               alt={collectable.name}
                             />
-                            <div
-                              onClick={(e) => {
-                                e.preventDefault()
-                              }}
-                            >
-                              <RemoveCollectableFromProfileButton
-                                type={profileCollection.WISHLIST}
-                                collectable={collectable.name}
-                                mutate={wishlistMutate}
-                              />
-                            </div>
+                            {isOwnProfile && (
+                              <div
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                }}
+                              >
+                                <RemoveCollectableFromProfileButton
+                                  type={profileCollection.WISHLIST}
+                                  collectable={collectable.name}
+                                  mutate={wishlistMutate}
+                                />
+                              </div>
+                            )}
                           </Link>
                         </div>
                         <div className="flex pl-10 pr-10">
@@ -313,17 +317,19 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                               className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                               alt={collectable.name}
                             />
-                            <div
-                              onClick={(e) => {
-                                e.preventDefault()
-                              }}
-                            >
-                              <RemoveCollectableFromProfileButton
-                                type={profileCollection.WARES}
-                                collectable={collectable.name}
-                                mutate={waresMutate}
-                              />
-                            </div>
+                            {isOwnProfile && (
+                              <div
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                }}
+                              >
+                                <RemoveCollectableFromProfileButton
+                                  type={profileCollection.WARES}
+                                  collectable={collectable.name}
+                                  mutate={waresMutate}
+                                />
+                              </div>
+                            )}
                           </Link>
                         </div>
                         <div className="flex pl-10 pr-10">
