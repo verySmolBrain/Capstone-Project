@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { CreateCampaignForm } from '../form/create-campaign-form'
-import { DatePickerForm } from '../form/test'
 
 export function AddCampaignButton() {
   return (
@@ -25,7 +24,7 @@ export function AddCampaignButton() {
         <DialogHeader>
           <DialogTitle>We&apos;re letting you cook...</DialogTitle>
         </DialogHeader>
-        <DatePickerForm />
+        <CreateCampaignForm />
       </DialogContent>
     </Dialog>
   )

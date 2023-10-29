@@ -195,6 +195,7 @@ export function DatePickerForm() {
           startDate: data.range.from,
           endDate: data.range.to,
           tags: data.tags.map((tag) => tag.text),
+          isActive: data.isActive,
         }),
       }
     )
@@ -208,18 +209,10 @@ export function DatePickerForm() {
         variant: 'destructive',
       })
     }
-    // return toast({
-    //   title: 'Success!',
-    //   description: 'The campaign was successfully created!',
-    //   variant: 'default',
-    // })
     return toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      title: 'Success!',
+      description: 'The campaign was successfully created!',
+      variant: 'default',
     })
   }
   React.useEffect(() => {

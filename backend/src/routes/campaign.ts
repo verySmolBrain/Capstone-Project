@@ -17,11 +17,19 @@ export default async function (fastify: FastifyInstance) {
     '/campaign',
     async (
       req: FastifyRequest<{
-        Body: { name: string; image: string; startDate: Date; endDate: Date; collection: collectionConnect[] }
+        Body: {
+          name: string
+          image: string
+          startDate: Date
+          endDate: Date
+          collection: collectionConnect[]
+          tags: string[]
+          isActive: boolean
+        }
       }>
     ) => {
       const token = req.headers['authorization'] as string
-      const { name, image, startDate, endDate } = req.body
+      const { name, image, startDate, endDate, collection, tags, isActive } = req.body
       const prisma = await requestHandler(token)
 
       const campaign = await prisma.campaign.create({
@@ -31,9 +39,11 @@ export default async function (fastify: FastifyInstance) {
           start: startDate,
           end: endDate,
           collections: {
-            connect: req.body.collection,
+            connect: collection,
           },
+          tags: tags,
           managers: { connect: { id: extractId(token) } },
+          isActive: isActive,
         },
       })
       return campaign
