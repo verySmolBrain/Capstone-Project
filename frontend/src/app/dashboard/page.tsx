@@ -56,6 +56,7 @@ export default function Dashboard() {
     }
   }, [roleData.data])
 
+  const campaignTag = 'Featured'
   const { data: resActive } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/campaign/tag/${campaignTag}`,
     fetcher
