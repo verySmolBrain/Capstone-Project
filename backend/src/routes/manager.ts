@@ -11,8 +11,8 @@ export default async function (fastify: FastifyInstance) {
   fastify.post('/manager', async (req: FastifyRequest<{ Body: { id: string } }>) => {
     const token = req.headers['authorization'] as string
     const { id } = req.body
+
     const name = await generateUsername(token)
-    console.log(id, name)
     const prisma = await requestHandler(token)
     await prisma.user.create({
       data: {

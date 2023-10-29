@@ -107,7 +107,6 @@ export default async function (fastify: FastifyInstance) {
       })
 
       if (!collectableCount) {
-        console.log('hi')
         await prisma.collectableCount.create({
           data: {
             name: req.params.collectable,

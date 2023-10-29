@@ -75,7 +75,10 @@ export default function ManagerPage() {
                           e.preventDefault()
                         }}
                       >
-                        <ArchiveCampaignButton></ArchiveCampaignButton>
+                        <ArchiveCampaignButton
+                          campaign={name}
+                          mutate={campaignMutate}
+                        />
                       </div>
                     </Link>
                   </div>

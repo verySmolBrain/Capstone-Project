@@ -22,7 +22,6 @@ export default async function (fastify: FastifyInstance) {
     })
 
     const collections: CollectionCollectable = {}
-    console.log(profile)
     profile?.inventory?.forEach((collectableCount) => {
       collectableCount?.collectable?.collection.forEach((collection) => {
         if (!collections[collection.name]) {
@@ -65,7 +64,6 @@ export default async function (fastify: FastifyInstance) {
             collectables: [],
           }
         }
-        console.log(collections[collection.name])
         collections[collection.name].collectables.push(collectableCount)
       })
     })
@@ -115,7 +113,6 @@ export default async function (fastify: FastifyInstance) {
       })
 
       if (!collectableCount) {
-        console.log('hi')
         await prisma.collectableCount.create({
           data: {
             name: req.params.collectable,

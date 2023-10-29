@@ -37,7 +37,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     }
   }
 
-  const { data: campaignResult } = useSWR(
+  const { data: campaignResult, mutate } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${params.slug}`,
     fetcher
   )
@@ -108,7 +108,10 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                 Collections Within {campaign.name}
               </h2>
               {role === Role.MANAGER && (
-                <AddCollectionToCampaignButton></AddCollectionToCampaignButton>
+                <AddCollectionToCampaignButton
+                  campaign={campaign.name}
+                  mutate={mutate}
+                />
               )}
             </div>
             <Carousel>
@@ -130,7 +133,11 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                               e.preventDefault()
                             }}
                           >
-                            <RemoveCollectionFromCampaignButton></RemoveCollectionFromCampaignButton>
+                            <RemoveCollectionFromCampaignButton
+                              campaign={campaign.name}
+                              collection={name}
+                              mutate={mutate}
+                            />
                           </div>
                         )}
                       </Link>
