@@ -115,8 +115,8 @@ export function SearchButton() {
                   <CommandItem
                     key={users.name}
                     value={users.name}
-                    onSelect={(value) => {
-                      router.push(`/profile/${value}`)
+                    onSelect={() => {
+                      router.push(`/profile/${users.name}`)
                     }}
                   >
                     <span>{users.name}</span>
@@ -129,8 +129,8 @@ export function SearchButton() {
                   <CommandItem
                     key={collectable.name}
                     value={collectable.name}
-                    onSelect={(value) => {
-                      router.push(`/collectable/${value}`)
+                    onSelect={() => {
+                      router.push(`/collectable/${collectable.name}`)
                     }}
                   >
                     <span>{collectable.name}</span>
@@ -143,8 +143,8 @@ export function SearchButton() {
                   <CommandItem
                     key={campaigns.name}
                     value={campaigns.name}
-                    onSelect={(value) => {
-                      router.push(`/campaign/${value}`)
+                    onSelect={() => {
+                      router.push(`/campaign/${campaigns.name}`)
                     }}
                   >
                     <span>{campaigns.name}</span>
@@ -157,8 +157,8 @@ export function SearchButton() {
                   <CommandItem
                     key={collection.name}
                     value={collection.name}
-                    onSelect={(value) => {
-                      router.push(`/collection/${value}`)
+                    onSelect={() => {
+                      router.push(`/collection/${collection.name}`)
                     }}
                   >
                     <span>{collection.name}</span>
