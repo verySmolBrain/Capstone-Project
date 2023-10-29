@@ -66,19 +66,19 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
   )
 
   const { data: inventoryData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory/${params.slug}`,
     fetcher,
     { refreshInterval: 3000 }
   )
 
   const { data: waresData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares/${params.slug}`,
     fetcher,
     { refreshInterval: 3000 }
   )
 
   const { data: wishlistData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist/${params.slug}`,
     fetcher,
     { refreshInterval: 3000 }
   )
