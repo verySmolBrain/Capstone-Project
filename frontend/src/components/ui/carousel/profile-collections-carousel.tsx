@@ -111,7 +111,7 @@ export function ProfileCollectionCarousel({
                 <DialogHeader>
                   <DialogTitle>{key}</DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4 max-h-[70vh]">
+                <div className="grid gap-4 py-4 max-h-[80vh]">
                   <ScrollArea>
                     <div className="w-full flex flex-row flex-wrap items-center justify-center gap-4">
                       {activeCollection?.collectables.map((collectable, i) => {
