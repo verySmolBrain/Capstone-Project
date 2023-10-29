@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { createCollectableSchema } from '@/lib/validation/collectable'
+import { createCollectionSchema } from '@/lib/validation/collection'
 import {
   Form,
   FormControl,
@@ -72,7 +72,7 @@ export default async function getCroppedImg(
 
 // -----------------------------------------------------------------------------
 
-type FormData = z.infer<typeof createCollectableSchema>
+type FormData = z.infer<typeof createCollectionSchema>
 
 export function CreateCollectionForm({
   setOpen,
@@ -95,7 +95,7 @@ export function CreateCollectionForm({
 
   const form = useForm<FormData>({
     mode: 'onChange',
-    resolver: zodResolver(createCollectableSchema),
+    resolver: zodResolver(createCollectionSchema),
   })
 
   // image functions
@@ -119,7 +119,7 @@ export function CreateCollectionForm({
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/collectable/upload`,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/collection/upload`,
       {
         method: 'POST',
         headers: {
@@ -139,7 +139,7 @@ export function CreateCollectionForm({
     }
 
     const createResult = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection`,
       {
         method: 'POST',
         headers: {
@@ -165,13 +165,13 @@ export function CreateCollectionForm({
 
     return toast({
       title: 'Success!',
-      description: 'The collectable was successfully created!',
+      description: 'The collection was successfully created!',
       variant: 'default',
     })
   }
 
   return (
-    <div className="grid gap-6 w-fill">
+    <div className="grid gap-6 w-fill overflow-y-auto max-h-[600px] no-scrollbar">
       <Dialog>
         {image && (
           <div className="flex flex-col gap-2">
@@ -198,9 +198,9 @@ export function CreateCollectionForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Collectable Name</FormLabel>
+                    <FormLabel>Collection Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Pikachu" {...field} />
+                      <Input placeholder="Sword and Shield!" {...field} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -226,7 +226,7 @@ export function CreateCollectionForm({
                     </FormControl>
                     <FormDescription>
                       These are the keywords that will be used to categorize
-                      your new collectable.
+                      your new collection.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -238,7 +238,7 @@ export function CreateCollectionForm({
                 render={({ field: { onChange } }) => (
                   <>
                     <FormItem>
-                      <FormLabel>Collectable Image</FormLabel>
+                      <FormLabel>Collection Image</FormLabel>
                       <FormControl>
                         <Input
                           type="file"
@@ -277,7 +277,7 @@ export function CreateCollectionForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Choose an image for your collectable.
+                        Choose an image for your collection.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -322,14 +322,14 @@ export function CreateCollectionForm({
         <DialogContent className="max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Crop Image</DialogTitle>
-            <DialogDescription>Crop your collectable here!</DialogDescription>
+            <DialogDescription>Crop your collection here!</DialogDescription>
           </DialogHeader>
           <div className="min-h-[350px] sm:min-h-[425px] relative border-2">
             <Cropper
               image={image}
               crop={crop}
               zoom={zoom}
-              aspect={1 / 1}
+              aspect={63 / 88}
               onCropComplete={onCropComplete}
               onCropChange={setCrop}
               onZoomChange={setZoom}

@@ -31,7 +31,6 @@ export default async function (fastify: FastifyInstance) {
       const token = req.headers['authorization'] as string
       const { name, image, startDate, endDate, collection, tags, isActive } = req.body
       const prisma = await requestHandler(token)
-      console.log(collection)
 
       const campaign = await prisma.campaign.create({
         data: {
@@ -98,12 +97,18 @@ export default async function (fastify: FastifyInstance) {
     async (
       req: FastifyRequest<{
         Params: { name: string }
-        Body: { image: string; startDate: Date; endDate: Date; collections: collectionConnect[] }
+        Body: {
+          image: string
+          startDate: Date
+          endDate: Date
+          collections: collectionConnect[]
+          isActive: boolean | undefined
+        }
       }>
     ) => {
       const token = req.headers['authorization'] as string
       const { name } = req.params
-      const { image, startDate, endDate } = req.body
+      const { image, startDate, endDate, isActive } = req.body
       const prisma = await requestHandler(token)
 
       const campaign = await prisma.campaign.update({
@@ -114,6 +119,7 @@ export default async function (fastify: FastifyInstance) {
           image: image,
           start: startDate,
           end: endDate,
+          isActive: isActive ?? true,
           collections: {
             connect: req.body.collections,
           },
@@ -149,8 +155,6 @@ export default async function (fastify: FastifyInstance) {
         },
       })
 
-      console.log(campaign)
-
       return campaign
     }
   )
@@ -173,4 +177,33 @@ export default async function (fastify: FastifyInstance) {
     })
     return campaign
   })
+
+  /*
+   * DELETE /collection/:collectionName/:collectableName
+   * Removes a collection from a campaign
+   * @param {string} collection
+   * @param {string} collectable
+   * @returns {object} collection
+   */
+  fastify.delete(
+    '/campaign/:campaignName/:collectionName',
+    async (req: FastifyRequest<{ Params: { campaignName: string; collectionName: string } }>) => {
+      const token = req.headers['authorization'] as string
+      const { campaignName, collectionName } = req.params
+
+      const prisma = await requestHandler(token)
+      const campaign = await prisma.campaign.update({
+        where: {
+          name: campaignName,
+        },
+        data: {
+          collections: {
+            disconnect: { name: collectionName },
+          },
+        },
+      })
+
+      return campaign
+    }
+  )
 }

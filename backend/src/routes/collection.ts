@@ -7,22 +7,26 @@ export default async function (fastify: FastifyInstance) {
    * Creates a collection
    * @param {string} name
    * @param {string} image
+   * @param {string[]} tags
    * @returns {object} collection
    */
-  fastify.post('/collection', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
-    const token = req.headers['authorization'] as string
-    const { name } = req.body
-    const prisma = await requestHandler(token)
+  fastify.post(
+    '/collection',
+    async (req: FastifyRequest<{ Body: { name: string; image: string; tags: string[] } }>) => {
+      const token = req.headers['authorization'] as string
+      const { name, image, tags } = req.body
+      const prisma = await requestHandler(token)
 
-    const collection = await prisma.collection.create({
-      data: {
-        name: name,
-        image: 'https://archives.bulbagarden.net/media/upload/7/7e/SV4_Logo_EN.png',
-        tags: [],
-      },
-    })
-    return collection
-  })
+      const collection = await prisma.collection.create({
+        data: {
+          name: name,
+          image: image,
+          tags: tags,
+        },
+      })
+      return collection
+    }
+  )
 
   /*
    * GET /collection
@@ -68,8 +72,7 @@ export default async function (fastify: FastifyInstance) {
     async (req: FastifyRequest<{ Params: { collectionName: string; collectableName: string } }>) => {
       const token = req.headers['authorization'] as string
       const { collectionName, collectableName } = req.params
-      console.log('AAAAAAAAA')
-      console.log(collectionName)
+
       const prisma = await requestHandler(token)
       const collection = await prisma.collection.update({
         where: {

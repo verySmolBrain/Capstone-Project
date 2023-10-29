@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { AddCollectionCampaignForm } from '../form/add-collection-campaign-form'
-import { ScrollArea } from '../scroll-area'
 import { CreateCollectionForm } from '../form/create-collection-form'
 
 export function AddCollectionToCampaignButton({

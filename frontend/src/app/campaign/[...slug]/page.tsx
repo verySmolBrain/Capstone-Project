@@ -133,7 +133,11 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                               e.preventDefault()
                             }}
                           >
-                            <RemoveCollectionFromCampaignButton></RemoveCollectionFromCampaignButton>
+                            <RemoveCollectionFromCampaignButton
+                              campaign={campaign.name}
+                              collection={name}
+                              mutate={mutate}
+                            />
                           </div>
                         )}
                       </Link>
