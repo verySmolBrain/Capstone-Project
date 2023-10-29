@@ -22,9 +22,18 @@ import { ScrollArea } from '../scroll-area'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
+import { RemoveCollectableFromProfileButton } from '../button/remove-collectable-from-profile-button'
+
+enum profileCollection {
+  INVENTORY,
+  WISHLIST,
+  WARES,
+}
 
 export function ProfileCollectionCarousel({
+  isOwnProfile,
   inventory,
+  inventoryMutate,
   default_img,
 }: {
   inventory: CollectionCollectable
@@ -136,6 +145,19 @@ export function ProfileCollectionCarousel({
                                       }
                                       alt="alt"
                                     />
+                                    {isOwnProfile && (
+                                      <div
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                        }}
+                                      >
+                                        <RemoveCollectableFromProfileButton
+                                          type={profileCollection.WISHLIST}
+                                          collectable={collectable.name}
+                                          mutate={inventoryMutate}
+                                        />
+                                      </div>
+                                    )}
                                   </Link>
                                 </TooltipTrigger>
                                 <TooltipContent>
