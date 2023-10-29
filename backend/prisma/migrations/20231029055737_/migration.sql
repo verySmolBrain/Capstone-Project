@@ -88,6 +88,9 @@ CREATE TABLE "CollectableCount" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "count" INTEGER NOT NULL DEFAULT 0,
+    "inventoryId" TEXT,
+    "wishlistId" TEXT,
+    "waresId" TEXT,
 
     CONSTRAINT "CollectableCount_pkey" PRIMARY KEY ("id")
 );
@@ -128,24 +131,6 @@ CREATE TABLE "_ChatsUsers" (
 -- CreateTable
 CREATE TABLE "_collection" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_inventory" (
-    "A" INTEGER NOT NULL,
-    "B" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_wishlist" (
-    "A" INTEGER NOT NULL,
-    "B" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_wares" (
-    "A" INTEGER NOT NULL,
     "B" TEXT NOT NULL
 );
 
@@ -195,24 +180,6 @@ CREATE UNIQUE INDEX "_collection_AB_unique" ON "_collection"("A", "B");
 CREATE INDEX "_collection_B_index" ON "_collection"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_inventory_AB_unique" ON "_inventory"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_inventory_B_index" ON "_inventory"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_wishlist_AB_unique" ON "_wishlist"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_wishlist_B_index" ON "_wishlist"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_wares_AB_unique" ON "_wares"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_wares_B_index" ON "_wares"("B");
-
--- CreateIndex
 CREATE UNIQUE INDEX "_CampaignToCollection_AB_unique" ON "_CampaignToCollection"("A", "B");
 
 -- CreateIndex
@@ -249,6 +216,15 @@ ALTER TABLE "Message" ADD CONSTRAINT "Message_chatId_fkey" FOREIGN KEY ("chatId"
 ALTER TABLE "CollectableCount" ADD CONSTRAINT "CollectableCount_name_fkey" FOREIGN KEY ("name") REFERENCES "Collectable"("name") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "CollectableCount" ADD CONSTRAINT "CollectableCount_inventoryId_fkey" FOREIGN KEY ("inventoryId") REFERENCES "Profile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CollectableCount" ADD CONSTRAINT "CollectableCount_wishlistId_fkey" FOREIGN KEY ("wishlistId") REFERENCES "Profile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CollectableCount" ADD CONSTRAINT "CollectableCount_waresId_fkey" FOREIGN KEY ("waresId") REFERENCES "Profile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "_AchievementToProfile" ADD CONSTRAINT "_AchievementToProfile_A_fkey" FOREIGN KEY ("A") REFERENCES "Achievement"("name") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -265,24 +241,6 @@ ALTER TABLE "_collection" ADD CONSTRAINT "_collection_A_fkey" FOREIGN KEY ("A") 
 
 -- AddForeignKey
 ALTER TABLE "_collection" ADD CONSTRAINT "_collection_B_fkey" FOREIGN KEY ("B") REFERENCES "Collection"("name") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_inventory" ADD CONSTRAINT "_inventory_A_fkey" FOREIGN KEY ("A") REFERENCES "CollectableCount"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_inventory" ADD CONSTRAINT "_inventory_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_wishlist" ADD CONSTRAINT "_wishlist_A_fkey" FOREIGN KEY ("A") REFERENCES "CollectableCount"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_wishlist" ADD CONSTRAINT "_wishlist_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_wares" ADD CONSTRAINT "_wares_A_fkey" FOREIGN KEY ("A") REFERENCES "CollectableCount"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_wares" ADD CONSTRAINT "_wares_B_fkey" FOREIGN KEY ("B") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_CampaignToCollection" ADD CONSTRAINT "_CampaignToCollection_A_fkey" FOREIGN KEY ("A") REFERENCES "Campaign"("name") ON DELETE CASCADE ON UPDATE CASCADE;
