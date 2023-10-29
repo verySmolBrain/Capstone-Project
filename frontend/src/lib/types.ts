@@ -15,6 +15,7 @@ enum Role {
   USER,
   MANAGER,
   ADMIN,
+  NULL,
 }
 
 type Collection = {

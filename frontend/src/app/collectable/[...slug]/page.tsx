@@ -6,7 +6,8 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
-import { Loader2 } from 'lucide-react'
+import { LoadingScreen } from '@/components/ui/page/loading-page'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function CollectablePage({
   params,
@@ -47,36 +48,44 @@ export default function CollectablePage({
   return collectable ? (
     <>
       <GeneralNavBar />
-      <section className="pt-6 md:pt-10">
-        <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
-          <Image
-            src={collectable.image}
-            width={500}
-            height={500}
-            className="object-cover w-full"
-            alt="Campaign Image"
-          />
+      <section className="container flex flex-col pt-3 items-center">
+        <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3">
+          {collectable?.image ? (
+            <Image
+              src={collectable.image}
+              width={528}
+              height={702}
+              className="object-cover w-full rounded-2xl"
+              alt="Campaign Image"
+            />
+          ) : (
+            <Skeleton className="h-60 xs:h-96" />
+          )}
         </div>
-        <div className="container flex flex-row flex-wrap gap-4">
-          <div className="flex flex-col order-last gap-2 md:order-none w-screen md:w-fit">
+        <div className="container flex flex-row flex-wrap gap-4 justify-center">
+          <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-semibold truncate">
               {collectable?.name}
             </h2>
             <hr />
-            <p className="text-sm font-normal break-words md:max-w-[400px] lg:max-w-[600px]">
-              Tags: {collectable?.tags.join(', ')}
-            </p>
+            <div className="flex flex-row flex-wrap gap-2 pb-3">
+              <p className="text-sm font-normal break-words pt-1">Tags:</p>
+              {collectable?.tags.map((tag, i) => {
+                return (
+                  <p
+                    key={i}
+                    className="bg-secondary pl-2 pr-2 pb-1 pt-1 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    {tag}
+                  </p>
+                )
+              })}
+            </div>
           </div>
-          edit collectable details button
         </div>
       </section>
     </>
   ) : (
-    <>
-      <GeneralNavBar />
-      <div className="w-full h-[calc(100vh-100px)] flex justify-center items-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    </>
+    <LoadingScreen />
   )
 }
