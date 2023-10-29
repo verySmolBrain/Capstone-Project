@@ -42,6 +42,8 @@ type FormData = z.infer<typeof updateProfileCollectionSchema>
 
 export function UpdateProfileCollectionForm(props: {
   type: profileCollection
+  setOpen: (a: boolean) => void
+  mutate: () => void
 }) {
   const [isLoading, setIsLoading] = React.useState(false)
   const [collectables, setCollectables] = React.useState<Collectable[]>()
@@ -104,6 +106,8 @@ export function UpdateProfileCollectionForm(props: {
         variant: 'destructive',
       })
     }
+    props.setOpen(false)
+    props.mutate()
     return toast({
       title: 'Success!',
       description: 'The collectable was successfully created!',
