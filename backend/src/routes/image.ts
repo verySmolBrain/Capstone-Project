@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
 import { v2 as cloudinary } from 'cloudinary'
+import { uploadError } from '@Source/utils/error'
 
 cloudinary.config({
   secure: true,
@@ -32,7 +33,7 @@ export default async function (fastify: FastifyInstance) {
     })
 
     if (!upload_res?.secure_url) {
-      throw new Error('Upload failed')
+      throw new uploadError()
     }
 
     const changedImage = await prisma.profile.updateMany({
@@ -42,5 +43,29 @@ export default async function (fastify: FastifyInstance) {
     })
 
     return changedImage
+  })
+
+  /*
+   * POST /image/collectable/upload
+   * Uploads a collectable image
+   * @param {string} name
+   * @param {Base64} image
+   * @returns {string} url
+   */
+  fastify.post('/image/collectable/upload', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
+    console.log(req.body.image)
+
+    const upload_res = await cloudinary.uploader.upload(req.body.image, {
+      resource_type: 'image',
+      public_id: `collectable/${req.body.name}`,
+      overwrite: true,
+      invalidate: true,
+    })
+
+    if (!upload_res?.secure_url) {
+      throw new uploadError()
+    }
+
+    return { image: upload_res.url }
   })
 }

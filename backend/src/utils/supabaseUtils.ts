@@ -15,6 +15,12 @@ export const prisma = new PrismaClient()
 export async function requestHandler(token: string) {
   const { data: user } = await supabase().auth.getUser(token)
 
+  const { role } = (await prisma.user.findFirst({
+    where: {
+      id: extractId(token),
+    },
+  })) ?? { role: 'USER' }
+
   /**
    *  This is ZenStack's implementation of RLS.
    *  Essentially there are permissions in the schema.zmodel in root directory that handles permissions
@@ -33,7 +39,7 @@ export async function requestHandler(token: string) {
    *  applied to your query!
    */
 
-  return enhance(prisma, { user: { id: user?.user?.id } })
+  return enhance(prisma, { user: { id: user?.user?.id, role: role } })
 }
 
 export const validateUser = async (token: string): Promise<boolean> => {

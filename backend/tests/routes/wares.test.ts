@@ -1,28 +1,28 @@
-
 import { build } from '@Source/app'
 import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
 
-  /*
-   *  GET /wares
-   *  Returns the user's wares
-   *  @returns {object} wares
-   */
+/*
+ *  GET /wares
+ *  Returns the user's wares
+ *  @returns {object} wares
+ */
 
 describe('/wares', () => {
-  it('Successfully retrieves user\'s wares - return 200', async () => {
-
-    // @ts-expect-error - Findunique generates type on query so will throw 
+  it("Successfully retrieves user's wares - return 200", async () => {
+    // @ts-expect-error - Findunique generates type on query so will throw
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-        wares: [{
-            id: 1,
-            name: 'dfsa',
-            image: null,
-        }],
-        id: 'yabb',
-        name: 'yabba',
-        description: null,
-        image: null,
-        reputation: 42,
+      wares: [
+        {
+          id: 1,
+          name: 'dfsa',
+          image: null,
+        },
+      ],
+      id: 'yabb',
+      name: 'yabba',
+      description: null,
+      image: null,
+      reputation: 42,
     })
 
     const app = await build({})
@@ -36,7 +36,7 @@ describe('/wares', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe("[{\"id\":1,\"name\":\"dfsa\",\"image\":null}]")
+    expect(response.body).toBe('[{"id":1,"name":"dfsa","image":null}]')
     await app.close()
   })
 
@@ -57,25 +57,45 @@ describe('/wares', () => {
 })
 
 /*
-    *  PUT /wares
-    *  Update the user's wares
-    *  @param {Id[]} collectableIds
-*/
+ *  PUT /wares
+ *  Update the user's wares
+ *  @param {Id[]} collectableIds
+ */
 describe('/wares', () => {
-  it('Successfully retrieves updates user\'s wares - return 200', async () => {
+  it("Successfully retrieves updates user's wares - return 200", async () => {
+    const inventory = {
+      inventory: [
+        {
+          name: 'yabbin',
+          count: 1,
+          collectable: {
+            image: 'image',
+            tags: ['onetag', 'twotag'],
+          },
+        },
+      ],
+      id: 'yabb',
+      name: 'yabba',
+      description: null,
+      image: null,
+      reputation: 42,
+    }
+    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce(inventory)
 
-    // @ts-expect-error - update generates type on query so will throw 
+    // @ts-expect-error - update generates type on query so will throw
     prismaMockInstance.profile.update.mockResolvedValueOnce({
-        wares: [{
-            id: 1,
-            name: 'dfsa',
-            image: null,
-        }],
-        id: 'yabb',
-        name: 'yabba',
-        description: null,
-        image: null,
-        reputation: 42,
+      wares: [
+        {
+          id: 1,
+          name: 'dfsa',
+          image: null,
+        },
+      ],
+      id: 'yabb',
+      name: 'yabba',
+      description: null,
+      image: null,
+      reputation: 42,
     })
 
     const app = await build({})
@@ -86,13 +106,13 @@ describe('/wares', () => {
         Authorization: 'Bearer your-token-here',
       },
       body: {
-        collectableIds: [{id: 1, name: 'yabbin', image: null},]
-      }
+        collectables: [{ id: 1, name: 'yabbin', image: null }],
+      },
     })
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe("[{\"id\":1,\"name\":\"dfsa\",\"image\":null}]")
+    expect(response.body).toBe('[{"id":1,"name":"dfsa","image":null}]')
     await app.close()
   })
 
@@ -111,4 +131,3 @@ describe('/wares', () => {
     await app.close()
   })
 })
-

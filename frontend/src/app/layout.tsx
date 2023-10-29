@@ -4,7 +4,7 @@ import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { cn } from '@/lib/utils'
 import type { Metadata } from 'next'
 import { Toaster } from '@/components/ui/toaster'
-// import { Inter } from 'next/font/google'
+import '@smastrom/react-rating/style.css'
 
 export const metadata: Metadata = {
   title: 'Goomba Market',

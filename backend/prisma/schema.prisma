@@ -10,7 +10,7 @@ datasource db {
 
 generator client {
     provider = "prisma-client-js"
-    previewFeatures = ["multiSchema","fullTextSearch"]
+    previewFeatures = ["fullTextSearch"]
 }
 
 enum Role {
@@ -51,7 +51,7 @@ model Profile {
     achievements Achievement[]
     sales Trade[] @relation("seller")
     purchases Trade[] @relation("buyer")
-    reputation Int @default(0)
+    reputation Float @default(0)
     givenReviews Review[] @relation("reviewer")
     receivedReviews Review[] @relation("reviewee")
     chats Chat[] @relation("ChatsUsers")
@@ -125,16 +125,18 @@ model Collectable {
     Trade Trade[]
 }
 
-/// @@deny('update', true)
 /// @@allow('all', true)
 model CollectableCount {
     id Int @id() @default(autoincrement())
     collectable Collectable @relation("count", fields: [name], references: [name])
     name String
     count Int @default(0)
-    inventory Profile[] @relation("inventory")
-    wishlist Profile[] @relation("wishlist")
-    wares Profile[] @relation("wares")
+    inventory Profile? @relation("inventory", fields: [inventoryId], references: [id])
+    inventoryId String?
+    wishlist Profile? @relation("wishlist", fields: [wishlistId], references: [id])
+    wishlistId String?
+    wares Profile? @relation("wares", fields: [waresId], references: [id])
+    waresId String?
 }
 
 /// @@allow('read', true)
@@ -150,8 +152,7 @@ model Collection {
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Campaign {
-    id Int @id() @default(autoincrement())
-    name String
+    name String @id() @unique()
     image String?
     tags String[]
     start DateTime @default(now())

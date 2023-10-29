@@ -4,15 +4,8 @@ import { requestHandler } from './supabaseUtils'
 
 const customConfig: Config = {
   dictionaries: [adjectives, colors, animals],
-}
-
-export type Id = {
-  id: number
-}
-
-export type collectableCount = {
-  name: string
-  count: number
+  style: 'capital',
+  separator: '',
 }
 
 // get user id from name
