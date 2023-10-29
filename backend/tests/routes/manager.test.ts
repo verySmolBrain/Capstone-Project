@@ -1,6 +1,4 @@
 import { build } from '@Source/app'
-import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
-import { Role } from '@prisma/client'
 
   /*
    * POST /manager
