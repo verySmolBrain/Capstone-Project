@@ -146,16 +146,17 @@ export function ChatPage({ receiver }: Props) {
     <div className="container flex w-screen pt-4 pb-24 min-w-full flex-grow overflow-x-hidden">
       <div className="space-y-4 min-w-full flex-grow">
         {messages.map((message, index) => (
-          <div
-            key={index}
-            className={cn(
-              'flex w-max max-w-[90%] flex-col gap-2 rounded-lg px-3 py-2 text-sm break-all',
-              message.type === MessageType.USER
-                ? 'ml-auto bg-primary text-primary-foreground'
-                : 'bg-muted'
-            )}
-          >
-            <LinkParser watchers={linkWatcher}>{message.content}</LinkParser>
+          <div key={index} className="flex items-center">
+            <div
+              className={cn(
+                'flex w-max max-w-[90%] flex-col gap-2 rounded-lg px-3 py-2 text-sm break-all',
+                message.type === MessageType.USER
+                  ? 'ml-auto bg-primary text-primary-foreground'
+                  : 'bg-muted'
+              )}
+            >
+              <LinkParser watchers={linkWatcher}>{message.content}</LinkParser>
+            </div>
           </div>
         ))}
         <div ref={messagesEndRef} />

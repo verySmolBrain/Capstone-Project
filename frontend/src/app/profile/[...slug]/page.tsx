@@ -40,7 +40,6 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     const supabase = createClientComponentClient<Database>()
     const session = (await supabase.auth.getSession()).data.session
     const token = session?.access_token
-
     const res = await fetch(url, {
       method: 'GET',
       headers: {
