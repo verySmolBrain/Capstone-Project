@@ -26,6 +26,7 @@ enum Status {
 }
 
 /// @@deny('update', true)
+/// @@allow('create', auth().role == ADMIN)
 /// @@allow('create, read', true)
 /// @@allow('update,delete', auth() == this)
 /// @@allow('all', auth().role == ADMIN)
@@ -60,7 +61,7 @@ model Profile {
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().id == reviewer.id)
 model Review {
-    id String @id()
+    id Int @id() @default(autoincrement())
     rating Int
     comment String
     reviewee Profile @relation("reviewee", fields: [reviewerId], references: [id])

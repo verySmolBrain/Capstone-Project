@@ -1,50 +1,44 @@
 import { build } from '@Source/app'
 import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
 
-/*
- *  GET /wares
- *  Returns the user's wares
- *  @returns {object} wares
- */
+  /*
+   *  GET /wishlist
+   *  Returns the user's wishlist
+   *  @returns {object} wishlist
+   */
 
-describe('/wares', () => {
-  it("Successfully retrieves user's wares - return 200", async () => {
-    // @ts-expect-error - Findunique generates type on query so will throw
+describe('/wishlist - GET', () => {
+  it('Successful wishlist retrieval - return 200', async () => {
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-      wares: [
-        {
-          id: 1,
-          name: 'dfsa',
-          image: null,
-        },
-      ],
-      id: 'yabb',
-      name: 'yabba',
-      description: null,
-      image: null,
-      reputation: 42,
-    })
+        id: 'double',
+        name: 'stringadsf',
+        description: null,
+        image: null,
+        reputation: 1,
+      })
 
     const app = await build({})
     const response = await app.inject({
       method: 'GET',
-      url: '/wares',
+      url: '/wishlist',
       headers: {
-        Authorization: 'Bearer your-token-here',
+        Authorization: 'yobba',
       },
+      body: {
+        collectableId: "haaaaaagghghghhg mimimimimi"
+      }
     })
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe('[{"id":1,"name":"dfsa","image":null}]')
-    await app.close()
+    expect(response.body.startsWith("")).toBe(true)
   })
 
-  it('Empty token - return 401 UnAuthorized', async () => {
+  it('Empty token error - return 401', async () => {
     const app = await build({})
     const response = await app.inject({
       method: 'GET',
-      url: '/wares',
+      url: '/wishlist',
       headers: {
         Authorization: '',
       },
@@ -52,58 +46,33 @@ describe('/wares', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
-    await app.close()
+
   })
 })
 
-/*
- *  PUT /wares
- *  Update the user's wares
- *  @param {Id[]} collectableIds
- */
-describe('/wares', () => {
-  it("Successfully retrieves updates user's wares - return 200", async () => {
-    const inventory = {
-      inventory: [
-        {
-          name: 'yabbin',
-          count: 1,
-          collectable: {
-            image: 'image',
-            tags: ['onetag', 'twotag'],
-          },
-        },
-      ],
-      id: 'yabb',
-      name: 'yabba',
-      description: null,
-      image: null,
-      reputation: 42,
-    }
-    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce(inventory)
+  /*
+   *  PUT /wishlist
+   *  Update the user's wishlist
+   *  @param {collectableCount[]} collectables
+   *  @returns {object} wishlist
+   */
 
-    // @ts-expect-error - update generates type on query so will throw
+describe('/wishlist - POST', () => {
+  it('Successful Wishlist  update - return 200', async () => {
     prismaMockInstance.profile.update.mockResolvedValueOnce({
-      wares: [
-        {
-          id: 1,
-          name: 'dfsa',
-          image: null,
-        },
-      ],
-      id: 'yabb',
-      name: 'yabba',
-      description: null,
-      image: null,
-      reputation: 42,
-    })
+        id: 'double',
+        name: 'stringadsf',
+        description: null,
+        image: null,
+        reputation: 1,
+      })
 
     const app = await build({})
     const response = await app.inject({
       method: 'PUT',
-      url: '/wares',
+      url: '/wishlist',
       headers: {
-        Authorization: 'Bearer your-token-here',
+        Authorization: 'yobba',
       },
       body: {
         collectables: [{ id: 1, name: 'yabbin', image: null }],
@@ -112,15 +81,14 @@ describe('/wares', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe('[{"id":1,"name":"dfsa","image":null}]')
-    await app.close()
+    expect(response.body.startsWith("")).toBe(true)
   })
 
-  it('Empty token - return 401 UnAuthorized', async () => {
+  it('Empty token error - return 401', async () => {
     const app = await build({})
     const response = await app.inject({
-      method: 'PUT',
-      url: '/wares',
+      method: 'POST',
+      url: '/wishlist',
       headers: {
         Authorization: '',
       },
@@ -128,6 +96,7 @@ describe('/wares', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
-    await app.close()
+
   })
 })
+

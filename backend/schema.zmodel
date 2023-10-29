@@ -57,7 +57,7 @@ model Profile {
 }
 
 model Review {
-  id         String  @id
+  id         Int   @id @default(autoincrement())
   rating     Int
   comment    String
   reviewee   Profile @relation('reviewee', fields: [reviewerId], references: [id])
