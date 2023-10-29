@@ -98,7 +98,7 @@ export function ProfileCollectionCarousel({
                   Open Collection
                 </Button>
               </DialogTrigger>
-              <DialogContent className="container min-w-[90%]">
+              <DialogContent className="container max-w-[350px] xs:min-w-[90%]">
                 <DialogHeader>
                   <DialogTitle>{key}</DialogTitle>
                 </DialogHeader>

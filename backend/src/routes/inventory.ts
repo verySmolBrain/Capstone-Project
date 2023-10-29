@@ -22,8 +22,9 @@ export default async function (fastify: FastifyInstance) {
     })
 
     const collections: CollectionCollectable = {}
-    profile.inventory.forEach((collectableCount) => {
-      collectableCount.collectable.collection.forEach((collection) => {
+    console.log(profile)
+    profile?.inventory?.forEach((collectableCount) => {
+      collectableCount?.collectable?.collection.forEach((collection) => {
         if (!collections[collection.name]) {
           collections[collection.name] = {
             image: collection.image ?? undefined,
