@@ -20,7 +20,11 @@ enum profileCollection {
   WARES,
 }
 
-async function onDelete(type: profileCollection, collectable: string) {
+async function onDelete(
+  type: profileCollection,
+  collectable: string,
+  mutate: () => void
+) {
   const supabase = createClientComponentClient<Database>()
   const token = (await supabase.auth.getSession()).data.session?.access_token
   let response
@@ -66,6 +70,7 @@ async function onDelete(type: profileCollection, collectable: string) {
       variant: 'destructive',
     })
   }
+  mutate()
   return toast({
     title: 'Success!',
     description: 'The collectable was successfully deleted!',
@@ -76,6 +81,7 @@ async function onDelete(type: profileCollection, collectable: string) {
 export function RemoveCollectableFromProfileButton(props: {
   type: profileCollection
   collectable: string
+  mutate: () => void
 }) {
   return (
     <Dialog>
@@ -93,7 +99,7 @@ export function RemoveCollectableFromProfileButton(props: {
             <Button
               className="flex-col m-2"
               onClick={() => {
-                onDelete(props.type, props.collectable)
+                onDelete(props.type, props.collectable, props.mutate)
               }}
             >
               Yes
