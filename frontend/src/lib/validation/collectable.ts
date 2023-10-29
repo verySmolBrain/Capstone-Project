@@ -43,3 +43,7 @@ export const updateProfileCollectionSchema = z.object({
       'Count should be an integer'
     ),
 })
+
+export const addCollectableCollectionSchema = z.object({
+  name: z.string(),
+})

@@ -18,7 +18,7 @@ const default_img =
 export default function Dashboard() {
   const [active, setActive] = React.useState<Campaign[]>([])
   const [trending, setTrending] = React.useState<Collection[]>()
-  const [recommended, setRecommended] = React.useState<Collection>()
+  const [recommended, setRecommended] = React.useState<Collectable[]>([])
   const [role, setRole] = React.useState<string>('')
 
   enum Roles {
@@ -56,18 +56,21 @@ export default function Dashboard() {
     }
   }, [roleData.data])
 
+  const campaignTag = 'Featured'
   const { data: resActive } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/campaign/tag/${campaignTag}`,
     fetcher
   )
 
+  const collectionTag = 'Legendary'
   const { data: resTrending } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collection/tag/${collectionTag}`,
     fetcher
   )
 
+  const collectableTag = 'Popular'
   const { data: resRecommended } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/Pikachu Clones`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collectable/tag/${collectableTag}`,
     fetcher
   )
 
@@ -122,7 +125,7 @@ export default function Dashboard() {
 
         <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
-            <TypographyH2 text="Active Campaigns" />
+            <TypographyH2 text="Featured Campaigns" />
             <Carousel>
               {active
                 .filter((c) => c.isActive)
@@ -154,7 +157,7 @@ export default function Dashboard() {
 
         <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
-            <TypographyH2 text="Trending Collections" />
+            <TypographyH2 text="Legendary Collections" />
             <Carousel>
               {trending?.map(({ image, name }, i) => {
                 return (
@@ -186,7 +189,7 @@ export default function Dashboard() {
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
             <TypographyH2 text="Popular Collectables" />
             <Carousel>
-              {recommended.collectables.map(({ image, name }, i) => {
+              {recommended.map(({ image, name }, i) => {
                 return (
                   <div key={i} className="">
                     <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
