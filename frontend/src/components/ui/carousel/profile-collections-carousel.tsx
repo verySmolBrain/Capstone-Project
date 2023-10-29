@@ -25,12 +25,12 @@ import { Database } from '@/lib/database.types'
 
 export function ProfileCollectionCarousel({
   inventory,
-  isOwnProfile,
   default_img,
 }: {
   inventory: CollectionCollectable
   isOwnProfile: boolean
   default_img: string
+  inventoryMutate: () => void
 }) {
   const [activeCollectionName, setActiveCollectionName] =
     React.useState<string>('')
@@ -120,18 +120,29 @@ export function ProfileCollectionCarousel({
                             key={i}
                             className="aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 max-w-[300px]"
                           >
-                            <Link href={`/collectable/${collectable.name}`}>
-                              <Image
-                                src={collectable?.image ?? default_img}
-                                height={100}
-                                width={300}
-                                className={
-                                  'object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl' +
-                                  (count === 0 ? ' grayscale' : '')
-                                }
-                                alt="alt"
-                              />
-                            </Link>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Link
+                                    href={`/collectable/${collectable.name}`}
+                                  >
+                                    <Image
+                                      src={collectable?.image ?? default_img}
+                                      height={100}
+                                      width={300}
+                                      className={
+                                        'object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl' +
+                                        (count === 0 ? ' grayscale' : '')
+                                      }
+                                      alt="alt"
+                                    />
+                                  </Link>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="md:text-base w-full text-center">{`${collectable.name}`}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <p className="text-center rounded-2xl bg-secondary mt-3">
                               {collectable.name} x{count}
                             </p>

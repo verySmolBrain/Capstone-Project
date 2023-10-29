@@ -203,6 +203,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                   inventory={inventory ?? {}}
                   isOwnProfile={isOwnProfile}
                   default_img={default_img}
+                  inventoryMutate={inventoryMutate}
                 />
               ) : (
                 <div className="flex flex-col justify-center items-center h-[464px]">

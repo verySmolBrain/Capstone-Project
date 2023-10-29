@@ -537,7 +537,7 @@ async function main() {
 
   const d = await prisma.user.create({
     data: {
-      id: '59b43561-7e65-418c-8531-972bbf1fd2a4',
+      id: '1054e834-0881-4019-bf13-49f9f9853e28',
       profile: {
         create: {
           name: 'd',

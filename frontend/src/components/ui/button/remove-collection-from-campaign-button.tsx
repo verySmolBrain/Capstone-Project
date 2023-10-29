@@ -11,7 +11,15 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 
-export function RemoveCollectionFromCampaignButton() {
+export function RemoveCollectionFromCampaignButton({
+  type,
+  collectable,
+  mutate,
+}: {
+  type: profileCollection
+  collection: string
+  mutate: () => void
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild className="hidden group-hover:block">
