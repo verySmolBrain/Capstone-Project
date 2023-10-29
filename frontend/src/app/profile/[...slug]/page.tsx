@@ -67,17 +67,20 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
 
   const { data: inventoryData } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory`,
-    fetcher
+    fetcher,
+    { refreshInterval: 3000 }
   )
 
   const { data: waresData } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares`,
-    fetcher
+    fetcher,
+    { refreshInterval: 3000 }
   )
 
   const { data: wishlistData } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist`,
-    fetcher
+    fetcher,
+    { refreshInterval: 3000 }
   )
 
   React.useEffect(() => {
