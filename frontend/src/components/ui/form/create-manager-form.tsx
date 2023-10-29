@@ -13,6 +13,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { userAuthSchema } from '@/lib/validation/auth'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Database } from '@/lib/database.types'
 
 type FormData = z.infer<typeof userAuthSchema>
 
@@ -26,6 +28,8 @@ export function CreateManagerForm() {
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
+    const email = String(data.email)
+    const password = String(data.password)
 
     const signUpResult = await fetch('/api/auth/register', {
       method: 'POST',
@@ -45,6 +49,34 @@ export function CreateManagerForm() {
         variant: 'destructive',
       })
     }
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
+    const supabase_response = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    console.log(
+      supabase_response.data.user?.id,
+      supabase_response.data.user?.email,
+      token
+    )
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/manager`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'update-type': 'name',
+          authorization: token!,
+        },
+        body: JSON.stringify({
+          id: supabase_response.data.user?.id,
+        }),
+      }
+    )
+
+    console.log(res)
 
     if (signUpResult?.redirected && signUpResult?.url) {
       // We need to redirect manually as we're using fetch instead of form
@@ -52,6 +84,7 @@ export function CreateManagerForm() {
       // which are required to make form interactive
       // We also use router.push instead of redirect as it doesn't work nicely with
       // async and onSubmit functions
+
       router.push(signUpResult.url)
     }
   }
@@ -61,19 +94,6 @@ export function CreateManagerForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-3">
           <div className="grid gap-2.5">
-            <Label htmlFor="email">Username</Label>
-            <Input
-              id="username"
-              type="username"
-              placeholder="Username"
-              className="w-full"
-              autoCapitalize="none"
-              autoComplete="username"
-              autoCorrect="off"
-              required
-              disabled={isLoading}
-              {...register('email')}
-            />
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"

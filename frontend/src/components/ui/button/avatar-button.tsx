@@ -11,13 +11,13 @@ import useSWR from 'swr'
 
 export function AvatarButton() {
   const [image, setImage] = React.useState<string>('')
-  const [role, setRole] = React.useState<string>('')
+  // const [role, setRole] = React.useState<string>('')
 
-  enum Roles {
-    USER = 'USER',
-    MANAGER = 'MANAGER',
-    ADMIN = 'ADMIN',
-  }
+  // enum Roles {
+  //   USER = 'USER',
+  //   MANAGER = 'MANAGER',
+  //   ADMIN = 'ADMIN',
+  // } -- maybe find a use for this later
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -48,17 +48,13 @@ export function AvatarButton() {
   )
 
   React.useEffect(() => {
-    if (roleData.data) {
-      setRole(roleData.data.role)
-    }
+    // if (roleData.data) {
+    //   setRole(roleData.data.role)
+    // }
     if (imageData.data) {
       setImage(imageData?.data.image)
     }
   }, [imageData.data, roleData.data])
-
-  if (role === Roles.ADMIN || role == Roles.MANAGER) {
-    return null
-  }
 
   return (
     <Link href="/profile">
