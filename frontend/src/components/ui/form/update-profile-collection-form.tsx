@@ -57,7 +57,6 @@ export function UpdateProfileCollectionForm(props: {
 
     let response
     if (props.type === profileCollection.INVENTORY) {
-      console.log('asd')
       response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory/${data.name}`,
         {
@@ -188,7 +187,7 @@ export function UpdateProfileCollectionForm(props: {
                 <FormControl>
                   <Input placeholder="0" {...field} />
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="pb-3">
                   How many of this collectable do you own?
                 </FormDescription>
               </FormItem>

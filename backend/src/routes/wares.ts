@@ -9,7 +9,7 @@ export default async function (fastify: FastifyInstance) {
    *  Returns the user's wares
    *  @returns {object} wares
    */
-  fastify.get('/wares', async (req: FastifyRequest<{ Body: { collectableId: string } }>) => {
+  fastify.get('/wares', async (req: FastifyRequest) => {
     const token = req.headers['authorization'] as string
 
     const prisma = await requestHandler(token)
@@ -18,7 +18,28 @@ export default async function (fastify: FastifyInstance) {
       where: {
         id: extractId(token),
       },
-      include: { wares: true },
+      include: { wares: { select: collectableCountSelect } },
+    })
+    return profile.wares
+  })
+
+  /*
+   *  GET /wares/:name
+   *  Returns the given users wares
+   *  @param {string} name
+   *  @returns {object} wares
+   */
+  fastify.get('/wares/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+
+    const prisma = await requestHandler(token)
+
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        name: name,
+      },
+      include: { wares: { select: collectableCountSelect } },
     })
     return profile.wares
   })

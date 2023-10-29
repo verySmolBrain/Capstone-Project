@@ -24,6 +24,26 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
+   *  GET /inventory/:name
+   *  Returns the given users inventory
+   *  @param {string} name
+   *  @returns {object} inventory
+   */
+  fastify.get('/inventory/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+
+    const prisma = await requestHandler(token)
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        name: name,
+      },
+      select: { inventory: { select: collectableCountSelect } },
+    })
+    return profile.inventory
+  })
+
+  /*
    *  PUT /inventory
    *  Update the user's inventory
    *  @param {collectableCount[]} collectables

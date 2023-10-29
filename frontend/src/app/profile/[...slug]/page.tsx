@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
 import { ChatButton } from '@/components/ui/button/chat-button'
+import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
 
 enum profileCollection {
   INVENTORY,
@@ -65,18 +66,21 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
   )
 
   const { data: inventoryData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory`,
-    fetcher
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/inventory/${params.slug}`,
+    fetcher,
+    { refreshInterval: 3000 }
   )
 
   const { data: waresData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares`,
-    fetcher
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wares/${params.slug}`,
+    fetcher,
+    { refreshInterval: 3000 }
   )
 
   const { data: wishlistData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist`,
-    fetcher
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/wishlist/${params.slug}`,
+    fetcher,
+    { refreshInterval: 3000 }
   )
 
   React.useEffect(() => {
@@ -151,11 +155,10 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               )}
             </div>
           </div>
-
           <div className="container gap-4 pb-6">
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
-              <h2 className="text-lg md:text-2xl font-semibold truncate">
-                My collections
+              <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
+                My Collectables
               </h2>
               {isOwnProfile && (
                 <AddCollectionProfileButton
@@ -167,8 +170,8 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               <Carousel>
                 {inventory?.map((collectable, i) => {
                   return (
-                    <div key={i} className="">
-                      <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                    <div key={i} className="flex-row space-y-1">
+                      <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                         <Link href={`/collectable/${collectable.name}`}>
                           <Image
                             src={
@@ -179,9 +182,27 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                             sizes="(max-width: 475px) 6rem" // Fix this later
                             fill
                             className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                            alt="alt"
+                            alt={collectable.name}
                           />
+                          <div
+                            onClick={(e) => {
+                              e.preventDefault()
+                            }}
+                          >
+                            <RemoveCollectableFromProfileButton
+                              type={profileCollection.INVENTORY}
+                              collectable={collectable.name}
+                            />
+                          </div>
                         </Link>
+                      </div>
+                      <div className="flex pl-10 pr-10">
+                        <h2 className="font-mono text-lg md:text-2xl w-full">
+                          {collectable.name}
+                        </h2>
+                        <h2 className="font-mono text-lg md:text-2xl p2">
+                          x{collectable.count}
+                        </h2>
                       </div>
                     </div>
                   )
@@ -189,7 +210,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               </Carousel>
             </div>
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
-              <h2 className="text-lg md:text-2xl font-semibold truncate">
+              <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
                 Looking for
               </h2>
               {isOwnProfile && (
@@ -201,7 +222,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 {wishlist?.map((collectable, i) => {
                   return (
                     <div key={i} className="">
-                      <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                      <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                         <Link href={`/collectable/${collectable.name}`}>
                           <Image
                             src={
@@ -212,9 +233,27 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                             sizes="(max-width: 475px) 6rem" // Fix this later
                             fill
                             className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                            alt="alt"
+                            alt={collectable.name}
                           />
+                          <div
+                            onClick={(e) => {
+                              e.preventDefault()
+                            }}
+                          >
+                            <RemoveCollectableFromProfileButton
+                              type={profileCollection.WISHLIST}
+                              collectable={collectable.name}
+                            />
+                          </div>
                         </Link>
+                      </div>
+                      <div className="flex pl-10 pr-10">
+                        <h2 className="font-mono text-lg md:text-2xl w-full">
+                          {collectable.name}
+                        </h2>
+                        <h2 className="font-mono text-lg md:text-2xl p2">
+                          x{collectable.count}
+                        </h2>
                       </div>
                     </div>
                   )
@@ -222,7 +261,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               </Carousel>
             </div>
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
-              <h2 className="text-lg md:text-2xl font-semibold truncate">
+              <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
                 Willing to trade
               </h2>
               {isOwnProfile && (
@@ -234,7 +273,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 {wares?.map((collectable, i) => {
                   return (
                     <div key={i} className="">
-                      <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
+                      <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
                         <Link href={`/collectable/${collectable.name}`}>
                           <Image
                             src={
@@ -245,9 +284,27 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                             sizes="(max-width: 475px) 6rem" // Fix this later
                             fill
                             className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
-                            alt="alt"
+                            alt={collectable.name}
                           />
+                          <div
+                            onClick={(e) => {
+                              e.preventDefault()
+                            }}
+                          >
+                            <RemoveCollectableFromProfileButton
+                              type={profileCollection.WARES}
+                              collectable={collectable.name}
+                            />
+                          </div>
                         </Link>
+                      </div>
+                      <div className="flex pl-10 pr-10">
+                        <h2 className="font-mono text-lg md:text-2xl w-full">
+                          {collectable.name}
+                        </h2>
+                        <h2 className="font-mono text-lg md:text-2xl p2">
+                          x{collectable.count}
+                        </h2>
                       </div>
                     </div>
                   )

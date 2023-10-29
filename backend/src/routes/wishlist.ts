@@ -24,6 +24,26 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
+   *  GET /wishlist/:name
+   *  Returns the given users wishlist
+   *  @param {string} name
+   *  @returns {object} wishlist
+   */
+  fastify.get('/wishlist/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+
+    const prisma = await requestHandler(token)
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        name: name,
+      },
+      select: { wishlist: { select: collectableCountSelect } },
+    })
+    return profile.wishlist
+  })
+
+  /*
    *  PUT /wishlist
    *  Update the user's wishlist
    *  @param {collectableCount[]} collectables
