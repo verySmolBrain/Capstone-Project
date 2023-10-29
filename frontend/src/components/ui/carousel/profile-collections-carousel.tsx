@@ -149,10 +149,11 @@ export function ProfileCollectionCarousel({
                                       <div
                                         onClick={(e) => {
                                           e.preventDefault()
+                                          console.log(collectable.name)
                                         }}
                                       >
                                         <RemoveCollectableFromProfileButton
-                                          type={profileCollection.WISHLIST}
+                                          type={profileCollection.INVENTORY}
                                           collectable={collectable.name}
                                           mutate={inventoryMutate}
                                         />
