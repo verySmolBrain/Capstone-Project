@@ -125,7 +125,6 @@ model Collectable {
     Trade Trade[]
 }
 
-/// @@deny('update', true)
 /// @@allow('all', true)
 model CollectableCount {
     id Int @id() @default(autoincrement())

@@ -146,7 +146,7 @@ model Collectable {
 model CollectableCount {
   id          Int         @id @default(autoincrement())
   collectable Collectable @relation('count', fields: [name], references: [name])
-  name        String      @@deny('update', true)
+  name        String      
   count       Int         @default(0)
 
   inventory   Profile?   @relation('inventory', fields: [inventoryId], references: [id])

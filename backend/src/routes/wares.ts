@@ -18,7 +18,7 @@ export default async function (fastify: FastifyInstance) {
       where: {
         id: extractId(token),
       },
-      include: { wares: true },
+      include: { wares: { select: collectableCountSelect } },
     })
     return profile.wares
   })

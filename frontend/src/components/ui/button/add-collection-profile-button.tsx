@@ -22,7 +22,7 @@ export function AddCollectionProfileButton(props: { type: profileCollection }) {
       </DialogTrigger>
       <DialogContent className="w-auto">
         <DialogHeader>
-          <DialogTitle>We&apos;re letting you cook...</DialogTitle>
+          <DialogTitle>Add or modify a collectable</DialogTitle>
         </DialogHeader>
         <UpdateProfileCollectionForm type={props.type} />
       </DialogContent>
