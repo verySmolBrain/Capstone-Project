@@ -10,7 +10,14 @@ import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 
 export function AvatarButton() {
-  const [image, setImage] = React.useState<string | undefined>(undefined)
+  const [image, setImage] = React.useState<string>('')
+  // const [role, setRole] = React.useState<string>('')
+
+  // enum Roles {
+  //   USER = 'USER',
+  //   MANAGER = 'MANAGER',
+  //   ADMIN = 'ADMIN',
+  // } -- maybe find a use for this later
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -29,20 +36,28 @@ export function AvatarButton() {
     }
   }
 
-  const { data } = useSWR(
+  const roleData = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
+  const imageData = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/profile`,
     fetcher
   )
 
   React.useEffect(() => {
-    if (data) {
-      setImage(data.image)
+    // if (roleData.data) {
+    //   setRole(roleData.data.role)
+    // }
+    if (imageData.data) {
+      setImage(imageData?.data.image)
     }
-  }, [data])
+  }, [imageData.data, roleData.data])
 
   return (
-    <Link rel="prefetch" href="/profile">
-      {' '}
+    <Link href="/profile">
       <Button variant="outline" size="icon">
         <Avatar className="w-8 h-8">
           <AvatarImage src={image} alt="Profile Picture" className="" />

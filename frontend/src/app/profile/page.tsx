@@ -5,7 +5,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 import { useRouter } from 'next/navigation'
-import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
+import { LoadingScreen } from '@/components/ui/page/loading-page'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -39,9 +39,5 @@ export default function ProfilePage() {
     }
   }, [data, router])
 
-  return (
-    <>
-      <GeneralNavBar />
-    </>
-  )
+  return <LoadingScreen />
 }

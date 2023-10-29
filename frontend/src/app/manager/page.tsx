@@ -11,6 +11,9 @@ import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { ArchiveCampaignButton } from '@/components/ui/button/archive-campaign-button'
 
+const default_img =
+  'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+
 export default function ManagerPage() {
   const [campaigns, setCampaigns] = React.useState<Campaign[]>([])
 
@@ -47,22 +50,23 @@ export default function ManagerPage() {
     <div className="flex flex-col min-h-screen">
       <GeneralNavBar />
       <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
-        <AddCampaignButton></AddCampaignButton>
         <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
-          <div className="flex flex-row">
-            <div className="grow">
+          <div className="flex">
+            <div className="grow w-full">
               <TypographyH2 text="All Your Campaigns" />
             </div>
+            <AddCampaignButton></AddCampaignButton>
           </div>
           <Carousel>
             {campaigns.map(({ image, name }, i) => {
               return (
                 <div key={i} className="">
-                  <div className="group relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
+                  <div className="group relative aspect-10/50 mt-6 mb-6 h-24 xs:h-24 w-auto mr-3 ml-3">
                     <Link href={`/campaign/${name}`}>
                       <Image
-                        src={image!}
-                        layout="fill"
+                        src={image ? image : default_img}
+                        height={100}
+                        width={300}
                         className="object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                         alt="alt"
                       />
@@ -97,8 +101,9 @@ export default function ManagerPage() {
                     <div className="relative aspect-10/50 mt-6 mb-6 h-16 xs:h-24 w-auto mr-3 ml-3">
                       <Link href={`/campaign/${name}`}>
                         <Image
-                          src={image}
-                          layout="fill"
+                          src={image ? image : default_img}
+                          height={100}
+                          width={300}
                           className="grayscale object-cover w-full transition-transform duration-300 transform hover:translate-y-3 border-primary border-1 rounded-2xl"
                           alt="alt"
                         />

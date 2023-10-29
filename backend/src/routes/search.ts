@@ -3,6 +3,101 @@ import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
   /*
+   * GET /search/:name
+   * Returns all users, collectibles, collections, campaigns matching the name or exact tag
+   * @param {string} name
+   * @returns {object} collectibles
+   */
+  fastify.get('/search/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const search_text = req.params.name
+
+    if (!search_text) {
+      return {
+        collectables: await prisma.collectable.findMany(),
+        collections: await prisma.collection.findMany(),
+        campaigns: await prisma.campaign.findMany(),
+        users: await prisma.profile.findMany(),
+      }
+    }
+
+    const collectables = await prisma.collectable.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: search_text,
+              mode: 'insensitive',
+            },
+          },
+          {
+            tags: {
+              has: search_text,
+            },
+          },
+        ],
+      },
+    })
+
+    const collections = await prisma.collection.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: search_text,
+              mode: 'insensitive',
+            },
+          },
+          {
+            tags: {
+              has: search_text,
+            },
+          },
+        ],
+      },
+    })
+
+    const campaigns = await prisma.campaign.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: search_text,
+              mode: 'insensitive',
+            },
+          },
+          {
+            tags: {
+              has: search_text,
+            },
+          },
+        ],
+      },
+    })
+
+    const users = await prisma.profile.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: search_text,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+    })
+
+    return {
+      collectables,
+      collections,
+      campaigns,
+      users,
+    }
+  })
+
+  /*
    * GET /search/collectible/:name
    * Returns all collectibles matching the name
    * @param {string} name
@@ -132,6 +227,66 @@ export default async function (fastify: FastifyInstance) {
             },
           },
         ],
+      },
+    })
+
+    return campaigns
+  })
+
+  /*
+   * GET /search/collectable/tag/:tag
+   * Returns all collectables with the matching tag
+   * @param {string} tag
+   * @returns {object} collectibles
+   */
+  fastify.get('/search/collectable/tag/:tag', async (req: FastifyRequest<{ Params: { tag: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const tag = req.params.tag
+
+    const collectibles = await prisma.collectable.findMany({
+      where: {
+        tags: { has: tag },
+      },
+    })
+
+    return collectibles
+  })
+
+  /*
+   * GET /search/collection/tag/:tag
+   * Returns all collections with the matching tag
+   * @param {string} tag
+   * @returns {object} collections
+   */
+  fastify.get('/search/collection/tag/:tag', async (req: FastifyRequest<{ Params: { tag: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const tag = req.params.tag
+
+    const collections = await prisma.collection.findMany({
+      where: {
+        tags: { has: tag },
+      },
+    })
+
+    return collections
+  })
+
+  /*
+   * GET /search/campaign/tag/:tag
+   * Returns all campaigns with the matching tag
+   * @param {string} tag
+   * @returns {object} campgians
+   */
+  fastify.get('/search/campaign/tag/:tag', async (req: FastifyRequest<{ Params: { tag: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const tag = req.params.tag
+
+    const campaigns = await prisma.campaign.findMany({
+      where: {
+        tags: { has: tag },
       },
     })
 

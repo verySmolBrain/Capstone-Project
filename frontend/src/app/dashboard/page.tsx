@@ -1,14 +1,16 @@
 'use client'
+
 import * as React from 'react'
-import { DashboardNavBar } from '@/components/ui/navbar/dashboard-navbar'
+import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import { TypographyH2 } from '@/components/ui/assets/typography-h2'
 import { Carousel } from '@/components/ui/carousel'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
-import { Loader2 } from 'lucide-react'
 import useSWR from 'swr'
+import { CreateManagerForm } from '@/components/ui/form/create-manager-form'
+import { LoadingScreen } from '@/components/ui/page/loading-page'
 
 const default_img =
   'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
@@ -16,12 +18,18 @@ const default_img =
 export default function Dashboard() {
   const [active, setActive] = React.useState<Campaign[]>([])
   const [trending, setTrending] = React.useState<Collection[]>()
-  const [recommended, setRecommended] = React.useState<Collection>()
+  const [recommended, setRecommended] = React.useState<Collectable[]>([])
+  const [role, setRole] = React.useState<string>('')
+
+  enum Roles {
+    USER = 'USER',
+    MANAGER = 'MANAGER',
+    ADMIN = 'ADMIN',
+  }
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
-    const session = (await supabase.auth.getSession()).data.session
-    const token = session?.access_token
+    const token = (await supabase.auth.getSession()).data.session?.access_token
 
     const res = await fetch(url, {
       method: 'GET',
@@ -36,18 +44,33 @@ export default function Dashboard() {
     }
   }
 
+  const roleData = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
+  React.useEffect(() => {
+    if (roleData.data) {
+      setRole(roleData.data.role)
+    }
+  }, [roleData.data])
+
+  const campaignTag = 'Featured'
   const { data: resActive } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/campaign/tag/${campaignTag}`,
     fetcher
   )
 
+  const collectionTag = 'Legendary'
   const { data: resTrending } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collection/tag/${collectionTag}`,
     fetcher
   )
 
+  const collectableTag = 'Popular'
   const { data: resRecommended } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/Pikachu Clones`,
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collectable/tag/${collectableTag}`,
     fetcher
   )
 
@@ -63,14 +86,46 @@ export default function Dashboard() {
     }
   }, [resActive, resTrending, resRecommended])
 
+  if (role === Roles.ADMIN) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <GeneralNavBar />
+        <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
+          <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
+            <TypographyH2 text="Welcome Admin" />
+            <div className="container relative flex-col max-w-none">
+              <div className="mx-auto flex flex-col space-y-3 w-[400px]">
+                <div className="flex flex-col">
+                  <h1 className="text-2xl font-semibold tracking-tight">
+                    Create a Campaign Manager Account
+                  </h1>
+                  <p className="text-sm text-muted-foreground"></p>
+                </div>
+                <CreateManagerForm />
+                <p className="px-8 text-center text-sm text-muted-foreground">
+                  <Link
+                    href="/login"
+                    className="hover:text-brand underline underline-offset-4"
+                  >
+                    Have an account? Login here
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    )
+  }
+
   return recommended ? (
     <>
       <div className="flex flex-col min-h-screen">
-        <DashboardNavBar />
+        <GeneralNavBar />
 
         <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
-            <TypographyH2 text="Active Campaigns" />
+            <TypographyH2 text="Featured Campaigns" />
             <Carousel>
               {active
                 .filter((c) => c.isActive)
@@ -102,7 +157,7 @@ export default function Dashboard() {
 
         <section className="space-y-8 pr-5 pl-5 pt-6 md:pt-10 2xl:pr-0 2xl:pl-0">
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
-            <TypographyH2 text="Trending Collections" />
+            <TypographyH2 text="Legendary Collections" />
             <Carousel>
               {trending?.map(({ image, name }, i) => {
                 return (
@@ -134,7 +189,7 @@ export default function Dashboard() {
           <div className="container flex flex-col gap-4 border bg-card text-card-foreground shadow-sm rounded-2xl pt-6 pb-6">
             <TypographyH2 text="Popular Collectables" />
             <Carousel>
-              {recommended.collectables.map(({ image, name }, i) => {
+              {recommended.map(({ image, name }, i) => {
                 return (
                   <div key={i} className="">
                     <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3 w-auto">
@@ -162,11 +217,6 @@ export default function Dashboard() {
       </div>
     </>
   ) : (
-    <>
-      <DashboardNavBar />
-      <div className="w-full h-[calc(100vh-100px)] flex justify-center items-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    </>
+    <LoadingScreen />
   )
 }

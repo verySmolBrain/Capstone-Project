@@ -20,6 +20,7 @@ import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 import { useRouter } from 'next/navigation'
+import _ from 'lodash'
 
 export function SearchButton() {
   const router = useRouter()
@@ -49,43 +50,34 @@ export function SearchButton() {
     }
   }
 
-  const userData = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/user/${searchText}`,
-    fetcher
-  )
-  const collectableData = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collectable/${searchText}`,
-    fetcher
-  )
-  const collectionData = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/collection/${searchText}`,
-    fetcher
-  )
-  const campaignData = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/campaign/${searchText}`,
+  const { data } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/${searchText}`,
     fetcher
   )
 
   React.useEffect(() => {
-    if (collectableData?.data) {
-      setCollectables(collectableData?.data)
+    if (data) {
+      if (data?.collectables) {
+        setCollectables(data?.collectables)
+      }
+
+      if (data?.users) {
+        setUsers(data?.users)
+      }
+
+      if (data?.collections) {
+        setCollections(data?.collections)
+      }
+
+      if (data?.campaigns) {
+        setCampaigns(data?.campaigns)
+      }
     }
-    if (userData?.data) {
-      setUsers(userData?.data)
-    }
-    if (collectionData?.data) {
-      setCollections(collectionData?.data)
-    }
-    if (campaignData?.data) {
-      console.log(campaignData?.data)
-      setCampaigns(campaignData?.data)
-    }
-  }, [
-    collectableData?.data,
-    userData?.data,
-    collectionData?.data,
-    campaignData?.data,
-  ])
+  }, [data])
+
+  const debounced_function = _.debounce((val: string) => {
+    setSearchText(val)
+  }, 250)
 
   return (
     <div className="flex items-center space-x-4">
@@ -114,7 +106,7 @@ export function SearchButton() {
           >
             <CommandInput
               placeholder="Search..."
-              onValueChange={setSearchText}
+              onValueChange={debounced_function}
             />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
@@ -123,8 +115,8 @@ export function SearchButton() {
                   <CommandItem
                     key={users.name}
                     value={users.name}
-                    onSelect={(value) => {
-                      router.push(`/profile/${value}`)
+                    onSelect={() => {
+                      router.push(`/profile/${users.name}`)
                     }}
                   >
                     <span>{users.name}</span>
@@ -137,8 +129,8 @@ export function SearchButton() {
                   <CommandItem
                     key={collectable.name}
                     value={collectable.name}
-                    onSelect={(value) => {
-                      router.push(`/collectable/${value}`)
+                    onSelect={() => {
+                      router.push(`/collectable/${collectable.name}`)
                     }}
                   >
                     <span>{collectable.name}</span>
@@ -151,8 +143,8 @@ export function SearchButton() {
                   <CommandItem
                     key={campaigns.name}
                     value={campaigns.name}
-                    onSelect={(value) => {
-                      router.push(`/campaign/${value}`)
+                    onSelect={() => {
+                      router.push(`/campaign/${campaigns.name}`)
                     }}
                   >
                     <span>{campaigns.name}</span>
@@ -165,8 +157,8 @@ export function SearchButton() {
                   <CommandItem
                     key={collection.name}
                     value={collection.name}
-                    onSelect={(value) => {
-                      router.push(`/collection/${value}`)
+                    onSelect={() => {
+                      router.push(`/collection/${collection.name}`)
                     }}
                   >
                     <span>{collection.name}</span>

@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
+import { collectionConnect } from '@Source/utils/types'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -9,13 +10,26 @@ export default async function (fastify: FastifyInstance) {
    * @param {string} image
    * @param {Date} startDate
    * @param {Date} endDate
+   * @param {collection[]} collections
    * @returns {object} campaign
    */
   fastify.post(
     '/campaign',
-    async (req: FastifyRequest<{ Body: { name: string; image: string; startDate: Date; endDate: Date } }>) => {
+    async (
+      req: FastifyRequest<{
+        Body: {
+          name: string
+          image: string
+          startDate: Date
+          endDate: Date
+          collection: collectionConnect[]
+          tags: string[]
+          isActive: boolean
+        }
+      }>
+    ) => {
       const token = req.headers['authorization'] as string
-      const { name, image, startDate, endDate } = req.body
+      const { name, image, startDate, endDate, collection, tags, isActive } = req.body
       const prisma = await requestHandler(token)
 
       const campaign = await prisma.campaign.create({
@@ -24,7 +38,12 @@ export default async function (fastify: FastifyInstance) {
           image: image,
           start: startDate,
           end: endDate,
+          collections: {
+            connect: collection,
+          },
+          tags: tags,
           managers: { connect: { id: extractId(token) } },
+          isActive: isActive,
         },
       })
       return campaign
@@ -70,12 +89,16 @@ export default async function (fastify: FastifyInstance) {
    * @param {string} image
    * @param {Date} startDate
    * @param {Date} endDate
+   * @param {collection[]} collections
    * @returns {object} campaign
    */
   fastify.put(
     '/campaign/:name',
     async (
-      req: FastifyRequest<{ Params: { name: string }; Body: { image: string; startDate: Date; endDate: Date } }>
+      req: FastifyRequest<{
+        Params: { name: string }
+        Body: { image: string; startDate: Date; endDate: Date; collections: collectionConnect[] }
+      }>
     ) => {
       const token = req.headers['authorization'] as string
       const { name } = req.params
@@ -90,6 +113,9 @@ export default async function (fastify: FastifyInstance) {
           image: image,
           start: startDate,
           end: endDate,
+          collections: {
+            connect: req.body.collections,
+          },
         },
       })
       return campaign

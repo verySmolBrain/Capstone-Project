@@ -9,6 +9,9 @@ import '@smastrom/react-rating/style.css'
 export const metadata: Metadata = {
   title: 'Goomba Market',
   description: 'A Collectables Trading App',
+  icons: {
+    icon: '/icon.png',
+  },
 }
 
 export default function RootLayout({
