@@ -132,6 +132,18 @@ type Profile = {
   wares: CollectableCount[]
 }
 
+type CollectionCollectable = {
+  [key: string]: {
+    image?: string
+    collectables: {
+      collectable: Collectable
+      count: number
+      name: string
+      tags: string[]
+    }[]
+  }
+}
+
 type User = {
   id: string
   role: Role

@@ -35,7 +35,7 @@ export default function ManagerPage() {
     }
   }
 
-  const { data: result } = useSWR(
+  const { data: result, mutate: campaignMutate } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign`,
     fetcher
   )
@@ -55,7 +55,7 @@ export default function ManagerPage() {
             <div className="grow w-full">
               <TypographyH2 text="All Your Campaigns" />
             </div>
-            <AddCampaignButton></AddCampaignButton>
+            <AddCampaignButton mutate={campaignMutate}></AddCampaignButton>
           </div>
           <Carousel>
             {campaigns.map(({ image, name }, i) => {
@@ -75,7 +75,10 @@ export default function ManagerPage() {
                           e.preventDefault()
                         }}
                       >
-                        <ArchiveCampaignButton></ArchiveCampaignButton>
+                        <ArchiveCampaignButton
+                          campaign={name}
+                          mutate={campaignMutate}
+                        />
                       </div>
                     </Link>
                   </div>

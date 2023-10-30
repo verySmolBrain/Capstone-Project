@@ -7,6 +7,12 @@ export const collectableCountSelect = {
     select: {
       image: true,
       tags: true,
+      collection: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
     },
   },
   count: true,
@@ -31,6 +37,13 @@ export const collectionSelect = {
 } satisfies Prisma.CollectionSelect
 
 export type collection = Prisma.CollectionGetPayload<{ select: typeof collectionSelect }>
+
+export type CollectionCollectable = {
+  [key: string]: {
+    image?: string
+    collectables: collectableCount[]
+  }
+}
 
 export const collectionConnectSelect = {
   name: true,

@@ -20,7 +20,6 @@ export default async function (fastify: FastifyInstance) {
     })
 
     if (userExists?.length > 0) {
-      console.log(userExists[0])
       return userExists[0]
     }
 
@@ -188,5 +187,57 @@ export default async function (fastify: FastifyInstance) {
       },
     })
     return changedImage
+  })
+
+  /*
+   *  PUT /profile/review
+   *  Updates the user's review score
+   *  @param {float} review
+   *  @returns a {review: float, description: string}
+   */
+  fastify.put(
+    '/profile/review',
+    async (
+      req: FastifyRequest<{ Body: { rating: number; comment: string; revieweeId: string; reviewerId: string } }>
+    ) => {
+      const token = req.headers['authorization'] as string
+      const { rating, comment, revieweeId, reviewerId } = req.body
+      const prisma = await requestHandler(token)
+
+      const newReview = await prisma.review.create({
+        data: {
+          rating: rating,
+          comment: comment,
+          revieweeId: revieweeId,
+          reviewerId: reviewerId,
+        },
+      })
+
+      return newReview
+    }
+  )
+
+  /*
+   *  GET /profile/reviews
+   *  Gets the user's review scores
+   *  @param {float} review
+   *  @returns a list of {review: float, description: string}
+   */
+
+  fastify.get('/profile/reviews', async (req) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: {
+        id: extractId(token),
+      },
+      include: { receivedReviews: true },
+    })
+    const extractedReviews = profile.receivedReviews.map((review) => ({
+      review: review.rating,
+      description: review.comment,
+    }))
+
+    return extractedReviews
   })
 }

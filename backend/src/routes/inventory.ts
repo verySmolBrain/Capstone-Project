@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { extractId, requestHandler } from '@Source/utils/supabaseUtils'
-import { collectableCountCreate, collectableCountSelect } from '@Source/utils/types'
+import { CollectionCollectable, collectableCountCreate, collectableCountSelect } from '@Source/utils/types'
 import { throwInvalidActionError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
@@ -20,7 +20,21 @@ export default async function (fastify: FastifyInstance) {
       },
       select: { inventory: { select: collectableCountSelect } },
     })
-    return profile.inventory
+
+    const collections: CollectionCollectable = {}
+    profile?.inventory?.forEach((collectableCount) => {
+      collectableCount?.collectable?.collection.forEach((collection) => {
+        if (!collections[collection.name]) {
+          collections[collection.name] = {
+            image: collection.image ?? undefined,
+            collectables: [],
+          }
+        }
+        collections[collection.name].collectables.push(collectableCount)
+      })
+    })
+
+    return collections
   })
 
   /*
@@ -40,7 +54,21 @@ export default async function (fastify: FastifyInstance) {
       },
       select: { inventory: { select: collectableCountSelect } },
     })
-    return profile.inventory
+
+    const collections: CollectionCollectable = {}
+    profile.inventory.forEach((collectableCount) => {
+      collectableCount.collectable.collection.forEach((collection) => {
+        if (!collections[collection.name]) {
+          collections[collection.name] = {
+            image: collection.image ?? undefined,
+            collectables: [],
+          }
+        }
+        collections[collection.name].collectables.push(collectableCount)
+      })
+    })
+
+    return collections
   })
 
   /*
@@ -85,7 +113,6 @@ export default async function (fastify: FastifyInstance) {
       })
 
       if (!collectableCount) {
-        console.log('hi')
         await prisma.collectableCount.create({
           data: {
             name: req.params.collectable,

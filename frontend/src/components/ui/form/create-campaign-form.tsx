@@ -109,7 +109,12 @@ const FormSchema = z.object({
       (file) => ALLOWED_IMAGE_TYPES.includes(file.type),
       'Only these types are allowed .jpg, .jpeg, .png, .svg and .webp'
     ),
-  range: z.custom<DateRange>(isDateRange, 'Please select a valid date range'),
+  range: z
+    .custom<DateRange>(isDateRange, 'Please select a valid date range')
+    .default({
+      from: new Date(),
+      to: addDays(new Date(), 14),
+    }),
   tags: z.array(
     z.object({
       id: z.string(),
@@ -120,13 +125,12 @@ const FormSchema = z.object({
   isActive: z.boolean().default(false).optional(),
 })
 
-export function CreateCampaignForm() {
+export function CreateCampaignForm(props: {
+  setOpen: (a: boolean) => void
+  mutate: () => void
+}) {
   const [isLoading, setIsLoading] = React.useState(false)
   const [collections, setCollections] = React.useState<Collectable[]>()
-  const [date] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 14),
-  })
   const [tags, setTags] = React.useState<Tag[]>([])
   const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
   const [image, setImage] = React.useState<string>('')
@@ -190,10 +194,11 @@ export function CreateCampaignForm() {
           authorization: token!,
         },
         body: JSON.stringify({
-          image: image,
           name: data.name,
+          image: image,
           startDate: data.range.from,
           endDate: data.range.to,
+          collection: [{ name: data.collection }],
           tags: data.tags.map((tag) => tag.text),
           isActive: data.isActive,
         }),
@@ -209,18 +214,13 @@ export function CreateCampaignForm() {
         variant: 'destructive',
       })
     }
-    // return toast({
-    //   title: 'Success!',
-    //   description: 'The campaign was successfully created!',
-    //   variant: 'default',
-    // })
+
+    props.mutate()
+    props.setOpen(false)
     return toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      title: 'Success!',
+      description: 'The campaign was successfully created!',
+      variant: 'default',
     })
   }
   React.useEffect(() => {
@@ -230,248 +230,235 @@ export function CreateCampaignForm() {
   }, [collectionData])
 
   return (
-    <div className="grid gap-6 w-fill max-h-[70vh]">
+    <div className="grid gap-6 w-fill overflow-y-auto max-h-[600px] no-scrollbar pl-3 pr-3">
       <Dialog>
-        <ScrollArea>
-          {image && (
-            <div className="flex flex-col gap-2">
-              <Label className="text-sm font-medium leading-none">
-                Preview
-              </Label>
-              <div className="container rounded-2xl border pt-3 pb-3 flex justify-center">
-                <NextImage
-                  src={image}
-                  className="rounded-2xl"
-                  alt="Collection image"
-                  width={200}
-                  height={200}
-                />
-              </div>
+        {image && (
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm font-medium leading-none">Preview</Label>
+            <div className="container rounded-2xl border pt-3 pb-3 flex justify-center">
+              <NextImage
+                src={image}
+                className="rounded-2xl"
+                alt="Collection image"
+                width={300}
+                height={100}
+              />
             </div>
-          )}
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8"
-              id="createCampaignForm"
-            >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Campaign Name</FormLabel>
+          </div>
+        )}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8"
+            id="createCampaignForm"
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Campaign Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Pikachu Stampede" {...field} />
+                  </FormControl>
+                  <FormDescription>Pick something catchy!</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="collection"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Campaign Collection</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
-                      <Input placeholder="Pikachu Stampede" {...field} />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a collection to add" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormDescription>Pick something catchy!</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="collection"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Collectable Name</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <SelectContent className="max-h-80">
+                      <ScrollArea>
+                        {collections?.map((collection) => (
+                          <SelectItem
+                            key={collection.name}
+                            value={collection.name}
+                          >
+                            {collection.name}
+                          </SelectItem>
+                        ))}
+                      </ScrollArea>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Please only add collections that you are in charge of. We
+                    have no way of checking!
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start">
+                  <FormLabel className="text-left">Tags</FormLabel>
+                  <FormControl>
+                    <TagInput
+                      {...field}
+                      placeholder="Enter a tag"
+                      tags={tags}
+                      className="w-full"
+                      setTags={(newTags) => {
+                        setTags(newTags)
+                        form.setValue('tags', newTags as [Tag, ...Tag[]])
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    These are the keywords that will be used to categorize your
+                    new campaign. Try featured or popular!
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="range"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Campaign Duration</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a collectable to add" />
-                        </SelectTrigger>
+                        <Button
+                          id="date"
+                          variant={'outline'}
+                          className={cn(
+                            'w-[300px] justify-start text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value?.from ? (
+                            field.value?.to ? (
+                              <>
+                                {format(field.value.from, 'LLL dd, y')} -{' '}
+                                {format(field.value.to, 'LLL dd, y')}
+                              </>
+                            ) : (
+                              format(field.value.from, 'LLL dd, y')
+                            )
+                          ) : (
+                            <>
+                              {format(new Date(), 'LLL dd, y')} -{' '}
+                              {format(addDays(new Date(), 7), 'LLL dd, y')}
+                            </>
+                          )}
+                        </Button>
                       </FormControl>
-                      <SelectContent className="max-h-80">
-                        <ScrollArea>
-                          {collections?.map((collection) => (
-                            <SelectItem
-                              key={collection.name}
-                              value={collection.name}
-                            >
-                              {collection.name}
-                            </SelectItem>
-                          ))}
-                        </ScrollArea>
-                      </SelectContent>
-                    </Select>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={field.value?.from}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        numberOfMonths={2}
+                        disabled={(date) => date < new Date()}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>The length of the campaign.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Start Campaign Now
+                    </FormLabel>
                     <FormDescription>
-                      Please only add collections that you are in charge of. We
-                      have no way of checking!
+                      Mark your campaign as ready to go now!
                     </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-start">
-                    <FormLabel className="text-left">Tags</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { onChange } }) => (
+                <>
+                  <FormItem>
+                    <FormLabel>Campaign Image</FormLabel>
                     <FormControl>
-                      <TagInput
-                        {...field}
-                        placeholder="Enter a tag"
-                        tags={tags}
-                        className="w-full"
-                        setTags={(newTags) => {
-                          setTags(newTags)
-                          form.setValue('tags', newTags as [Tag, ...Tag[]])
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        disabled={form?.formState?.isSubmitting}
+                        onChange={(e) => {
+                          if (e.target.files) {
+                            onChange(e.target.files[0])
+                          }
+                          if (
+                            e.target.files &&
+                            profilePictureUpdateSchema.safeParse({
+                              image: e.target.files[0],
+                            }).success
+                          ) {
+                            const dataTransfer = new DataTransfer()
+                            dataTransfer.items.add(e.target.files[0])
+
+                            const file = dataTransfer.files[0]
+
+                            if (file) {
+                              const reader = new FileReader()
+
+                              reader.onload = function () {
+                                const base64Image =
+                                  (reader.result as string) ?? ''
+                                setImageAvailable(true)
+                                setImage(base64Image)
+                              }
+
+                              reader.readAsDataURL(file)
+                            }
+                          }
                         }}
                       />
                     </FormControl>
                     <FormDescription>
-                      These are the keywords that will be used to categorize
-                      your new collectable.
+                      Choose an image for your campaign.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="range"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Campaign Duration</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            id="date"
-                            variant={'outline'}
-                            className={cn(
-                              'w-[300px] justify-start text-left font-normal',
-                              !date && 'text-muted-foreground'
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {date?.from ? (
-                              date.to ? (
-                                <>
-                                  {format(date.from, 'LLL dd, y')} -{' '}
-                                  {format(date.to, 'LLL dd, y')}
-                                </>
-                              ) : (
-                                format(date.from, 'LLL dd, y')
-                              )
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          initialFocus
-                          mode="range"
-                          defaultMonth={date?.from}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          numberOfMonths={2}
-                          disabled={(date) => date < new Date()}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormDescription>
-                      The length of the campaign.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="isActive"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">
-                        Start Campaign Now
-                      </FormLabel>
-                      <FormDescription>
-                        Mark your campaign as ready to go now!
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field: { onChange } }) => (
-                  <>
-                    <FormItem>
-                      <FormLabel>Campaign Image</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          disabled={form?.formState?.isSubmitting}
-                          onChange={(e) => {
-                            if (e.target.files) {
-                              onChange(e.target.files[0])
-                            }
-                            if (
-                              e.target.files &&
-                              profilePictureUpdateSchema.safeParse({
-                                image: e.target.files[0],
-                              }).success
-                            ) {
-                              const dataTransfer = new DataTransfer()
-                              dataTransfer.items.add(e.target.files[0])
-
-                              const file = dataTransfer.files[0]
-
-                              if (file) {
-                                const reader = new FileReader()
-
-                                reader.onload = function () {
-                                  const base64Image =
-                                    (reader.result as string) ?? ''
-                                  setImageAvailable(true)
-                                  setImage(base64Image)
-                                }
-
-                                reader.readAsDataURL(file)
-                              }
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Choose an image for your campaign.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  </>
-                )}
-              />
-            </form>
-          </Form>
-          <div className="pt-4">
-            {imageAvailable ? (
-              <DialogTrigger asChild>
-                <Button
-                  type="submit"
-                  className="w-auto justify-self-start transition-transform duration-300 transform active:translate-y-3"
-                >
-                  {isLoading && (
-                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Crop Image
-                </Button>
-              </DialogTrigger>
-            ) : (
+                </>
+              )}
+            />
+          </form>
+        </Form>
+        <div className="pt-4">
+          {imageAvailable ? (
+            <DialogTrigger asChild>
               <Button
                 type="submit"
                 className="w-auto justify-self-start transition-transform duration-300 transform active:translate-y-3"
@@ -481,18 +468,30 @@ export function CreateCampaignForm() {
                 )}
                 Crop Image
               </Button>
-            )}
-          </div>
-        </ScrollArea>
-        <Button
-          type="submit"
-          form="createCampaignForm"
-          disabled={isLoading}
-          className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
-        >
-          {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-          Submit
-        </Button>
+            </DialogTrigger>
+          ) : (
+            <Button
+              type="submit"
+              className="w-auto justify-self-start transition-transform duration-300 transform active:translate-y-3"
+            >
+              {isLoading && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Crop Image
+            </Button>
+          )}
+        </div>
+        <DialogClose asChild>
+          <Button
+            type="submit"
+            form="createCampaignForm"
+            disabled={isLoading}
+            className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
+          >
+            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            Submit
+          </Button>
+        </DialogClose>
         <DialogContent className="max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Crop Image</DialogTitle>
@@ -505,7 +504,7 @@ export function CreateCampaignForm() {
               image={image}
               crop={crop}
               zoom={zoom}
-              aspect={1 / 1}
+              aspect={150 / 55}
               onCropComplete={onCropComplete}
               onCropChange={setCrop}
               onZoomChange={setZoom}

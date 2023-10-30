@@ -53,8 +53,6 @@ export default async function (fastify: FastifyInstance) {
    * @returns {string} url
    */
   fastify.post('/image/collectable/upload', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
-    console.log(req.body.image)
-
     const upload_res = await cloudinary.uploader.upload(req.body.image, {
       resource_type: 'image',
       public_id: `collectable/${req.body.name}`,
@@ -77,8 +75,6 @@ export default async function (fastify: FastifyInstance) {
    * @returns {string} url
    */
   fastify.post('/image/collection/upload', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
-    console.log(req.body.image)
-
     const upload_res = await cloudinary.uploader.upload(req.body.image, {
       resource_type: 'image',
       public_id: `collection/${req.body.name}`,
@@ -101,8 +97,6 @@ export default async function (fastify: FastifyInstance) {
    * @returns {string} url
    */
   fastify.post('/image/campaign/upload', async (req: FastifyRequest<{ Body: { name: string; image: string } }>) => {
-    console.log(req.body.image)
-
     const upload_res = await cloudinary.uploader.upload(req.body.image, {
       resource_type: 'image',
       public_id: `campaign/${req.body.name}`,
