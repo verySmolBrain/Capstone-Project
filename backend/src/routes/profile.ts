@@ -55,7 +55,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   *  GET /role
+   *  GET /role/:name
    *  Returns the given user's role
    *  @returns {string} role
    */
