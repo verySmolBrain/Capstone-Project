@@ -155,3 +155,114 @@ describe('/image/collectable/upload - post (+name as param)', () => {
     expect(response.statusMessage).toBe('Unauthorized')
   })
 })
+
+/*
+  * POST /image/collection/upload
+  * Uploads a collection image
+  * @param {string} name
+  * @param {Base64} image
+  * @returns {string} url
+*/
+
+describe('/image/collection/upload - post', () => {
+  it('Successful collection image upload - return 200', async () => {
+    const uploadMock = jest.fn();
+    cloudinary.uploader.upload = uploadMock;
+    uploadMock.mockResolvedValue({secure_url: 'its moorbin time', url : 'okiedogi'});
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'POST',
+      url: '/image/collection/upload',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        name: "Okiedogi",
+        image: "ah",
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("{\"image\":\"okiedogi\"}")
+  })
+
+  it('Unsuccessful collection image upload - return 400', async () => {
+
+    const uploadMock = jest.fn();
+    cloudinary.uploader.upload = uploadMock;
+    uploadMock.mockResolvedValue({});
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'POST',
+      url: '/image/collection/upload',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        name: "Okiedogi",
+        image: "ah",
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(response.statusMessage).toBe('Bad Request')
+  })
+})
+
+/*
+  * POST /image/campaign/upload
+  * Uploads a campaign image
+  * @param {string} name
+  * @param {Base64} image
+  * @returns {string} url
+*/
+describe('/image/campaign/upload - post', () => {
+  it('Successful campaign image upload - return 200', async () => {
+    const uploadMock = jest.fn();
+    cloudinary.uploader.upload = uploadMock;
+    uploadMock.mockResolvedValue({secure_url: 'its moorbin time', url : 'okiedogi'});
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'POST',
+      url: '/image/campaign/upload',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        name: "Okiedogi",
+        image: "ah",
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("{\"image\":\"okiedogi\"}")
+  })
+
+  it('Unsuccessful campaign image upload - return 400', async () => {
+
+    const uploadMock = jest.fn();
+    cloudinary.uploader.upload = uploadMock;
+    uploadMock.mockResolvedValue({});
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'POST',
+      url: '/image/campaign/upload',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        name: "Okiedogi",
+        image: "ah",
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(response.statusMessage).toBe('Bad Request')
+  })
+})
