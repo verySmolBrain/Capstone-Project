@@ -13,6 +13,7 @@ import LinkParser from 'react-link-parser'
 import * as z from 'zod'
 import useSWR from 'swr'
 import { Loader2 } from 'lucide-react'
+import * as emoji from 'node-emoji'
 
 enum MessageType {
   USER,
@@ -155,7 +156,9 @@ export function ChatPage({ receiver }: Props) {
                   : 'bg-muted'
               )}
             >
-              <LinkParser watchers={linkWatcher}>{message.content}</LinkParser>
+              <LinkParser watchers={linkWatcher}>
+                {emoji.emojify(message.content)}
+              </LinkParser>
             </div>
           </div>
         ))}
