@@ -244,51 +244,128 @@ describe('/campaign - get', () => {
    * @param {string} name
    * @returns {boolean} success
    */
-  describe('/campaign/:name - delete', () => {
-    it('Successfully retrieves campaigns - return 200', async () => {
-      prismaMockInstance.campaign.delete.mockResolvedValueOnce({
-          name: 'yabba',
-          image: 'a',
-          tags: [],
-          start: new Date(),
-          end: new Date(),
-          isActive: false
-      })
-  
-      const app = await build({})
-      const response = await app.inject({
-        method: 'DELETE',
-        url: '/campaign/:name',
-        headers: {
-          Authorization: 'yobba',
-        },
-        query: {
-            name: 'gobby'
-        }
-      })
-  
-      expect(response.statusCode).toBe(200)
-      expect(response.statusMessage).toBe('OK')
-      expect(response.body.startsWith("{\"name\":\"yabba\",\"image\":\"a\",\"tags\":[],\"start\":\"")).toBe(true)
+describe('/campaign/:name - delete', () => {
+  it('Successfully retrieves campaigns - return 200', async () => {
+    prismaMockInstance.campaign.delete.mockResolvedValueOnce({
+        name: 'yabba',
+        image: 'a',
+        tags: [],
+        start: new Date(),
+        end: new Date(),
+        isActive: false
     })
-  
-    it('Empty token error - return 401', async () => {
-      const app = await build({})
-      const response = await app.inject({
-        method: 'DELETE',
-        url: '/campaign/:name',
-        headers: {
-          Authorization: '',
-        },
-        body: {
-          name: 'a',
-          image: 'a',
-          startDate: new Date(),
-          endDate: new Date(),
-        }
-      })
-  
-      expect(response.statusCode).toBe(401)
-      expect(response.statusMessage).toBe('Unauthorized')
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'DELETE',
+      url: '/campaign/:name',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+          name: 'gobby'
+      }
     })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith("{\"name\":\"yabba\",\"image\":\"a\",\"tags\":[],\"start\":\"")).toBe(true)
   })
+
+  it('Empty token error - return 401', async () => {
+    const app = await build({})
+    const response = await app.inject({
+      method: 'DELETE',
+      url: '/campaign/:name',
+      headers: {
+        Authorization: '',
+      },
+      body: {
+        name: 'a',
+        image: 'a',
+        startDate: new Date(),
+        endDate: new Date(),
+      }
+    })
+
+    expect(response.statusCode).toBe(401)
+    expect(response.statusMessage).toBe('Unauthorized')
+  })
+})
+
+
+    /*
+   * PUT /collection/:collectionName/:collectableName
+   * Adds a collection to a campaign by name
+   * @param {string} name
+   * @param {string} image
+   * @returns {object} campaign
+   */
+
+describe('/campaign/:collectionName/:collectableName - PUT', () => {
+  it('Successfully updates a campaign by name - return 200', async () => {
+    prismaMockInstance.campaign.update.mockResolvedValueOnce({
+        name: 'gobby',
+        image: 'a',
+        tags: [],
+        start: new Date(),
+        end: new Date(),
+        isActive: false,
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/campaign/:collectionName/:collectableName',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+          campaignName: 'gobby',
+          collectionName: 'nobby'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith("{\"name\":\"gobby\",\"image\":\"a\",\"tags\":[],\"start\":\"")).toBe(true)
+  })
+})
+
+/*
+  * DELETE /collection/:collectionName/:collectableName
+  * Removes a collection from a campaign
+  * @param {string} collection
+  * @param {string} collectable
+  * @returns {object} collection
+  */
+
+describe('/campaign/:campaignName/:collectionName - DELETE', () => {
+  it('Successfully updates a campaign by name - return 200', async () => {
+    prismaMockInstance.campaign.update.mockResolvedValueOnce({
+        name: 'gobby',
+        image: 'a',
+        tags: [],
+        start: new Date(),
+        end: new Date(),
+        isActive: false,
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'DELETE',
+      url: '/campaign/:campaignName/:collectionName',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+          campaignName: 'gobby',
+          collectionName: 'nobby'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith("{\"name\":\"gobby\",\"image\":\"a\",\"tags\":[],\"start\":\"")).toBe(true)
+  })
+})
