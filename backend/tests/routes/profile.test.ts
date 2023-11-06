@@ -1,6 +1,8 @@
 import { Role } from '@prisma/client'
 import { build } from '@Source/app'
 import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
+import  *  as utils from '@Source/utils/utils'
+
 
 /*  
   * POST /user
@@ -528,6 +530,168 @@ describe('/profile/review - PUT', () => {
     
     expect(response1.statusCode).toBe(401)
     expect(response1.statusMessage).toBe('Unauthorized')
+    await app.close()
+  })
+})
+
+  /*
+   *  GET /role
+   *  Returns the current user's role
+   *  @returns {string} role
+  */
+describe('/role - GET', () => {
+  it('Successfully gets user\'s role - return 200', async () => {
+    const app = await build({})
+    prismaMockInstance.user.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      role: Role.USER
+    })
+    
+    const response1 = await app.inject({
+      method: 'GET',
+      url: '/role',
+      headers: {
+        Authorization: 'double',
+      },
+    })
+    
+    expect(response1.statusCode).toBe(200)
+    expect(response1.statusMessage).toBe('OK')
+    expect(response1.body).toBe("{\"role\":\"USER\"}")
+    await app.close()
+  })
+
+  it('Successfully gets user\'s role (MANAGER) - return 200', async () => {
+    const app = await build({})
+    
+    prismaMockInstance.user.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      role: Role.MANAGER
+    })
+    
+    const response1 = await app.inject({
+      method: 'GET',
+      url: '/role',
+      headers: {
+        Authorization: 'double',
+      },
+    })
+    
+    expect(response1.statusCode).toBe(200)
+    expect(response1.statusMessage).toBe('OK')
+    expect(response1.body).toBe("{\"role\":\"MANAGER\"}")
+    await app.close()
+  })
+
+  it('Successfully gets user\'s role (ADMIN) - return 200', async () => {
+    const app = await build({})
+    
+    prismaMockInstance.user.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      role: Role.ADMIN
+    })
+    
+    const response1 = await app.inject({
+      method: 'GET',
+      url: '/role',
+      headers: {
+        Authorization: 'double',
+      },
+    })
+    
+    expect(response1.statusCode).toBe(200)
+    expect(response1.statusMessage).toBe('OK')
+    expect(response1.body).toBe("{\"role\":\"ADMIN\"}")
+    await app.close()
+  })
+})
+
+/*
+   *  GET /role
+   *  Returns the given user's role
+   *  @returns {string} role
+  */
+describe('/role/:name - GET', () => {
+  it('Successfully gets user\'s role - return 200', async () => {
+    const app = await build({})
+
+    prismaMockInstance.user.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      role: Role.USER
+    })
+    
+    const spy = jest.spyOn(utils, 'getUserId')
+    spy.mockReturnValue(Promise.resolve('double'));
+    
+    const response1 = await app.inject({
+      method: 'GET',
+      url: '/role/:name',
+      headers: {
+        Authorization: 'double',
+      },
+      query: {
+        name: 'okidogi'
+      }
+    })
+    
+    expect(response1.statusCode).toBe(200)
+    expect(response1.statusMessage).toBe('OK')
+    expect(response1.body).toBe("{\"role\":\"USER\"}")
+    await app.close()
+  })
+
+  it('Successfully gets user\'s role (MANAGER) - return 200', async () => {
+    const app = await build({})
+    
+    prismaMockInstance.user.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      role: Role.MANAGER
+    })
+    
+    const spy = jest.spyOn(utils, 'getUserId')
+    spy.mockReturnValue(Promise.resolve('double'));
+    
+    const response1 = await app.inject({
+      method: 'GET',
+      url: '/role/:name',
+      headers: {
+        Authorization: 'double',
+      },
+      query: {
+        name: 'okidogi'
+      }
+    })
+    
+    expect(response1.statusCode).toBe(200)
+    expect(response1.statusMessage).toBe('OK')
+    expect(response1.body).toBe("{\"role\":\"MANAGER\"}")
+    await app.close()
+  })
+
+  it('Successfully gets user\'s role (ADMIN) - return 200', async () => {
+    const app = await build({})
+    
+    prismaMockInstance.user.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      role: Role.ADMIN
+    })
+    const spy = jest.spyOn(utils, 'getUserId')
+    spy.mockReturnValue(Promise.resolve('double'));
+    
+    const response1 = await app.inject({
+      method: 'GET',
+      url: '/role/:name',
+      headers: {
+        Authorization: 'double',
+      },
+      query: {
+        name: 'okidogi'
+      }
+    })
+    
+    expect(response1.statusCode).toBe(200)
+    expect(response1.statusMessage).toBe('OK')
+    expect(response1.body).toBe("{\"role\":\"ADMIN\"}")
     await app.close()
   })
 })
