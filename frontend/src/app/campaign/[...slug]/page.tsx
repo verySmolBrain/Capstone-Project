@@ -33,7 +33,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     value,
     index,
   }) => {
-    const radius = outerRadius * 1.75
+    const radius = outerRadius * 1.5
     const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180))
     const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180))
 
@@ -149,12 +149,16 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               )
             })}
           </div>
-          <p className="text-sm font-normal break-words lg:w-[60%] xl:w-[70%]">
-            Status:{' '}
-            {campaign.isActive
-              ? `Active | ${campaign.views} views`
-              : 'Inactive'}
-          </p>
+          {campaign.isActive && (
+            <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
+              {`Active | ${campaign.views} views`}
+            </p>
+          )}
+          {!campaign.isActive && (
+            <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
+              {`Inactive`}
+            </p>
+          )}
           <h3 className="text-1xl font-bold">Stats at a glance</h3>
           <p className="text-sm font-normal break-words">
             {`${campaign.collections.reduce(
