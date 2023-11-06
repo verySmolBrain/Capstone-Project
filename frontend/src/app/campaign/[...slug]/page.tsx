@@ -14,10 +14,35 @@ import { RemoveCollectionFromCampaignButton } from '@/components/ui/button/remov
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Role } from '@/lib/utils'
+import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts'
+import randomColor from 'randomcolor'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
   const [role, setRole] = React.useState<Role>()
+
+  type ChartData = { name: string; value: number }[]
+
+  let data: ChartData = []
+  const renderCustomLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    value,
+    index,
+  }) => {
+    const radius = outerRadius * 1.75
+    const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180))
+    const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180))
+
+    return (
+      <text x={x} y={y} fill="white" textAnchor="middle">
+        {data[index].name + ' ' + data[index].value}
+      </text>
+    )
+  }
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -77,6 +102,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     updatePageView()
   }, [params.slug])
 
+  if (campaign) {
+    data = campaign.collections.map((x) => ({
+      name: x.name,
+      value: x.collectables.length,
+    }))
+  }
+
   return campaign ? (
     <>
       <GeneralNavBar />
@@ -132,6 +164,23 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               campaign.collections.length > 1 ? 'collections' : 'collection'
             }`}
           </p>
+          <PieChart width={400} height={400}>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              label={renderCustomLabel}
+              labelLine={true}
+              outerRadius={80}
+              fill="#8884d8"
+              dataKey="value"
+              nameKey="name"
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={randomColor()} />
+              ))}
+            </Pie>
+          </PieChart>
         </div>
 
         <div className="container gap-4 pb-3 md:pb-6 pt-3 md:pt-6 lg:max-w-[calc(100vw-600px)]">
