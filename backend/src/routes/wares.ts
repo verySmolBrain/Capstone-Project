@@ -64,7 +64,6 @@ export default async function (fastify: FastifyInstance) {
 
     for (const collectable of req.body.collectables) {
       const inventoryCollectable = inventory.find((c) => c.name === collectable.name)
-
       if (!inventoryCollectable) {
         throwInvalidActionError('update wares', 'Collectable not found in inventory')
       }
