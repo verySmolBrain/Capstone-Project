@@ -71,7 +71,7 @@ model Review {
 }
 
 /// @@allow('read', true)
-/// @@allow('all', auth().role == ADMIN)
+/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Achievement {
     name String @id() @unique()
     description String

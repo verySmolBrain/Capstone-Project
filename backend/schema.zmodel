@@ -76,7 +76,7 @@ model Achievement {
   users       Profile[]
 
   @@allow('read', true)
-  @@allow('all', auth().role == ADMIN)
+  @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 }
 
 // Trade Schemas ---------------------------------------------------------------
