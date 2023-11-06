@@ -130,6 +130,7 @@ type Profile = {
   inventory: CollectableCount[]
   wishlist: CollectableCount[]
   wares: CollectableCount[]
+  achievements: Achievement[]
 }
 
 type CollectionCollectable = {

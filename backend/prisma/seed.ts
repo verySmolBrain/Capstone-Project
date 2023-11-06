@@ -219,18 +219,22 @@ async function main() {
       {
         name: 'The Legendary Birds',
         description: 'Collect all three legendary birds',
+        image: 'https://archives.bulbagarden.net/media/upload/b/b5/Rainbow_Badge.png',
       },
       {
         name: 'The Lake Guardians',
         description: 'Collect all three lake guardians',
+        image: 'https://archives.bulbagarden.net/media/upload/e/e6/Glacier_Badge.png',
       },
       {
         name: 'The Treasures of Ruin',
         description: 'Collect all four treasures of ruin',
+        image: 'https://archives.bulbagarden.net/media/upload/c/c4/Heat_Badge.png',
       },
       {
         name: 'Pikachu Clones',
         description: 'Collect all eleven pikachu clones',
+        image: 'https://archives.bulbagarden.net/media/upload/a/a6/Thunder_Badge.png',
       },
     ],
   })

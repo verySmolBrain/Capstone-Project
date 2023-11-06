@@ -44,7 +44,9 @@ export default async function (fastify: FastifyInstance) {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)
 
-    const achievements = await prisma.achievement.findMany()
+    const achievements = await prisma.achievement.findMany({
+      include: { users: true },
+    })
     return achievements
   })
 
@@ -53,7 +55,7 @@ export default async function (fastify: FastifyInstance) {
    * Returns an achievement by name
    * @returns {object} achievement
    */
-  fastify.get('/achievement/:achievementName', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+  fastify.get('/achievement/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
     const token = req.headers['authorization'] as string
     const { name } = req.params
     const prisma = await requestHandler(token)

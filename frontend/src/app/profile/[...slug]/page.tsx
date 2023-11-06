@@ -40,6 +40,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [inventory, setInventory] = React.useState<CollectionCollectable>()
   const [wares, setWares] = React.useState<CollectableCount[]>()
   const [wishlist, setWishlist] = React.useState<CollectableCount[]>()
+  const [achievements, setAchievements] = React.useState<Achievement[]>([])
 
   const router = useRouter()
 
@@ -98,6 +99,12 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     { refreshInterval: 3000 }
   )
 
+  const { data: achievementsData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/achievement`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
   React.useEffect(() => {
     if (profileData?.data) {
       setProfile(profileData?.data)
@@ -118,6 +125,9 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     if (roleData) {
       setRole((roleData?.role as Role) ?? Role.NULL)
     }
+    if (achievementsData) {
+      setAchievements(achievementsData)
+    }
   }, [
     profileData?.data,
     ownProfileData?.data,
@@ -126,6 +136,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     waresData,
     wishlistData,
     roleData,
+    achievementsData,
   ])
 
   const default_profile =
@@ -185,6 +196,47 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
             </div>
           </div>
           <div className="container gap-4 pb-6">
+            <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
+              <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
+                {isOwnProfile ? 'My' : 'Their'} Achievements
+              </h2>
+            </div>
+            <div className="container border rounded-2xl pt-6 pb-6">
+              <Carousel>
+                {achievements?.map((achievement, i) => {
+                  const hasAchievement = achievement.users.find(
+                    (u) => u.id == profile.id
+                  )
+                  return (
+                    <div key={i} className="pt-5">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="mt-6 mb-6 mr-3 ml-3 w-auto">
+                              <Image
+                                src={achievement.image}
+                                width={125}
+                                height={125}
+                                className={
+                                  'rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3 border-primary border-1' +
+                                  (!hasAchievement ? ' grayscale' : '')
+                                }
+                                alt={achievement.name}
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="md:text-base w-full text-center">
+                              {achievement.name}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )
+                })}
+              </Carousel>
+            </div>
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
                 {isOwnProfile ? 'My' : 'Their'} Collectables
