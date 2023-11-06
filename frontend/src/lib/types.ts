@@ -40,6 +40,7 @@ type Campaign = {
   start: Date
   end: Date
   managers: User[]
+  views: number
 }
 
 type UserProfile = {

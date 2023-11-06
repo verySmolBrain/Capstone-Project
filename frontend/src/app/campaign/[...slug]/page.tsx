@@ -118,7 +118,19 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             })}
           </div>
           <p className="text-sm font-normal break-words lg:w-[60%] xl:w-[70%]">
-            Status: {campaign.isActive ? 'Active' : 'Inactive'}
+            Status:{' '}
+            {campaign.isActive
+              ? `Active | ${campaign.views} views`
+              : 'Inactive'}
+          </p>
+          <h3 className="text-1xl font-bold">Stats at a glance</h3>
+          <p className="text-sm font-normal break-words">
+            {`${campaign.collections.reduce(
+              (accumulator, curr) => accumulator + curr.collectables.length,
+              0
+            )} collectable(s) across ${campaign.collections.length} ${
+              campaign.collections.length > 1 ? 'collections' : 'collection'
+            }`}
           </p>
         </div>
 
