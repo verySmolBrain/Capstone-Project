@@ -10,7 +10,6 @@ describe('/wares - GET', () => {
   it('Successful wishlist retrieval - return 200', async () => {
     // @ts-expect-error wares 
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-        
         id: 'double',
         name: 'stringadsf',
         description: null,
@@ -144,18 +143,55 @@ describe('/wares/:name - GET', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body.startsWith("")).toBe(true)
+    expect(response.body.startsWith("[{\"collectable\":{\"collection\":[{\"name\":\"Collection A\",\"image\":\"collectionA.jpg\"},")).toBe(true)
   })
 })
 
-  /*
-   *  PUT /wares
-   *  Update the user's wares
-   *  @param {collectableCount[]} collectables
-   *  @returns {object} wares
-   */
+/*
+  *  PUT /wares
+  *  Update the user's wares
+  *  @param {collectableCount[]} collectables
+  *  @returns {object} wares
+  */
 describe('/wares - PUT', () => {
-  it('Successful wishlist retrieval - return 200', async () => {
+  it('Successful wares update - return 200', async () => {
+    const inventory = [
+      {
+        collectable: {
+          collection: [
+            {
+              name: 'Collection A',
+              image: 'collectionA.jpg',
+            },
+            {
+              name: 'Collection B',
+              image: null,
+            },
+          ],
+          image: 'collectableImage.jpg',
+          tags: ['tag1', 'tag2'],
+        },
+        count: 3,
+        id: 1,
+        name: 'Item A',
+      },
+      {
+        collectable: {
+          collection: [
+            {
+              name: 'Collection C',
+              image: 'collectionC.jpg',
+            },
+          ],
+          image: 'collectableImage.jpg',
+          tags: ['tag3'],
+        },
+        count: 1,
+        id: 2,
+        name: 'Item B',
+      },
+    ];
+
     // @ts-expect-error wares 
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
         
@@ -164,44 +200,7 @@ describe('/wares - PUT', () => {
         description: null,
         image: null,
         reputation: 1,
-
-        wares: 
-        [
-          {
-            collectable: {
-              collection: [
-                {
-                  name: 'Collection A',
-                  image: 'collectionA.jpg',
-                },
-                {
-                  name: 'Collection B',
-                  image: null,
-                },
-              ],
-              image: 'collectableImage.jpg',
-              tags: ['tag1', 'tag2'],
-            },
-            count: 3,
-            id: 1,
-            name: 'Item A',
-          },
-          {
-            collectable: {
-              collection: [
-                {
-                  name: 'Collection C',
-                  image: 'collectionC.jpg',
-                },
-              ],
-              image: 'collectableImage.jpg',
-              tags: ['tag3'],
-            },
-            count: 1,
-            id: 2,
-            name: 'Item B',
-          },
-        ],
+        inventory: inventory
     })
 
     // @ts-expect-error wares 
@@ -267,6 +266,112 @@ describe('/wares - PUT', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith("")).toBe(true)
+  })
+  it('Update wares (Collectable not found in inventory)- return 400', async () => {
+    const inventory = [
+      {
+        collectable: {
+          collection: [
+            {
+              name: 'Collection A',
+              image: 'collectionA.jpg',
+            },
+            {
+              name: 'Collection B',
+              image: null,
+            },
+          ],
+          image: 'collectableImage.jpg',
+          tags: ['tag1', 'tag2'],
+        },
+        count: 3,
+        id: 1,
+        name: 'Item A',
+      },
+      {
+        collectable: {
+          collection: [
+            {
+              name: 'Collection C',
+              image: 'collectionC.jpg',
+            },
+          ],
+          image: 'collectableImage.jpg',
+          tags: ['tag3'],
+        },
+        count: 1,
+        id: 2,
+        name: 'Item B',
+      },
+    ];
+    // @ts-expect-error inventory throws as it is not required in profile but is required for testing
+    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
+        id: 'double',
+        name: 'stringadsf',
+        description: null,
+        image: null,
+        reputation: 1,
+        inventory: inventory
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/wares',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        collectables: [{name: 'yabbanese', id: 1}, {name: 'yabbaneses', id: 2}]
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(response.statusMessage).toBe("Bad Request")
+  })
+
+  it('Update wares (Not enough collectables in inventory) - return 400', async () => {
+    const inventory = [
+      {
+        collectable: {
+          collection: [
+            {
+              name: 'Collection C',
+              image: 'collectionC.jpg',
+            },
+          ],
+          image: 'collectableImage.jpg',
+          tags: ['tag3'],
+        },
+        count: 0,
+        id: 2,
+        name: 'yobbin',
+      },
+    ];
+    // @ts-expect-error inventory throws as it is not required in profile but is required for testing
+    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
+        id: 'double',
+        name: 'stringadsf',
+        description: null,
+        image: null,
+        reputation: 1,
+        inventory: inventory
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/wares',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        collectables: [{name: 'yobbin', count: 2},]
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(response.statusMessage).toBe("Bad Request")
   })
 })
 
