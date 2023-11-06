@@ -56,6 +56,27 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     }
   }, [campaignResult, roleResult, params.slug])
 
+  React.useEffect(() => {
+    const updatePageView = async () => {
+      const supabase = createClientComponentClient<Database>()
+      const token = (await supabase.auth.getSession()).data.session
+        ?.access_token
+
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${params.slug}/view`,
+        {
+          method: 'PUT',
+          headers: {
+            'update-type': 'name',
+            authorization: token!,
+          },
+        }
+      )
+    }
+
+    updatePageView()
+  }, [params.slug])
+
   return campaign ? (
     <>
       <GeneralNavBar />

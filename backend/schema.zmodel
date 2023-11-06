@@ -179,6 +179,7 @@ model Campaign {
   start      DateTime @default(now())
   end        DateTime
   isActive   Boolean  @default(false)
+  views      Int
 
   collections Collection[]
 
