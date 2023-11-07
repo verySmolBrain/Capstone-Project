@@ -24,13 +24,13 @@ import { PrismaClient } from '@prisma/client'
 
 // stuff should have tags ctrl+f 'tags' to find them
 
-// collections: 'The Legendary Birds', 'The Lake Trio', 'The Treasures of Ruin', 'Bellsprout', 'Pikachu Clones'
+// collections: 'The Legendary Bird Trio', 'The Lake Trio', 'The Treasures of Ruin', 'Bellsprout', 'Pikachu Clones'
 // campaigns: 'The Legendary Bird Trio', 'Just BellSprout', 'Random Legendaries'
 // 'The Legendary Bird Trio' has the 'featured' tag
 // 'Just BellSprout' has the 'popular' tag
 
 // there are 4 achievements:
-// 'The Legendary Birds', 'The Lake Guardians', 'The Treasures of Ruin', 'Pikachu Clones'
+// 'Bird Brained', 'The Three Musketeers', 'Treasure Collector', 'Pikachu Power'
 
 const prisma = new PrismaClient()
 
@@ -217,24 +217,28 @@ async function main() {
   const achievements = await prisma.achievement.createMany({
     data: [
       {
-        name: 'The Legendary Birds',
-        description: 'Collect all three legendary birds',
+        name: 'Bird Brained',
+        description: 'Collect all three Legendary Birds',
         image: 'https://archives.bulbagarden.net/media/upload/b/b5/Rainbow_Badge.png',
+        id: 'The Legendary Bird Trio',
       },
       {
-        name: 'The Lake Guardians',
+        name: 'The Three Musketeers',
         description: 'Collect all three lake guardians',
         image: 'https://archives.bulbagarden.net/media/upload/1/12/Volcano_Badge.png',
+        id: 'The Lake Trio',
       },
       {
-        name: 'The Treasures of Ruin',
+        name: 'Treasure Collector',
         description: 'Collect all four treasures of ruin',
         image: 'https://archives.bulbagarden.net/media/upload/9/9c/Cascade_Badge.png',
+        id: 'The Treasures of Ruin',
       },
       {
-        name: 'Pikachu Clones',
+        name: 'Pikachu Power',
         description: 'Collect all eleven pikachu clones',
         image: 'https://archives.bulbagarden.net/media/upload/a/a6/Thunder_Badge.png',
+        id: 'Pikachu Clones',
       },
     ],
   })

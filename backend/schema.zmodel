@@ -70,10 +70,13 @@ model Review {
 }
 
 model Achievement {
-  name        String  @id @unique
+  id          String @id
+  name        String  @unique
   description String
   image       String?
   users       Profile[]
+
+  collection  Collection @relation(fields: [id], references: [name])
 
   @@allow('read', true)
   @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
@@ -166,6 +169,7 @@ model Collection {
 
   collectables Collectable[]  @relation('collection')
   collections Campaign[]
+  achievement Achievement?
 
 
   @@allow('read', true)

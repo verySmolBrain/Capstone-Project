@@ -21,7 +21,6 @@ export default function AchievementPage({
 }) {
   const [achievement, setAchievement] = React.useState<Achievement>()
   const [inventory, setInventory] = React.useState<CollectionCollectable>()
-  const [collection, setCollection] = React.useState<Collection>()
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -51,11 +50,6 @@ export default function AchievementPage({
     fetcher
   )
 
-  const { data: collectionData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/Pikachu Clones`,
-    fetcher
-  )
-
   React.useEffect(() => {
     if (achievementData) {
       setAchievement(achievementData)
@@ -63,10 +57,7 @@ export default function AchievementPage({
     if (inventoryData) {
       setInventory(inventoryData)
     }
-    if (collectionData) {
-      setCollection(collectionData)
-    }
-  }, [achievementData, inventoryData, collectionData, params.slug])
+  }, [achievementData, inventoryData, params.slug])
 
   return achievement ? (
     <>
@@ -95,9 +86,9 @@ export default function AchievementPage({
                 Your progress
               </h2>
               <Carousel>
-                {collection?.collectables.map((collectable, i) => {
+                {achievement.collection?.collectables.map((collectable, i) => {
                   const count = inventory
-                    ? inventory[collection.name]?.collectables.find(
+                    ? inventory[achievement.id]?.collectables.find(
                         (inventoryCollectable) =>
                           inventoryCollectable.name === collectable.name
                       )?.count

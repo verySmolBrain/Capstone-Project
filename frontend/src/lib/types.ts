@@ -77,6 +77,7 @@ type Achievement = {
   description: string
   image: string
   users: UserProfile[]
+  collection: Collection
 }
 
 type Review = {

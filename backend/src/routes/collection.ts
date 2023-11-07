@@ -22,6 +22,13 @@ export default async function (fastify: FastifyInstance) {
           name: name,
           image: image,
           tags: tags,
+          achievement: {
+            create: {
+              name: name,
+              description: 'Complete ' + name,
+              image: 'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg',
+            },
+          },
         },
       })
       return collection
@@ -55,6 +62,7 @@ export default async function (fastify: FastifyInstance) {
       where: { name: name },
       include: {
         collectables: true,
+        achievement: true,
       },
     })
     return collection

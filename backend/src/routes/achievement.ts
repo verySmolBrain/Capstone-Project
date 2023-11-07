@@ -3,39 +3,6 @@ import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
   /*
-   * POST /achievement
-   * Creates an achievement
-   * @param {string} name
-   * @param {string} description
-   * @param {string} image
-   */
-  fastify.post(
-    '/achievement',
-    async (
-      req: FastifyRequest<{
-        Body: {
-          name: string
-          description: string
-          image: string
-        }
-      }>
-    ) => {
-      const token = req.headers['authorization'] as string
-      const { name, description, image } = req.body
-      const prisma = await requestHandler(token)
-
-      const achievement = await prisma.achievement.create({
-        data: {
-          name: name,
-          description: description,
-          image: image,
-        },
-      })
-      return achievement
-    }
-  )
-
-  /*
    * GET /achievement
    * Returns all achievements
    * @returns {object} achievements
@@ -62,6 +29,14 @@ export default async function (fastify: FastifyInstance) {
 
     const achievement = await prisma.achievement.findFirstOrThrow({
       where: { name: name },
+      include: {
+        collection: {
+          include: {
+            collectables: true,
+          },
+        },
+        users: true,
+      },
     })
     return achievement
   })
