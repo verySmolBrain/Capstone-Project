@@ -137,6 +137,9 @@ model Post {
 /// @@allow('all', auth().role == ADMIN || auth().id == authorId)
 model Comment {
     id Int @id() @default(autoincrement())
+    parentCommend Comment? @relation("subComment", fields: [parentCommentId], references: [id])
+    parentCommentId Int?
+    subComment Comment[] @relation("subComment")
     post Post @relation(fields: [postId], references: [id])
     postId Int
     author Profile @relation(fields: [authorId], references: [id])
@@ -200,7 +203,7 @@ model Campaign {
     isActive Boolean @default(false)
     collections Collection[]
     managers User[] @relation("managers")
-    reviewes CampaignReview[]
+    reviews CampaignReview[]
     posts Post[]
 }
 

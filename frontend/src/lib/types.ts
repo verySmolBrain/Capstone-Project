@@ -18,7 +18,7 @@ enum Role {
   NULL,
 }
 
-type ProfileReviews = {
+type ProfileReview = {
   reviewer: {
     id: string
     name: string
@@ -28,7 +28,19 @@ type ProfileReviews = {
   }
   review: number
   description: string
-}[]
+}
+
+type CampaignReview = {
+  reviewer: {
+    id: string
+    name: string
+    description: string | null
+    image: string | null
+    reputation: number
+  }
+  review: number
+  description: string
+}
 
 type Collection = {
   name: string

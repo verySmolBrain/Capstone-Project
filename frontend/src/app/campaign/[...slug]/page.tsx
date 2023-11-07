@@ -15,7 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Role } from '@/lib/utils'
 import ForumList from '@/components/ui/page/forum-list'
-import { Rating } from '@smastrom/react-rating'
+import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-button'
+import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
@@ -83,13 +84,17 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               )}
             </div>
           </div>
-          <h2 className="text-2xl font-semibold truncate">{campaign?.name}</h2>
+          <Link href={`/campaign/reviews/${campaign.name}`}>
+            <h2 className="text-2xl font-semibold truncate hover:underline">
+              {campaign?.name}
+            </h2>
+          </Link>
           <hr />
           <div className="flex flex-row flex-wrap gap-2 pb-3 w-28">
             {role === Role.USER ? (
-              <Rating className="overflow-hidden " value={0} />
+              <ReviewCampaignButton campaign={campaign.name} />
             ) : (
-              <Rating className="overflow-hidden " value={0} readOnly />
+              <ManagerCampaignRating campaign={campaign.name} />
             )}
           </div>
           <div className="flex flex-row flex-wrap gap-2 pb-3">

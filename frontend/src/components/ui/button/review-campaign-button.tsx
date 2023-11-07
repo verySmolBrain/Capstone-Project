@@ -12,16 +12,16 @@ import {
 } from '@/components/ui/dialog'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
-import { ReviewUserForm } from '../form/review-user-form'
 import useSWR from 'swr'
+import { ReviewCampaignForm } from '../form/review-campaign-form'
 
-export function ReviewProfileRating({ username }: { username: string }) {
+export function ReviewCampaignButton({ campaign }: { campaign: string }) {
   const [open, setOpen] = React.useState(false)
   const [rating, setRating] = React.useState(0) // Change to get request first
   const [userSetRating, setUserSetRating] = React.useState(0)
-  const [profileReviews, setProfileReviews] = React.useState<ProfileReview[]>(
-    []
-  )
+  const [campaignReviews, setCampaignReviews] = React.useState<
+    CampaignReview[]
+  >([])
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -41,22 +41,21 @@ export function ReviewProfileRating({ username }: { username: string }) {
     }
   }
 
-  const { data: profileReviewsData, mutate } = useSWR<ProfileReview[]>(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/reviews/profile/${username}`,
+  const { data: campaignReviewsData, mutate } = useSWR<CampaignReview[]>(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/reviews/campaign/${campaign}`,
     fetcher
   )
 
   React.useEffect(() => {
-    if (profileReviewsData) {
+    if (campaignReviewsData) {
       const averageRating =
-        profileReviewsData.reduce((a, b) => a + b.review, 0) /
-        profileReviewsData.length
+        campaignReviewsData.reduce((a, b) => a + b.review, 0) /
+        campaignReviewsData.length
 
-      console.log(averageRating)
       setRating(averageRating)
-      setProfileReviews(profileReviewsData)
+      setCampaignReviews(campaignReviewsData)
     }
-  }, [profileReviewsData])
+  }, [campaignReviewsData])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -70,17 +69,17 @@ export function ReviewProfileRating({ username }: { username: string }) {
           }}
         />
         <span className="text-sm font-medium leading-none">
-          ( Reviews: {profileReviews.length} )
+          ( Reviews: {campaignReviews.length} )
         </span>
       </DialogTrigger>
       <DialogContent className="w-auto m-20">
         <DialogHeader>
-          <DialogTitle>Review User</DialogTitle>
+          <DialogTitle>Review Campaign</DialogTitle>
         </DialogHeader>
         <div className="flex-col justify-left">
-          <ReviewUserForm
+          <ReviewCampaignForm
             rating={userSetRating}
-            username={username}
+            campaign={campaign}
             mutate={mutate}
             setOpen={setOpen}
           />

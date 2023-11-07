@@ -13,8 +13,8 @@ export default function ReviewListPage({
       <GeneralNavBar />
       <section className="space pb-8 pt-6 md:pb-12 md:pt-10">
         <div className="container flex flex-col gap-4">
-          <TypographyH2 text="Active chats" />
-          <CampaignReviewList username={params.slug} />
+          <TypographyH2 text="Campaign Reviews" />
+          <CampaignReviewList campaign={params.slug} />
         </div>
       </section>
     </div>

@@ -4,7 +4,7 @@ import * as React from 'react'
 import { toast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { reviewProfileDescriptionUpdateSchema } from '@/lib/validation/profile'
+import { reviewCampaignDescriptionUpdateSchema } from '@/lib/validation/campaign'
 import { useForm } from 'react-hook-form'
 import {
   Form,
@@ -20,23 +20,23 @@ import type { Database } from '@/lib/database.types'
 import { Rating } from '@smastrom/react-rating'
 import * as z from 'zod'
 
-type FormData = z.infer<typeof reviewProfileDescriptionUpdateSchema>
+type FormData = z.infer<typeof reviewCampaignDescriptionUpdateSchema>
 
-export function ReviewUserForm({
+export function ReviewCampaignForm({
   rating,
-  username,
+  campaign,
   mutate,
   setOpen,
 }: {
   rating: number
-  username: string
+  campaign: string
   mutate: () => void
   setOpen: (open: boolean) => void
 }) {
   const [isLoading, setIsLoading] = React.useState(false)
 
   const form = useForm<FormData>({
-    resolver: zodResolver(reviewProfileDescriptionUpdateSchema),
+    resolver: zodResolver(reviewCampaignDescriptionUpdateSchema),
   })
 
   async function onSubmit(data: FormData) {
@@ -46,7 +46,7 @@ export function ReviewUserForm({
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
     const updateResult = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/reviews/profile/${username}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/reviews/campaign/${campaign}`,
       {
         method: 'PUT',
         headers: {
@@ -94,7 +94,7 @@ export function ReviewUserForm({
               <FormLabel>Review Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us your thoughts about this user!"
+                  placeholder="Tell us your thoughts about this campaign!"
                   className="resize-y w-full h-32"
                   {...field}
                   {...form.register('description')}

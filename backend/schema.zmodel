@@ -241,7 +241,7 @@ model Campaign {
 
   managers   User[] @relation('managers')
 
-  reviewes  CampaignReview[]
+  reviews  CampaignReview[]
 
   posts    Post[]
 

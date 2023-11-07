@@ -196,7 +196,7 @@ export default async function (fastify: FastifyInstance) {
    *  @returns a list of {profile: Profile, review: float, description: string}
    */
 
-  fastify.get('/profile/reviews/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+  fastify.get('/reviews/profile/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
     const token = req.headers['authorization'] as string
     const { name } = req.params
     const prisma = await requestHandler(token)
@@ -232,7 +232,7 @@ export default async function (fastify: FastifyInstance) {
    */
 
   fastify.put(
-    '/profile/reviews/:name',
+    '/reviews/profile/:name',
     async (req: FastifyRequest<{ Params: { name: string }; Body: { review: number; description: string } }>) => {
       const token = req.headers['authorization'] as string
 
@@ -247,11 +247,6 @@ export default async function (fastify: FastifyInstance) {
         },
       })
 
-      console.log(extractId(token))
-      console.log(await getUserId(name, prisma))
-      console.log(await prisma.userReview.findMany())
-      console.log(findReview)
-
       if (findReview) {
         const updatedReview = await prisma.userReview.update({
           where: {
@@ -265,8 +260,6 @@ export default async function (fastify: FastifyInstance) {
 
         return updatedReview
       }
-
-      console.log('bvvvvvvvvvvvvvvvvvv')
 
       const createdReview = await prisma.userReview.create({
         data: {

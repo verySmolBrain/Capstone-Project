@@ -10,7 +10,9 @@ import { Rating } from '@smastrom/react-rating'
 import { Avatar } from '../avatar'
 
 export function ProfileReviewList({ username }: { username: string }) {
-  const [profileReviews, setProfileReviews] = React.useState<ProfileReviews>([])
+  const [profileReviews, setProfileReviews] = React.useState<ProfileReview[]>(
+    []
+  )
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -29,8 +31,8 @@ export function ProfileReviewList({ username }: { username: string }) {
     }
   }
 
-  const { data: profileReviewsData } = useSWR<ProfileReviews>(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/profile/reviews/${username}`,
+  const { data: profileReviewsData } = useSWR<ProfileReview[]>(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/reviews/profile/${username}`,
     fetcher,
     { refreshInterval: 5000 }
   )
@@ -46,7 +48,7 @@ export function ProfileReviewList({ username }: { username: string }) {
       return (
         <div>
           <h1 className="text-xl font-semibold tracking-tight">
-            You have no reviews!
+            This profile has no reviews!
           </h1>
         </div>
       )
