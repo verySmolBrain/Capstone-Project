@@ -15,6 +15,14 @@ import { AddCollectionProfileButton } from '@/components/ui/button/add-collectio
 import { ChatButton } from '@/components/ui/button/chat-button'
 import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
 import { Role } from '@/lib/utils'
+import { LoadingScreen } from '@/components/ui/page/loading-page'
+import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 enum profileCollection {
   INVENTORY,
@@ -22,16 +30,14 @@ enum profileCollection {
   WARES,
 }
 
+const default_profile =
+  'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
+
 const default_img =
   'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
-import { LoadingScreen } from '@/components/ui/page/loading-page'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
+
+const default_badge =
+  'https://archives.bulbagarden.net/media/upload/d/dd/Boulder_Badge.png'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
@@ -139,9 +145,6 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     achievementsData,
   ])
 
-  const default_profile =
-    'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
-
   return profile ? (
     <>
       <GeneralNavBar />
@@ -213,16 +216,18 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="mt-6 mb-6 mr-3 ml-3 w-auto">
-                              <Image
-                                src={achievement.image}
-                                width={125}
-                                height={125}
-                                className={
-                                  'rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3 border-primary border-1' +
-                                  (!hasAchievement ? ' grayscale' : '')
-                                }
-                                alt={achievement.name}
-                              />
+                              <Link href={`/achievement/${achievement.name}`}>
+                                <Image
+                                  src={achievement.image ?? default_badge}
+                                  width={125}
+                                  height={125}
+                                  className={
+                                    'rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3 border-primary border-1' +
+                                    (!hasAchievement ? ' grayscale' : '')
+                                  }
+                                  alt={achievement.name}
+                                />
+                              </Link>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>

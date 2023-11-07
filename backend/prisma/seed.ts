@@ -224,12 +224,12 @@ async function main() {
       {
         name: 'The Lake Guardians',
         description: 'Collect all three lake guardians',
-        image: 'https://archives.bulbagarden.net/media/upload/e/e6/Glacier_Badge.png',
+        image: 'https://archives.bulbagarden.net/media/upload/1/12/Volcano_Badge.png',
       },
       {
         name: 'The Treasures of Ruin',
         description: 'Collect all four treasures of ruin',
-        image: 'https://archives.bulbagarden.net/media/upload/c/c4/Heat_Badge.png',
+        image: 'https://archives.bulbagarden.net/media/upload/9/9c/Cascade_Badge.png',
       },
       {
         name: 'Pikachu Clones',
