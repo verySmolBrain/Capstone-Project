@@ -14,6 +14,8 @@ import { RemoveCollectionFromCampaignButton } from '@/components/ui/button/remov
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Role } from '@/lib/utils'
+import ForumList from '@/components/ui/page/forum-list'
+import { Rating } from '@smastrom/react-rating'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
@@ -83,7 +85,14 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
           <h2 className="text-2xl font-semibold truncate">{campaign?.name}</h2>
           <hr />
-          <div className="flex flex-row flex-wrap gap-2  pb-3">
+          <div className="flex flex-row flex-wrap gap-2 pb-3 w-28">
+            {role === Role.USER ? (
+              <Rating className="overflow-hidden " value={0} />
+            ) : (
+              <Rating className="overflow-hidden " value={0} readOnly />
+            )}
+          </div>
+          <div className="flex flex-row flex-wrap gap-2 pb-3">
             <p className="text-sm font-normal break-words pt-1">Tags:</p>
             {campaign?.tags.map((tag, i) => {
               return (
@@ -149,6 +158,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </section>
+      <ForumList />
     </>
   ) : (
     <LoadingScreen />

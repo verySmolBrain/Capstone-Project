@@ -191,7 +191,7 @@ export default async function (fastify: FastifyInstance) {
 
   /*
    *  GET /profile/reviews/:name
-   *  Gets the user's review scores
+   *  Gets the user's reviews
    *  @param {float} review
    *  @returns a list of {profile: Profile, review: float, description: string}
    */
@@ -239,6 +239,34 @@ export default async function (fastify: FastifyInstance) {
       const { name } = req.params
       const { review, description } = req.body
       const prisma = await requestHandler(token)
+
+      const findReview = await prisma.userReview.findFirst({
+        where: {
+          revieweeId: extractId(token),
+          reviewerId: await getUserId(name, prisma),
+        },
+      })
+
+      console.log(extractId(token))
+      console.log(await getUserId(name, prisma))
+      console.log(await prisma.userReview.findMany())
+      console.log(findReview)
+
+      if (findReview) {
+        const updatedReview = await prisma.userReview.update({
+          where: {
+            id: findReview.id,
+          },
+          data: {
+            rating: review,
+            comment: description,
+          },
+        })
+
+        return updatedReview
+      }
+
+      console.log('bvvvvvvvvvvvvvvvvvv')
 
       const createdReview = await prisma.userReview.create({
         data: {

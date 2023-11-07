@@ -156,8 +156,12 @@ model Post {
 model Comment {
     id         Int       @id @default(autoincrement())
 
-    post      Post      @relation(fields: [postId], references: [id])
-    postId   Int
+    parentCommend     Comment?  @relation('subComment', fields: [parentCommentId], references: [id])
+    parentCommentId   Int?
+    subComment Comment[] @relation('subComment')
+
+    post       Post      @relation(fields: [postId], references: [id])
+    postId     Int
 
     author     Profile   @relation(fields: [authorId], references: [id])
     authorId   String
