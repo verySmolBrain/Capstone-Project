@@ -588,64 +588,64 @@ async function main() {
     }),
   ]
 
-  const ap = await prisma.profile.findFirstOrThrow({ where: { id: 'f3d0c820-eb35-4edc-89d1-913a6a9b87cc' } })
-  const achievementA = await prisma.achievement.findFirstOrThrow({
-    where: { name: 'Bird Brained' },
-    include: { users: true },
+  const pA = await prisma.profile.findFirstOrThrow({
+    where: { name: 'a' },
+    include: { achievements: true },
   })
-  achievementA?.users.push(ap)
+  const achievementA = await prisma.achievement.findFirstOrThrow({ where: { id: 'Bird Brained' } })
+  pA.achievements.push(achievementA)
 
-  const bp = await prisma.profile.findFirstOrThrow({ where: { id: '1bd1afa6-4b79-4888-bcaa-dfd2f4bf35f5' } })
-  const achievementB = await prisma.achievement.findFirstOrThrow({
-    where: { name: 'The Three Musketeers' },
-    include: { users: true },
+  const pB = await prisma.profile.findFirstOrThrow({
+    where: { name: 'b' },
+    include: { achievements: true },
   })
-  achievementB?.users.push(bp)
+  const achievementB = await prisma.achievement.findFirstOrThrow({ where: { id: 'The Three Musketeers' } })
+  pB.achievements.push(achievementB)
 
-  const cp = await prisma.profile.findFirstOrThrow({ where: { id: '104d0ebb-558d-47fe-8c52-f257c6a238a8' } })
-  const achievementC = await prisma.achievement.findFirstOrThrow({
-    where: { name: 'Treasure Collector' },
-    include: { users: true },
+  const pC = await prisma.profile.findFirstOrThrow({
+    where: { name: 'c' },
+    include: { achievements: true },
   })
-  achievementC?.users.push(cp)
+  const achievementC = await prisma.achievement.findFirstOrThrow({ where: { id: 'Treasure Collector' } })
+  pC.achievements.push(achievementC)
 
-  const dp = await prisma.profile.findFirstOrThrow({ where: { id: '1054e834-0881-4019-bf13-49f9f9853e28' } })
-  const achievementD = await prisma.achievement.findFirstOrThrow({
-    where: { name: 'Slenderman' },
-    include: { users: true },
+  const pD = await prisma.profile.findFirstOrThrow({
+    where: { name: 'd' },
+    include: { achievements: true },
   })
-  achievementD?.users.push(dp)
+  const achievementD = await prisma.achievement.findFirstOrThrow({ where: { id: 'Slenderman' } })
+  pD.achievements.push(achievementD)
 
   const achievements = [
-    await prisma.achievement.update({
-      where: { name: 'Bird Brained' },
+    await prisma.profile.update({
+      where: { name: 'a' },
       data: {
-        users: {
-          set: [...achievementA?.users],
+        achievements: {
+          connect: pA.achievements,
         },
       },
     }),
-    await prisma.achievement.update({
-      where: { name: 'The Three Musketeers' },
+    await prisma.profile.update({
+      where: { name: 'b' },
       data: {
-        users: {
-          set: [...achievementB?.users],
+        achievements: {
+          connect: pB.achievements,
         },
       },
     }),
-    await prisma.achievement.update({
-      where: { name: 'Treasure Collector' },
+    await prisma.profile.update({
+      where: { name: 'c' },
       data: {
-        users: {
-          set: [...achievementC?.users],
+        achievements: {
+          connect: pC.achievements,
         },
       },
     }),
-    await prisma.achievement.update({
-      where: { name: 'Slenderman' },
+    await prisma.profile.update({
+      where: { name: 'd' },
       data: {
-        users: {
-          set: [...achievementD?.users],
+        achievements: {
+          connect: pD.achievements,
         },
       },
     }),
