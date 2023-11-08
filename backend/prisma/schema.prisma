@@ -70,13 +70,14 @@ model Review {
     reviewerId String
 }
 
-/// @@allow('read', true)
-/// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+/// @@allow('all', true)
+/// @@allow('all', auth().role == ADMIN)
 model Achievement {
     id String @id()
     name String @unique()
     description String
     image String?
+    /// @allow('all', true)
     users Profile[]
     collection Collection @relation(fields: [id], references: [name])
 }

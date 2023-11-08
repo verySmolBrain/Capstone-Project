@@ -11,8 +11,14 @@ import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/carousel'
 
+const default_profile =
+  'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
+
 const default_img =
   'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+
+const default_badge =
+  'https://archives.bulbagarden.net/media/upload/d/dd/Boulder_Badge.png'
 
 export default function AchievementPage({
   params,
@@ -21,6 +27,7 @@ export default function AchievementPage({
 }) {
   const [achievement, setAchievement] = React.useState<Achievement>()
   const [inventory, setInventory] = React.useState<CollectionCollectable>()
+  const [profile, setProfile] = React.useState<Profile>()
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -50,6 +57,12 @@ export default function AchievementPage({
     fetcher
   )
 
+  const { data: profileData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/profile`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
   React.useEffect(() => {
     if (achievementData) {
       setAchievement(achievementData)
@@ -57,7 +70,10 @@ export default function AchievementPage({
     if (inventoryData) {
       setInventory(inventoryData)
     }
-  }, [achievementData, inventoryData, params.slug])
+    if (profileData) {
+      setProfile(profileData)
+    }
+  }, [achievementData, inventoryData, profileData, params.slug])
 
   return achievement ? (
     <>
@@ -66,10 +82,15 @@ export default function AchievementPage({
         <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3">
           {achievement?.image ? (
             <Image
-              src={achievement.image}
+              src={achievement.image ?? default_badge}
               width={528}
               height={702}
-              className="object-cover w-full rounded-2xl"
+              className={
+                'object-cover w-full rounded-2xl' +
+                (!achievement.users.find((u) => u.id == profile?.id)
+                  ? ' grayscale'
+                  : '')
+              }
               alt="Campaign Image"
             />
           ) : (
@@ -82,8 +103,12 @@ export default function AchievementPage({
               {achievement?.name} - {achievement?.description}
             </h2>
             <div className="container border rounded-2xl pt-6 pb-6">
-              <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
-                Your progress
+              <h2 className="text-lg md:text-2xl font-semibold truncate">
+                Your progress on {achievement.collection.name}:{' '}
+                {inventory
+                  ? inventory[achievement.id]?.collectables.length ?? 0
+                  : 0}
+                /{achievement.collection.collectables.length}
               </h2>
               <Carousel>
                 {achievement.collection?.collectables.map((collectable, i) => {
@@ -118,6 +143,38 @@ export default function AchievementPage({
                 })}
               </Carousel>
             </div>
+          </div>
+          <div className="container border rounded-2xl pt-6 pb-6">
+            <h2 className="text-lg md:text-2xl font-semibold truncate">
+              Users who have this achievement
+              {achievement.users.length ? (
+                <Carousel>
+                  {achievement.users.map((user, i) => {
+                    return (
+                      <div key={i} className="pt-5">
+                        <div className="group relative pl-4">
+                          <Link href={`/profile/${user.name}`}>
+                            <Image
+                              src={user.image ?? default_profile}
+                              height={45}
+                              width={45}
+                              className="h-20 w-20 rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3"
+                              alt="alt"
+                            />
+                          </Link>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </Carousel>
+              ) : (
+                <div className="flex flex-col justify-center items-center h-[200px]">
+                  <h2 className="place-self-center">
+                    Seems empty... You could be the first!
+                  </h2>
+                </div>
+              )}
+            </h2>
           </div>
         </div>
       </section>

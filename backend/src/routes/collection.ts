@@ -26,7 +26,7 @@ export default async function (fastify: FastifyInstance) {
             create: {
               name: name,
               description: 'Complete ' + name,
-              image: 'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg',
+              image: 'https://archives.bulbagarden.net/media/upload/d/dd/Boulder_Badge.png',
             },
           },
         },

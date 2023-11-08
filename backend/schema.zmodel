@@ -74,12 +74,12 @@ model Achievement {
   name        String  @unique
   description String
   image       String?
-  users       Profile[]
+  users       Profile[] @allow('all', true)
 
   collection  Collection @relation(fields: [id], references: [name])
 
-  @@allow('read', true)
-  @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+  @@allow('all', true)
+  @@allow('all', auth().role == ADMIN)
 }
 
 // Trade Schemas ---------------------------------------------------------------
