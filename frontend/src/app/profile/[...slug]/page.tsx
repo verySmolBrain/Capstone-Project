@@ -216,7 +216,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="mt-6 mb-6 mr-3 ml-3 w-auto">
-                              <Link href={`/achievement/${achievement.name}`}>
+                              <Link href={`/achievement/${achievement.id}`}>
                                 <Image
                                   src={achievement.image ?? default_badge}
                                   width={125}
@@ -225,7 +225,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                                     'rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3 border-primary border-1' +
                                     (!hasAchievement ? ' grayscale' : '')
                                   }
-                                  alt={achievement.name}
+                                  alt={achievement.id}
                                 />
                               </Link>
                             </div>

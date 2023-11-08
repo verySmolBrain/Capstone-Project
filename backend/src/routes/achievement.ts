@@ -18,17 +18,17 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   * GET /achievement/:name
-   * Returns an achievement by name
+   * GET /achievement/:id
+   * Returns an achievement by id
    * @returns {object} achievement
    */
-  fastify.get('/achievement/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+  fastify.get('/achievement/:id', async (req: FastifyRequest<{ Params: { id: string } }>) => {
     const token = req.headers['authorization'] as string
-    const { name } = req.params
+    const { id } = req.params
     const prisma = await requestHandler(token)
 
     const achievement = await prisma.achievement.findFirstOrThrow({
-      where: { name: name },
+      where: { id: id },
       include: {
         collection: {
           include: {
@@ -42,34 +42,37 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   * PUT /achievement/:name
-   * Updates an achievement by name
+   * PUT /achievement/:id
+   * Updates an achievement by id
+   * @param {string} id
    * @param {string} name
    * @param {string} description
    * @param {string} image
    * @returns {object} achievement
    */
   fastify.put(
-    '/achievement/:name',
+    '/achievement/:id',
     async (
       req: FastifyRequest<{
-        Params: { name: string }
+        Params: { id: string }
         Body: {
+          name: string
           description: string
           image: string
         }
       }>
     ) => {
       const token = req.headers['authorization'] as string
-      const { name } = req.params
-      const { description, image } = req.body
+      const { id } = req.params
+      const { name, description, image } = req.body
       const prisma = await requestHandler(token)
 
       const achievement = await prisma.achievement.update({
         where: {
-          name: name,
+          id: id,
         },
         data: {
+          name: name,
           description: description,
           image: image,
         },
@@ -79,19 +82,19 @@ export default async function (fastify: FastifyInstance) {
   )
 
   /*
-   * DELETE /achievement/:name
-   * Deletes an achievement by name
-   * @param {string} name
+   * DELETE /achievement/:id
+   * Deletes an achievement by id
+   * @param {string} id
    * @returns {boolean} success
    */
-  fastify.delete('/achievement/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+  fastify.delete('/achievement/:id', async (req: FastifyRequest<{ Params: { id: string } }>) => {
     const token = req.headers['authorization'] as string
-    const { name } = req.params
+    const { id } = req.params
 
     const prisma = await requestHandler(token)
     const achievement = await prisma.achievement.delete({
       where: {
-        name: name,
+        id: id,
       },
     })
     return achievement
