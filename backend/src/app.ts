@@ -15,6 +15,7 @@ import campaignRoute from '@Source/routes/campaign'
 import managerRoute from '@Source/routes/manager'
 import imageRoute from '@Source/routes/image'
 import searchRoute from '@Source/routes/search'
+import forumRoute from '@Source/routes/forum'
 
 export const build = async (opt: FastifyServerOptions) => {
   const fastify = Fastify(opt)
@@ -37,6 +38,7 @@ export const build = async (opt: FastifyServerOptions) => {
   fastify.register(managerRoute)
   fastify.register(imageRoute)
   fastify.register(searchRoute)
+  fastify.register(forumRoute)
 
   // checks if user is authenticated before every request
   // handlers are guaranteed to be given a valid user

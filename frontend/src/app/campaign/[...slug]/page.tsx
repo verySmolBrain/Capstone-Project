@@ -163,7 +163,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </section>
-      <ForumList />
+      <ForumList campaign={params.slug} />
     </>
   ) : (
     <LoadingScreen />

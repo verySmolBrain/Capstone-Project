@@ -80,6 +80,7 @@ export function CampaignReviewList({ campaign }: { campaign: string }) {
                       <p className="text-2xl font-semibold truncate">
                         {review.reviewer.name}
                       </p>
+
                       <div className="w-28">
                         <Rating value={review.review} readOnly />
                       </div>

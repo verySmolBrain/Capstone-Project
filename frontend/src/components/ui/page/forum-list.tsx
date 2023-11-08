@@ -1,16 +1,19 @@
 'use client'
 
-import Image from 'next/image'
 import * as React from 'react'
-import { format } from 'date-fns'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Loader2 } from 'lucide-react'
-import * as emoji from 'node-emoji'
+import { CreateForumPostButton } from '../button/create-forum-post-button'
+import Link from 'next/link'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
-export default function ForumList() {
-  const [chats, setChats] = React.useState<FormattedChat[]>()
+dayjs.extend(relativeTime)
+
+export default function ForumList({ campaign }: { campaign: string }) {
+  const [forumPosts, setForumPosts] = React.useState<ForumPost[]>()
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -29,69 +32,55 @@ export default function ForumList() {
     }
   }
 
-  const { data } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/chat`,
+  const { data: forumPostData, mutate } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/${campaign}/forum`,
     fetcher,
     { refreshInterval: 2500 }
   )
 
   React.useEffect(() => {
-    if (data) {
-      setChats(data.chats)
+    if (forumPostData) {
+      console.log(forumPostData)
+      setForumPosts(forumPostData)
     }
-  }, [data])
+  }, [forumPostData])
 
-  if (chats) {
-    if (chats.length === 0) {
+  if (forumPosts) {
+    if (forumPosts.length === 0) {
       return (
-        <div>
+        <div className="flex items-center justify-center flex-col gap-2">
           <h1 className="text-xl font-semibold tracking-tight">
             No messages in the Forum!
           </h1>
+          <CreateForumPostButton campaign={campaign} mutate={mutate} />
         </div>
       )
     } else {
       return (
-        <div className="flex items-center justify-center ">
-          <section className="space-y-10 pb-8 pt-6 md:pb-12 md:pt-10">
-            {chats.map((chat, index) => (
-              <div key={index}>
-                <a href={`/chat/${chat.receiver.name}`}>
-                  <div className="flex items-center gap-4 border rounded-2xl pt-6 pb-6 w-[400px] sm:w-[500px] xl:w-[700px]">
-                    <div className="relative w-20 h-20 rounded-full overflow-hidden ml-6 shrink-0">
-                      <Image // make it so no crash if invalid source
-                        src={chat.image}
-                        fill
-                        className="object-cover w-full h-full"
-                        alt="profile picture"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-4 overflow-hidden">
-                      <p className="text-2xl font-semibold truncate">
-                        {chat.receiver.name}
-                      </p>
-                      <div className="text-xs text-gray-400	-mt-3 truncate">
-                        {chat?.latestMessage?.updatedAt
-                          ? format(
-                              new Date(chat.latestMessage.updatedAt),
-                              'h:mm a'
-                            ) +
-                            ' on ' +
-                            format(
-                              new Date(chat.latestMessage.updatedAt),
-                              'd/M/y'
-                            )
-                          : ''}
-                      </div>
-                      <div className="text-500 truncate">
-                        {chat?.latestMessage?.content
-                          ? emoji.emojify(chat.latestMessage.content)
-                          : ''}
-                      </div>
-                    </div>
+        <div className="flex flex-col items-center justify-center gap-5">
+          <CreateForumPostButton campaign={campaign} mutate={mutate} />
+          <section className="flex flex-col gap-3 pb-10">
+            {forumPosts.map((forumPost, index) => (
+              <Link href={`/posts/${forumPost.id}`} key={index}>
+                <div className="container w-[400px] md:w-[600px] lg:w-[800px] flex flex-col gap-2 border rounded-2xl justify-start items-start pr-4 pl-4 pb-4 pt-4">
+                  <div className="flex flex-row justify-between w-full">
+                    <p className="text-2xl font-semibold truncate">
+                      {forumPost.title}
+                    </p>
+                    <p className="text-xs">
+                      Posted by {forumPost.author.name}{' '}
+                      {dayjs(forumPost.createdAt).fromNow()}
+                    </p>
                   </div>
-                </a>
-              </div>
+
+                  <p className="line-clamp-3 w-full break-all">
+                    {forumPost.description}
+                  </p>
+                  <p className="text-xs">
+                    {forumPost.comments?.length ?? 0} Comments
+                  </p>
+                </div>
+              </Link>
             ))}
           </section>
         </div>

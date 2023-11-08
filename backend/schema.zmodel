@@ -141,13 +141,15 @@ model Post {
     image       String?
     tags        String[]
     
-    campaign   Campaign? @relation(fields: [campaignName], references: [name])
+    campaign   Campaign?  @relation(fields: [campaignName], references: [name])
     campaignName String?
     
     author      Profile   @relation(fields: [authorId], references: [id])
     authorId    String
     
-    comments    Comment[]
+    comments    Comment[] @@allow('create', true)
+
+    createdAt  DateTime  @default(now())
     
     @@allow('read', true)
     @@allow('all', auth().role == ADMIN || auth().id == authorId)

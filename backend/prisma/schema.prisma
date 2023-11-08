@@ -118,6 +118,7 @@ model Message {
     updatedAt DateTime @updatedAt()
 }
 
+/// @@allow('create', true)
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().id == authorId)
 model Post {
@@ -131,6 +132,7 @@ model Post {
     author Profile @relation(fields: [authorId], references: [id])
     authorId String
     comments Comment[]
+    createdAt DateTime @default(now())
 }
 
 /// @@allow('read', true)

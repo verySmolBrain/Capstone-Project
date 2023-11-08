@@ -66,6 +66,44 @@ type Campaign = {
   managers: User[]
 }
 
+type ForumPost = {
+  author: {
+    id: string
+    name: string
+    description: string | null
+    image: string | null
+    reputation: number
+  }
+  comments: PostComment[]
+} & {
+  id: number
+  title: string
+  description: string
+  image: string | null
+  tags: string[]
+  campaignName: string | null
+  authorId: string
+  createdAt: Date
+}
+
+type PostComment = {
+  author: {
+    id: string
+    name: string
+    description: string | null
+    image: string | null
+    reputation: number
+  }
+} & {
+  id: number
+  parentCommentId: number | null
+  postId: number
+  authorId: string
+  content: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 type UserProfile = {
   id: string
   name: string
