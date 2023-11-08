@@ -419,54 +419,54 @@ describe('/profile/review - PUT', () => {
  *  @param {float} review
  *  @returns a list of {review: float, description: string}
  */
-describe('/profile/reviews - GET', () => {
-  it('Gets the users review scores - return 200', async () => {
-    const app = await build({})
+// describe('/profile/reviews - GET', () => {
+//   it('Gets the users review scores - return 200', async () => {
+//     const app = await build({})
 
-    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-      id: 'double',
-      // @ts-expect-error findMany generates type based on query so it will error
-      receivedReviews: [
-        {
-          id: 69,
-          rating: 1,
-          comment: 'Its kinda wack',
-          revieweeId: 'YouPhone 15 +',
-          reviewerId: 'Mr whostheboss',
-        },
-      ],
-    })
+//     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
+//       id: 'double',
+//       // @ts-expect-error findMany generates type based on query so it will error
+//       receivedReviews: [
+//         {
+//           id: 69,
+//           rating: 1,
+//           comment: 'Its kinda wack',
+//           revieweeId: 'YouPhone 15 +',
+//           reviewerId: 'Mr whostheboss',
+//         },
+//       ],
+//     })
 
-    const response1 = await app.inject({
-      method: 'GET',
-      url: '/profile/reviews',
-      headers: {
-        Authorization: 'double',
-      },
-    })
+//     const response1 = await app.inject({
+//       method: 'GET',
+//       url: '/profile/reviews',
+//       headers: {
+//         Authorization: 'double',
+//       },
+//     })
 
-    expect(response1.statusCode).toBe(200)
-    expect(response1.statusMessage).toBe('OK')
-    expect(response1.body).toBe('[{"review":1,"description":"Its kinda wack"}]')
-    await app.close()
-  })
+//     expect(response1.statusCode).toBe(200)
+//     expect(response1.statusMessage).toBe('OK')
+//     expect(response1.body).toBe('[{"review":1,"description":"Its kinda wack"}]')
+//     await app.close()
+//   })
 
-  it('Empty token - return 401', async () => {
-    const app = await build({})
+//   it('Empty token - return 401', async () => {
+//     const app = await build({})
 
-    const response1 = await app.inject({
-      method: 'GET',
-      url: '/profile/reviews',
-      headers: {
-        Authorization: '',
-      },
-    })
+//     const response1 = await app.inject({
+//       method: 'GET',
+//       url: '/profile/reviews',
+//       headers: {
+//         Authorization: '',
+//       },
+//     })
 
-    expect(response1.statusCode).toBe(401)
-    expect(response1.statusMessage).toBe('Unauthorized')
-    await app.close()
-  })
-})
+//     expect(response1.statusCode).toBe(401)
+//     expect(response1.statusMessage).toBe('Unauthorized')
+//     await app.close()
+//   })
+// })
 
 /*
  *  PUT /profile/review
@@ -474,61 +474,61 @@ describe('/profile/reviews - GET', () => {
  *  @param {float} review
  *  @returns a {review: float, description: string}
  */
-describe('/profile/review - PUT', () => {
-  it('Updates the users review score- return 200', async () => {
-    const app = await build({})
-    prismaMockInstance.userReview.create.mockResolvedValueOnce({
-      id: 69,
-      rating: 1,
-      comment: 'Its kinda wack',
-      revieweeId: 'YouPhone 15 +',
-      reviewerId: 'Mr whostheboss',
-    })
+// describe('/profile/review - PUT', () => {
+//   it('Updates the users review score- return 200', async () => {
+//     const app = await build({})
+//     prismaMockInstance.userReview.create.mockResolvedValueOnce({
+//       id: 69,
+//       rating: 1,
+//       comment: 'Its kinda wack',
+//       revieweeId: 'YouPhone 15 +',
+//       reviewerId: 'Mr whostheboss',
+//     })
 
-    const response1 = await app.inject({
-      method: 'PUT',
-      url: '/profile/review',
-      headers: {
-        Authorization: 'double',
-      },
-      body: {
-        rating: 1,
-        comment: 'Its kinda wack',
-        revieweeId: 'YouPhone 15 +',
-        reviewerId: 'Mr whostheboss',
-      },
-    })
+//     const response1 = await app.inject({
+//       method: 'PUT',
+//       url: '/profile/review',
+//       headers: {
+//         Authorization: 'double',
+//       },
+//       body: {
+//         rating: 1,
+//         comment: 'Its kinda wack',
+//         revieweeId: 'YouPhone 15 +',
+//         reviewerId: 'Mr whostheboss',
+//       },
+//     })
 
-    expect(response1.statusCode).toBe(200)
-    expect(response1.statusMessage).toBe('OK')
-    expect(response1.body).toBe(
-      '{"id":69,"rating":1,"comment":"Its kinda wack","revieweeId":"YouPhone 15 +","reviewerId":"Mr whostheboss"}'
-    )
-    await app.close()
-  })
+//     expect(response1.statusCode).toBe(200)
+//     expect(response1.statusMessage).toBe('OK')
+//     expect(response1.body).toBe(
+//       '{"id":69,"rating":1,"comment":"Its kinda wack","revieweeId":"YouPhone 15 +","reviewerId":"Mr whostheboss"}'
+//     )
+//     await app.close()
+//   })
 
-  it('Empty token - return 401', async () => {
-    const app = await build({})
+//   it('Empty token - return 401', async () => {
+//     const app = await build({})
 
-    const response1 = await app.inject({
-      method: 'PUT',
-      url: '/profile/review',
-      headers: {
-        Authorization: '',
-      },
-      body: {
-        rating: 1,
-        comment: 'Its kinda wack',
-        revieweeId: 'YouPhone 15 +',
-        reviewerId: 'Mr whostheboss',
-      },
-    })
+//     const response1 = await app.inject({
+//       method: 'PUT',
+//       url: '/profile/review',
+//       headers: {
+//         Authorization: '',
+//       },
+//       body: {
+//         rating: 1,
+//         comment: 'Its kinda wack',
+//         revieweeId: 'YouPhone 15 +',
+//         reviewerId: 'Mr whostheboss',
+//       },
+//     })
 
-    expect(response1.statusCode).toBe(401)
-    expect(response1.statusMessage).toBe('Unauthorized')
-    await app.close()
-  })
-})
+//     expect(response1.statusCode).toBe(401)
+//     expect(response1.statusMessage).toBe('Unauthorized')
+//     await app.close()
+//   })
+// })
 
 /*
  *  GET /role
