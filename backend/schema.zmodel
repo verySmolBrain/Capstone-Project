@@ -47,16 +47,20 @@ model Profile {
   purchases    Trade[]       @relation('buyer')
   reputation   Float           @default(0)
 
-  givenReviews    Review[]  @relation('reviewer')
-  receivedReviews Review[]  @relation('reviewee')
+  givenUserReviews    UserReview[]  @relation('reviewer')
+  receivedUserReviews UserReview[]  @relation('reviewee')
+  givenCampaignReviews   CampaignReview[]  @relation('reviewer')
+
   chats   Chat[]            @relation("ChatsUsers")
+  posts   Post[]
+  comments Comment[]
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)
   @@allow('all', auth().role == ADMIN)
 }
 
-model Review {
+model UserReview {
   id         Int   @id @default(autoincrement())
   rating     Int
   comment    String
@@ -131,6 +135,61 @@ model Message {
   @@allow('all', auth().role == ADMIN)
 }
 
+// Forum Schemas ---------------------------------------------------------------
+
+model Post {
+    id          Int       @id @default(autoincrement())
+    title       String
+    description String
+    image       String?
+    tags        String[]
+    
+    campaign   Campaign?  @relation(fields: [campaignName], references: [name])
+    campaignName String?
+    
+    author      Profile   @relation(fields: [authorId], references: [id])
+    authorId    String
+    
+    comments    Comment[] @@allow('create', true)
+
+    createdAt  DateTime  @default(now())
+    
+    @@allow('read', true)
+    @@allow('all', auth().role == ADMIN || auth().id == authorId)
+}
+
+model Comment {
+    id         Int       @id @default(autoincrement())
+
+    parentCommend     Comment?  @relation('subComment', fields: [parentCommentId], references: [id])
+    parentCommentId   Int?
+    subComment Comment[] @relation('subComment')
+
+    post       Post      @relation(fields: [postId], references: [id])
+    postId     Int
+
+    author     Profile   @relation(fields: [authorId], references: [id])
+    authorId   String
+
+    content    String
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+
+    reports    CommentReports[]
+
+    @@allow('read', true)
+    @@allow('all', auth().role == ADMIN || auth().id == authorId)
+}
+
+model CommentReports {
+    commentId        Int       @id @default(autoincrement())
+
+    comment  Comment   @relation(fields: [commentId], references: [id])
+
+    @@allow('read, create', true)
+    @@allow('all', auth().role == ADMIN)
+}
+
 // Collectable Schemas ---------------------------------------------------------
 
 model Collectable {
@@ -188,6 +247,25 @@ model Campaign {
 
   managers   User[] @relation('managers')
 
+  reviews  CampaignReview[]
+
+  posts    Post[]
+
   @@allow('read', true)
   @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+}
+
+model CampaignReview {
+  id           Int   @id @default(autoincrement())
+  rating       Int
+  comment      String
+
+  campaignName String
+  campaign     Campaign @relation(fields: [campaignName], references: [name])
+
+  reviewer   Profile @relation('reviewer', fields: [reviewerId], references: [id])
+  reviewerId String
+
+  @@allow('read', true)
+  @@allow('all', auth().role == ADMIN || auth().id == reviewer.id)
 }

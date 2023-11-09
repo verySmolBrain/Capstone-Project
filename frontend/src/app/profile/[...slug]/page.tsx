@@ -7,7 +7,6 @@ import useSWR from 'swr'
 import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import Image from 'next/image'
 import { ProfileEditButton } from '@/components/ui/button/profile-edit-button'
-import { Rating } from '@smastrom/react-rating'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/carousel'
 import { useRouter } from 'next/navigation'
@@ -15,14 +14,16 @@ import { AddCollectionProfileButton } from '@/components/ui/button/add-collectio
 import { ChatButton } from '@/components/ui/button/chat-button'
 import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
 import { Role } from '@/lib/utils'
+import { ReviewProfileRating } from '@/components/ui/button/review-profile-rating'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
-import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
+import { PersonalProfileRating } from '@/components/ui/button/personal-profile-rating'
 
 enum profileCollection {
   INVENTORY,
@@ -180,15 +181,15 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
             </div>
             <div className="ml-auto flex flex-row">
               <div className="flex flex-col overflow-hidden pr-4 max-w-min gap-2">
-                <Link href="/reputation">
+                <Link href={`/profile/reviews/${profile.name}`}>
                   <h2 className="text-xl font-semibold text-right hover:underline">
                     Reputation
                   </h2>
                 </Link>
                 {isOwnProfile ? (
-                  <Rating className="overflow-hidden" value={4.37} readOnly />
+                  <PersonalProfileRating username={profile.name} />
                 ) : (
-                  <Rating className="overflow-hidden" value={0} />
+                  <ReviewProfileRating username={profile.name} />
                 )}
               </div>
               {isOwnProfile ? (
