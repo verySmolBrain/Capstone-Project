@@ -89,7 +89,7 @@ model Trade {
   buyerId       String
   collectable   Collectable @relation(fields: [collectableName], references: [name])
   collectableName String
-  status        Status      @default(PENDING) @allow('update', auth().id == sellerId)
+  status        Status      @default(PENDING) @@allow('update', auth().id == sellerId)
   price         Int
 
   @@allow('read', true)
@@ -179,8 +179,8 @@ model Campaign {
   start      DateTime @default(now())
   end        DateTime
   isActive   Boolean  @default(false)
-  views      Int
-
+  
+  views      Int      @default(0) @@allow('update', true)
   collections Collection[]
 
   managers   User[] @relation('managers')

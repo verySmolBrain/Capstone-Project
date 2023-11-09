@@ -79,6 +79,7 @@ model Achievement {
     users Profile[]
 }
 
+/// @@allow('update', auth().id == sellerId)
 /// @@allow('read', true)
 /// @@allow('create', auth().id == sellerId)
 model Trade {
@@ -89,7 +90,6 @@ model Trade {
     buyerId String
     collectable Collectable @relation(fields: [collectableName], references: [name])
     collectableName String
-    /// @allow('update', auth().id == sellerId)
     status Status @default(PENDING)
     price Int
 }
@@ -150,6 +150,7 @@ model Collection {
     collections Campaign[]
 }
 
+/// @@allow('update', true)
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Campaign {
@@ -159,6 +160,7 @@ model Campaign {
     start DateTime @default(now())
     end DateTime
     isActive Boolean @default(false)
+    views Int @default(0)
     collections Collection[]
     managers User[] @relation("managers")
 }
