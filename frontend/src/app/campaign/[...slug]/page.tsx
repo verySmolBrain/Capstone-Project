@@ -18,6 +18,7 @@ import ForumList from '@/components/ui/page/forum-list'
 import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-button'
 import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
 import { CollectibleChart } from '@/components/ui/page/campaign-collectible-chart'
+import { ForumStats } from '@/components/ui/page/campaign-forum-stats'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
@@ -162,6 +163,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </p>
           <div className="-mt-10">
             <CollectibleChart data={data}></CollectibleChart>
+            {role === Role.MANAGER && <ForumStats campaign={campaign.name} />}
           </div>
         </div>
 

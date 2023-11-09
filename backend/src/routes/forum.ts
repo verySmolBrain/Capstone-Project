@@ -73,7 +73,9 @@ export default async function (fastify: FastifyInstance) {
         },
       },
       include: {
-        comments: true,
+        comments: {
+          include: { author: true },
+        },
         author: true,
       },
     })
