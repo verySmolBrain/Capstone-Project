@@ -172,9 +172,9 @@ export function EditAchievemnetForm(props: {
               <NextImage
                 src={image}
                 className="rounded-2xl"
-                alt="Collection image"
+                alt="Achievement image"
                 width={300}
-                height={100}
+                height={300}
               />
             </div>
           </div>
@@ -183,7 +183,7 @@ export function EditAchievemnetForm(props: {
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-8"
-            id="createCampaignForm"
+            id="editAchievementForm"
           >
             <FormField
               control={form.control}
@@ -292,7 +292,7 @@ export function EditAchievemnetForm(props: {
         <DialogClose asChild>
           <Button
             type="submit"
-            form="createCampaignForm"
+            form="editAchievementForm"
             disabled={isLoading}
             className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
           >
@@ -312,7 +312,7 @@ export function EditAchievemnetForm(props: {
               image={image}
               crop={crop}
               zoom={zoom}
-              aspect={150 / 55}
+              aspect={1}
               onCropComplete={onCropComplete}
               onCropChange={setCrop}
               onZoomChange={setZoom}
