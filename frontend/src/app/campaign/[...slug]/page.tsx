@@ -14,7 +14,7 @@ import { RemoveCollectionFromCampaignButton } from '@/components/ui/button/remov
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Role } from '@/lib/utils'
-import { PieChart, Pie, Cell, Label, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell } from 'recharts'
 import randomColor from 'randomcolor'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
@@ -28,10 +28,20 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     cx,
     cy,
     midAngle,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     innerRadius,
     outerRadius,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     value,
     index,
+  }: {
+    cx: number
+    cy: number
+    midAngle: number
+    innerRadius: number
+    outerRadius: number
+    value: number
+    index: number
   }) => {
     const radius = outerRadius * 1.5
     const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180))
