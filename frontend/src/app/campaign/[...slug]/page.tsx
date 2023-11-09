@@ -160,7 +160,9 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               campaign.collections.length > 1 ? 'collections' : 'collection'
             }`}
           </p>
-          <CollectibleChart data={data}></CollectibleChart>
+          <div className="-mt-10">
+            <CollectibleChart data={data}></CollectibleChart>
+          </div>
         </div>
 
         <div className="container gap-4 pb-3 md:pb-6 pt-3 md:pt-6 lg:max-w-[calc(100vw-600px)]">
