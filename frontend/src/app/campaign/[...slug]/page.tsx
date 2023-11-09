@@ -14,6 +14,9 @@ import { RemoveCollectionFromCampaignButton } from '@/components/ui/button/remov
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Role } from '@/lib/utils'
+import ForumList from '@/components/ui/page/forum-list'
+import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-button'
+import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
@@ -81,9 +84,20 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               )}
             </div>
           </div>
-          <h2 className="text-2xl font-semibold truncate">{campaign?.name}</h2>
+          <Link href={`/campaign/reviews/${campaign.name}`}>
+            <h2 className="text-2xl font-semibold truncate hover:underline">
+              {campaign?.name}
+            </h2>
+          </Link>
           <hr />
-          <div className="flex flex-row flex-wrap gap-2  pb-3">
+          <div className="flex flex-row flex-wrap gap-2 pb-3 w-28">
+            {role === Role.USER ? (
+              <ReviewCampaignButton campaign={campaign.name} />
+            ) : (
+              <ManagerCampaignRating campaign={campaign.name} />
+            )}
+          </div>
+          <div className="flex flex-row flex-wrap gap-2 pb-3">
             <p className="text-sm font-normal break-words pt-1">Tags:</p>
             {campaign?.tags.map((tag, i) => {
               return (
@@ -149,6 +163,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </section>
+      <ForumList campaign={params.slug} />
     </>
   ) : (
     <LoadingScreen />

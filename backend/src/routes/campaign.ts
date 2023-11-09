@@ -206,4 +206,98 @@ export default async function (fastify: FastifyInstance) {
       return campaign
     }
   )
+
+  /*
+   *  GET /campaign/reviews/:name
+   *  Gets the campaigns reviews
+   *  @param {float} review
+   *  @returns a list of {campaign: Campaign, review: float, description: string}
+   */
+
+  fastify.get('/reviews/campaign/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+    const prisma = await requestHandler(token)
+
+    const reviews = await prisma.campaignReview.findMany({
+      where: {
+        campaign: {
+          name: name,
+        },
+      },
+      include: {
+        reviewer: true,
+      },
+    })
+
+    const extractedReviews = reviews.map((review) => {
+      return {
+        reviewer: review.reviewer,
+        review: review.rating,
+        description: review.comment,
+      }
+    })
+
+    return extractedReviews
+  })
+
+  /**
+   * POST /campaign/reviews/:name
+   * Creates a review for a campaign
+   * @param {float} review
+   * @param {string} description
+   * @returns the review
+   */
+
+  fastify.put(
+    '/reviews/campaign/:name',
+    async (req: FastifyRequest<{ Params: { name: string }; Body: { review: number; description: string } }>) => {
+      const token = req.headers['authorization'] as string
+      const { name } = req.params
+      const { review, description } = req.body
+      const prisma = await requestHandler(token)
+
+      const findCampaignReview = await prisma.campaignReview.findFirst({
+        where: {
+          campaign: {
+            name: name,
+          },
+          reviewerId: extractId(token),
+        },
+      })
+
+      if (findCampaignReview) {
+        const updatedCampaignReview = await prisma.campaignReview.update({
+          where: {
+            id: findCampaignReview.id,
+          },
+          data: {
+            rating: review,
+            comment: description,
+          },
+        })
+
+        return updatedCampaignReview
+      }
+
+      const campaignReview = await prisma.campaignReview.create({
+        data: {
+          rating: review,
+          comment: description,
+          reviewer: {
+            connect: {
+              id: extractId(token),
+            },
+          },
+          campaign: {
+            connect: {
+              name: name,
+            },
+          },
+        },
+      })
+
+      return campaignReview
+    }
+  )
 }

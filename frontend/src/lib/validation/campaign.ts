@@ -28,3 +28,14 @@ export const createCampaignSchema = z.object({
 
   range: z.custom<DateRange>(isDateRange, 'Required to pick a date range'),
 })
+
+export const reviewCampaignDescriptionUpdateSchema = z.object({
+  description: z
+    .string()
+    .min(10, {
+      message: 'Review must be at least 10 characters.',
+    })
+    .max(160, {
+      message: 'Review must not be longer than 160 characters.',
+    }),
+})
