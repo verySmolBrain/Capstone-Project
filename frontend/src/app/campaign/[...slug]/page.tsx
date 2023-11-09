@@ -152,6 +152,8 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               )
             })}
           </div>
+          <hr></hr>
+
           <h3 className="text-1xl font-bold">Stats at a glance</h3>
           <p className="text-sm font-normal break-words">
             {`${campaign.collections.reduce(

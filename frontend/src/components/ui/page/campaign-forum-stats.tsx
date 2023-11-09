@@ -4,6 +4,8 @@ import * as React from 'react'
 import { Database } from '@/lib/database.types'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import useSWR from 'swr'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
 export function ForumStats({ campaign }: { campaign: string }) {
   const [forumPosts, setForumPosts] = React.useState<ForumPost[]>()
@@ -53,21 +55,38 @@ export function ForumStats({ campaign }: { campaign: string }) {
   return (
     <div>
       <p className="text-sm font-medium">Forum stats</p>
-      <div className="text-sm">
-        <p>{uniqueUserCount} unique user(s)</p>
-        <p>
-          {forumPosts ? forumPosts.length : 0} post(s) by {uniquePosterCount}{' '}
-          user(s)
-        </p>
-        <p>
-          {forumPosts
-            ? forumPosts.reduce(
-                (accumulator, curr) => accumulator + curr.comments.length,
-                0
-              )
-            : 0}{' '}
-          comment(s) by {uniqueCommenterCount} user(s)
-        </p>
+      <div className="flex text-sm justify-between">
+        <div>
+          <p>{uniqueUserCount} unique user(s)</p>
+          <p>
+            {forumPosts ? forumPosts.length : 0} post(s) by {uniquePosterCount}{' '}
+            user(s)
+          </p>
+          <p>
+            {forumPosts
+              ? forumPosts.reduce(
+                  (accumulator, curr) => accumulator + curr.comments.length,
+                  0
+                )
+              : 0}{' '}
+            comment(s) by {uniqueCommenterCount} user(s)
+          </p>
+        </div>
+        <div>
+          <br />
+          <br />
+
+          <p>
+            Latest post{' '}
+            {forumPosts
+              ? `${dayjs(
+                  forumPosts[forumPosts.length - 1].createdAt
+                ).fromNow()} by ${
+                  forumPosts[forumPosts.length - 1].author.name
+                }`
+              : 'never'}
+          </p>
+        </div>
       </div>
     </div>
   )
