@@ -103,6 +103,30 @@ describe('/search/:name', () => {
     expect(response.body.startsWith("{\"collectables\":[{\"name\":\"Yabbin\",\"image\":null,\"tags\":[]}],\"collections\":[{\"name\":\"Yabbin\",\"image\":\"aaaa\",\"tags\":[]}],\"")).toBe(true)
     await app.close()
   })
+
+  it('Search (no search text)- return 200', async () => {
+    prismaMockInstance.collectable.findMany.mockResolvedValueOnce([{
+      name: 'Yabbin',
+      image: null,
+      tags: [],
+  }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: '',
+      },
+    })
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("{\"collectables\":[{\"name\":\"Yabbin\",\"image\":null,\"tags\":[]}]}")
+    await app.close()
+  })
 })
 
   /*
@@ -123,6 +147,31 @@ describe('/search/collectible/:name', () => {
     const response = await app.inject({
       method: 'GET',
       url: '/search/collectable/:name',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: '',
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("[{\"name\":\"Yabbin\",\"image\":null,\"tags\":[]}]")
+    await app.close()
+  })
+
+  it('Search for collectible (no search text) - return 200', async () => {
+    prismaMockInstance.collectable.findMany.mockResolvedValueOnce([{
+        name: 'Yabbin',
+        image: null,
+        tags: [],
+    }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/collectable/',
       headers: {
         Authorization: 'Bearer your-token-here',
       },
@@ -169,41 +218,93 @@ describe('/search/collection/:name', () => {
     expect(response.body).toBe("[{\"name\":\"Yabbin\",\"image\":\"aaaa\",\"tags\":[]}]")
     await app.close()
   })
+
+  it('Search for collection (No search text) - return 200', async () => {
+    prismaMockInstance.collection.findMany.mockResolvedValueOnce([{
+        name: 'Yabbin',
+        image: 'aaaa',
+        tags: [],
+    }])
+
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/collection/',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: '',
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("[{\"name\":\"Yabbin\",\"image\":\"aaaa\",\"tags\":[]}]")
+    await app.close()
+  })
 })
 
-  /*
-   * GET /search/user/:name
-   * Returns all users matching the name
-   * @returns {object} users
-   */
-  describe('/search/user/:name', () => {
-    it('Successfully search for collection - return 200', async () => {
-        prismaMockInstance.profile.findMany.mockResolvedValueOnce([{
-            id: 'double',
-            name: 'stringadsf',
-            description: null,
-            image: null,
-            reputation: 1,
-          }])
-  
-      const app = await build({})
-      const response = await app.inject({
-        method: 'GET',
-        url: '/search/user/:name',
-        headers: {
-          Authorization: 'Bearer your-token-here',
-        },
-        query: {
-          name: '',
-        },
-      })
-  
-      expect(response.statusCode).toBe(200)
-      expect(response.statusMessage).toBe('OK')
-      expect(response.body).toBe("[{\"id\":\"double\",\"name\":\"stringadsf\",\"description\":null,\"image\":null,\"reputation\":1}]")
-      await app.close()
+/*
+  * GET /search/user/:name
+  * Returns all users matching the name
+  * @returns {object} users
+*/
+describe('/search/user/:name', () => {
+  it('Successfully search for users - return 200', async () => {
+      prismaMockInstance.profile.findMany.mockResolvedValueOnce([{
+          id: 'double',
+          name: 'stringadsf',
+          description: null,
+          image: null,
+          reputation: 1,
+        }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/user/:name',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: '',
+      },
     })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("[{\"id\":\"double\",\"name\":\"stringadsf\",\"description\":null,\"image\":null,\"reputation\":1}]")
+    await app.close()
   })
+  it('Search for users (no search text) - return 200', async () => {
+      prismaMockInstance.profile.findMany.mockResolvedValueOnce([{
+          id: 'double',
+          name: 'stringadsf',
+          description: null,
+          image: null,
+          reputation: 1,
+        }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/user/',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: '',
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("[{\"id\":\"double\",\"name\":\"stringadsf\",\"description\":null,\"image\":null,\"reputation\":1}]")
+    await app.close()
+  })
+})
 
 /*
    * GET /search/campaign/:name
@@ -211,31 +312,163 @@ describe('/search/collection/:name', () => {
    * @returns {object} users
 */
 describe('/search/campaign/:name', () => {
+  it('Successfully search for collection - return 200', async () => {
+      prismaMockInstance.campaign.findMany.mockResolvedValueOnce([{
+          name: 'yabba',
+          image: 'a',
+          tags: [],
+          start: new Date(),
+          end: new Date(),
+          isActive: false
+      }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/campaign/:name',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: '',
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith( "[{\"name\":\"yabba\",\"image\":\"a\",\"tags\":[],\"start\"")).toBe(true)
+    await app.close()
+  })
+
+  it('Search for collection - return 200', async () => {
+      prismaMockInstance.campaign.findMany.mockResolvedValueOnce([{
+          name: 'yabba',
+          image: 'a',
+          tags: [],
+          start: new Date(),
+          end: new Date(),
+          isActive: false
+      }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/campaign/',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: '',
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith( "[{\"name\":\"yabba\",\"image\":\"a\",\"tags\":[],\"start\"")).toBe(true)
+    await app.close()
+  })
+})
+
+  /*
+   * GET /search/collectable/tag/:tag
+   * Returns all collectables with the matching tag
+   * @param {string} tag
+   * @returns {object} collectibles
+   */
+
+  describe('/search/collectable/tag/:tag', () => {
     it('Successfully search for collection - return 200', async () => {
-        prismaMockInstance.campaign.findMany.mockResolvedValueOnce([{
+        prismaMockInstance.collectable.findMany.mockResolvedValueOnce([{
             name: 'yabba',
             image: 'a',
             tags: [],
-            start: new Date(),
-            end: new Date(),
-            isActive: false
         }])
   
       const app = await build({})
       const response = await app.inject({
         method: 'GET',
-        url: '/search/campaign/:name',
+        url: '/search/collectable/tag/:tag',
         headers: {
           Authorization: 'Bearer your-token-here',
         },
         query: {
-          name: '',
+          tag: '',
         },
       })
   
       expect(response.statusCode).toBe(200)
       expect(response.statusMessage).toBe('OK')
-      expect(response.body.startsWith( "[{\"name\":\"yabba\",\"image\":\"a\",\"tags\":[],\"start\"")).toBe(true)
+      expect(response.body.startsWith( "[{\"name\":\"yabba\",\"image\":\"a\",\"tags")).toBe(true)
       await app.close()
     })
   })
+
+   /*
+   * GET /search/collection/tag/:tag
+   * Returns all collections with the matching tag
+   * @param {string} tag
+   * @returns {object} collections
+   */
+  describe('/search/collection/tag/:tag', () => {
+    it('Successfully search for collection - return 200', async () => {
+        prismaMockInstance.collection.findMany.mockResolvedValueOnce([{
+            name: 'yabba',
+            image: 'a',
+            tags: [],
+        }])
+  
+      const app = await build({})
+      const response = await app.inject({
+        method: 'GET',
+        url: '/search/collection/tag/:tag',
+        headers: {
+          Authorization: 'Bearer your-token-here',
+        },
+        query: {
+          tag: 'taggy',
+        },
+      })
+  
+      expect(response.statusCode).toBe(200)
+      expect(response.statusMessage).toBe('OK')
+      expect(response.body.startsWith( "[{\"name\":\"yabba\",\"image\":\"a\",\"tags")).toBe(true)
+      await app.close()
+    })
+  })
+
+    /*
+   * GET /search/campaign/tag/:tag
+   * Returns all campaigns with the matching tag
+   * @param {string} tag
+   * @returns {object} campgians
+   */
+
+describe('/search/campaign/tag/:tag', () => {
+  it('Successfully search for collection - return 200', async () => {
+    prismaMockInstance.campaign.findMany.mockResolvedValueOnce([{
+      name: 'yabba',
+      image: 'a',
+      tags: [],
+      start: new Date(),
+      end: new Date(),
+      isActive: false
+  }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/campaign/tag/:tag',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        tag: 'taggy',
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith("[{\"name\":\"yabba\",\"image\":\"a\",\"tags\":[],\"start\"")).toBe(true)
+    await app.close()
+  })
+})

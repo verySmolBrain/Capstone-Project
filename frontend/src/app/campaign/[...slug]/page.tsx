@@ -14,45 +14,16 @@ import { RemoveCollectionFromCampaignButton } from '@/components/ui/button/remov
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Role } from '@/lib/utils'
-import { PieChart, Pie, Cell } from 'recharts'
-import randomColor from 'randomcolor'
+import ForumList from '@/components/ui/page/forum-list'
+import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-button'
+import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
+import { CollectibleChart } from '@/components/ui/page/campaign-collectible-chart'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
   const [role, setRole] = React.useState<Role>()
 
-  type ChartData = { name: string; value: number }[]
-
   let data: ChartData = []
-  const renderCustomLabel = ({
-    cx,
-    cy,
-    midAngle,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    innerRadius,
-    outerRadius,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    value,
-    index,
-  }: {
-    cx: number
-    cy: number
-    midAngle: number
-    innerRadius: number
-    outerRadius: number
-    value: number
-    index: number
-  }) => {
-    const radius = outerRadius * 1.5
-    const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180))
-    const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180))
-
-    return (
-      <text x={x} y={y} fill="white" textAnchor="middle">
-        {data[index].name + ' ' + data[index].value}
-      </text>
-    )
-  }
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -146,7 +117,28 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
           <h2 className="text-2xl font-semibold truncate">{campaign?.name}</h2>
           <hr />
-          <div className="flex flex-row flex-wrap gap-2  pb-3">
+          <div className="flex items-top justify-between">
+            <div className="flex flex-row flex-wrap gap-2 pb-3 w-28 items-center">
+              {role === Role.USER ? (
+                <ReviewCampaignButton campaign={campaign.name} />
+              ) : (
+                <ManagerCampaignRating campaign={campaign.name} />
+              )}
+            </div>
+            <div>
+              {campaign.isActive && (
+                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
+                  {`Active | ${campaign.views} views`}
+                </p>
+              )}
+              {!campaign.isActive && (
+                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
+                  {`Inactive`}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-row flex-wrap gap-2 pb-3">
             <p className="text-sm font-normal break-words pt-1">Tags:</p>
             {campaign?.tags.map((tag, i) => {
               return (
@@ -159,16 +151,6 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               )
             })}
           </div>
-          {campaign.isActive && (
-            <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
-              {`Active | ${campaign.views} views`}
-            </p>
-          )}
-          {!campaign.isActive && (
-            <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
-              {`Inactive`}
-            </p>
-          )}
           <h3 className="text-1xl font-bold">Stats at a glance</h3>
           <p className="text-sm font-normal break-words">
             {`${campaign.collections.reduce(
@@ -178,23 +160,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               campaign.collections.length > 1 ? 'collections' : 'collection'
             }`}
           </p>
-          <PieChart width={400} height={400}>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              label={renderCustomLabel}
-              labelLine={true}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-              nameKey="name"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={randomColor()} />
-              ))}
-            </Pie>
-          </PieChart>
+          <CollectibleChart data={data}></CollectibleChart>
         </div>
 
         <div className="container gap-4 pb-3 md:pb-6 pt-3 md:pt-6 lg:max-w-[calc(100vw-600px)]">
@@ -245,6 +211,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </section>
+      <ForumList campaign={params.slug} />
     </>
   ) : (
     <LoadingScreen />

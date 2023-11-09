@@ -9,8 +9,8 @@ jest.mock('@Source/utils/supabaseUtils', () => ({
   requestHandler: jest.fn(() => Promise.resolve(prismaMock)),
   supabase: jest.fn(() => SupabaseService.getInstance()),
   validateUser: jest.fn(() => Promise.resolve(true)),
-  extractId: jest.fn(() => ''),
-  getUserId: jest.fn(() => ''),
+  extractId: jest.fn(() => '1'),
+  getUserId: jest.fn(() => '1'),
   getChatId: jest.fn(() => 1),
 }))
 
