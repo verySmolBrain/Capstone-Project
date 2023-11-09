@@ -414,6 +414,3 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     <LoadingScreen />
   )
 }
-
-// search bar?
-// later on collectable stats should show people looking for and willing to trade

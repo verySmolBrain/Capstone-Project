@@ -14,6 +14,7 @@ import { EditCampaignButton } from '@/components/ui/button/edit-campaign-button'
 import { Role } from '@/lib/utils'
 import { AddCollectableCollectionButton } from '@/components/ui/button/add-collectable-collection-button'
 import { RemoveCollectableCollectionButton } from '@/components/ui/button/remove-collectable-from-collection-button'
+import { EditAchievementButton } from '@/components/ui/button/edit-achievement-button'
 
 export default function CollectionPage({
   params,
@@ -148,6 +149,42 @@ export default function CollectionPage({
               )
             })}
           </Carousel>
+        </div>
+      </section>
+      <section className="container flex flex-col lg:flex-row pt-3 max-w-full justify-start">
+        <div className="container flex flex-col gap-2 w-fit">
+          <h2 className="text-2xl font-semibold truncate">
+            Achievement: {collection?.achievement.name}
+          </h2>
+          <hr />
+          <p>{collection?.achievement.description}</p>
+          <div className="flex flex-row">
+            <div className="group relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 w-auto mr-3 ml-3">
+              <div className="relative aspect-63/88 mt-6 mb-6 h-60 xs:h-96 mr-3 ml-3">
+                <Link href={`/achievement/${collection.achievement.id}`}>
+                  {collection.achievement.image ? (
+                    <Image
+                      src={collection.achievement.image}
+                      width={528}
+                      height={702}
+                      className="object-cover w-full rounded-2xl transition-transform duration-300 transform hover:translate-y-3"
+                      alt="Campaign Image"
+                    />
+                  ) : (
+                    <Skeleton className="h-60 xs:h-96" />
+                  )}
+                </Link>
+              </div>
+            </div>
+            <div className="pt-4">
+              {role === Role.MANAGER && (
+                <EditAchievementButton
+                  id={collection.name}
+                  mutate={collectionMutate}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </section>
     </>

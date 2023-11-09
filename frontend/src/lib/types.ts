@@ -23,6 +23,7 @@ type Collection = {
   image?: string
   tags: string[]
   collectables: Collectable[]
+  achievement: Achievement
 }
 
 type Collectable = {

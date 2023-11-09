@@ -174,7 +174,6 @@ export default async function (fastify: FastifyInstance) {
           })
         }
       }
-
       return
     }
   )
