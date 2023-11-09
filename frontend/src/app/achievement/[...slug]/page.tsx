@@ -103,13 +103,21 @@ export default function AchievementPage({
               {achievement?.name} - {achievement?.description}
             </h2>
             <div className="container border rounded-2xl pt-6 pb-6">
-              <h2 className="text-lg md:text-2xl font-semibold truncate">
-                Your progress on {achievement.collection.name}:{' '}
-                {inventory
-                  ? inventory[achievement.id]?.collectables.length ?? 0
-                  : 0}
-                /{achievement.collection.collectables.length}
-              </h2>
+              {achievement.collection.collectables.length ? (
+                <h2 className="text-lg md:text-2xl font-semibold truncate">
+                  Your progress on {achievement.collection.name}:{' '}
+                  {inventory
+                    ? inventory[achievement.id]?.collectables.length ?? 0
+                    : 0}
+                  /{achievement.collection.collectables.length}
+                </h2>
+              ) : (
+                <div className="]">
+                  <h2 className="place-self-center mt-5">
+                    There are no collectables in this collection yet!
+                  </h2>
+                </div>
+              )}
               <Carousel>
                 {achievement.collection?.collectables.map((collectable, i) => {
                   const count = inventory
