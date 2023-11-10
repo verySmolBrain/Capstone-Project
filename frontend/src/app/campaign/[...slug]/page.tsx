@@ -183,7 +183,9 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </p>
           <div className="-mt-10">
             <CollectibleChart data={data}></CollectibleChart>
-            {role === Role.MANAGER && <ForumStats campaign={campaign.name} />}
+            {(role === Role.MANAGER || role === Role.ADMIN) && (
+              <ForumStats campaign={campaign.name} />
+            )}
           </div>
         </div>
 
