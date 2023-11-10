@@ -65,6 +65,8 @@ type Campaign = {
   start: Date
   end: Date
   managers: User[]
+  views: number
+  viewData: number[]
 }
 
 type ForumPost = {
@@ -225,3 +227,5 @@ type CollectableCount = {
   wishlist: Profile[]
   wares: Profile[]
 }
+
+type ChartData = { name: string; value: number }[]
