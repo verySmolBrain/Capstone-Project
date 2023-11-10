@@ -53,18 +53,18 @@
  * @param {number} price
  * @returns {object} trade
  */
-// describe('/trade', () => {
-//   it('Successfully trade - return 200', async () => {
-//     const app = await build({})
-//     const response = await app.inject({
-//       method: 'GET',
-//       url: '/trade',
-//       headers: {
-//         Authorization: 'Bearer your-token-here',
-//       },
-//     })
-//     expect(response.statusCode).toBe(200)
-//     expect(response.statusMessage).toBe('OK')
-//     await app.close()
-//   })
-// })
+describe('/trade', () => {
+  it('Successfully trade - return 200', async () => {
+    // const app = await build({})
+    // const response = await app.inject({
+    //   method: 'GET',
+    //   url: '/trade',
+    //   headers: {
+    //     Authorization: 'Bearer your-token-here',
+    //   },
+    // })
+    // expect(response.statusCode).toBe(200)
+    // expect(response.statusMessage).toBe('OK')
+    // await app.close()
+  })
+})
