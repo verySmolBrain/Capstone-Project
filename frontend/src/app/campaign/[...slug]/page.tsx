@@ -20,6 +20,7 @@ import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-r
 import { CollectibleChart } from '@/components/ui/page/campaign-collectible-chart'
 import { ForumStats } from '@/components/ui/page/campaign-forum-stats'
 import { ViewChart } from '@/components/ui/page/campaign-view-chart'
+import dayjs from 'dayjs'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
@@ -79,6 +80,9 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             'update-type': 'name',
             authorization: token!,
           },
+          body: JSON.stringify({
+            timestamp: new Date().getTime(),
+          }),
         }
       )
     }
@@ -91,21 +95,20 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       name: x.name,
       value: x.collectables.length,
     }))
+    const now = dayjs()
+    const currHourDates = campaign.viewData.filter(
+      (x) => dayjs(x).get('hour') === now.get('hour')
+    )
 
-    if (campaign.viewData.length < 5) {
-      for (let i = 0; i < campaign.viewData.length; i++) {
-        viewData.push({
-          name: `${i * 5} minutes ago`,
-          Views: campaign.viewData[campaign.viewData.length - i - 1],
-        })
-      }
-    } else {
-      for (let i = 0; i < 5; i++) {
-        viewData.push({
-          name: `${i * 5} minutes ago`,
-          Views: campaign.viewData[campaign.viewData.length - i - 1],
-        })
-      }
+    for (let i = 0; i < 5; i++) {
+      const viewsInInterval = currHourDates.filter(
+        (x) =>
+          dayjs(x).get('minute') === now.subtract(i, 'minute').get('minute')
+      ).length
+      viewData.push({
+        name: `${i * 5} minutes ago`,
+        Views: viewsInInterval,
+      })
     }
   }
 
