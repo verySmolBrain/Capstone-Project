@@ -81,7 +81,9 @@ export function ForumStats({ campaign }: { campaign: string }) {
               : 'never'}
             {forumPosts && forumPosts.length > 0 ? (
               <Link
-                href={forumPosts[forumPosts.length - 1].author.name}
+                href={`../profile/${
+                  forumPosts[forumPosts.length - 1].author.name
+                }`}
                 className="hover:underline"
               >
                 {forumPosts[forumPosts.length - 1].author.name}
