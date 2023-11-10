@@ -27,7 +27,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [role, setRole] = React.useState<Role>()
 
   let data: ChartData = []
-  const viewData = []
+  const localViewData = []
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -72,16 +72,19 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       const token = (await supabase.auth.getSession()).data.session
         ?.access_token
 
+      const currTime = dayjs().unix()
+      console.log(currTime)
       await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${params.slug}/view`,
         {
           method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             'update-type': 'name',
             authorization: token!,
           },
           body: JSON.stringify({
-            timestamp: new Date().getTime(),
+            timestamp: currTime,
           }),
         }
       )
@@ -100,13 +103,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       (x) => dayjs(x).get('hour') === now.get('hour')
     )
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 20; i++) {
       const viewsInInterval = currHourDates.filter(
-        (x) =>
-          dayjs(x).get('minute') === now.subtract(i, 'minute').get('minute')
+        (x) => x < now.subtract(i, 'minutes').unix()
       ).length
-      viewData.push({
-        name: `${i * 5} minutes ago`,
+
+      localViewData.push({
+        name: `${i} minutes ago`,
         Views: viewsInInterval,
       })
     }
@@ -242,7 +245,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             <div className="pt-5">
               <h3 className="text-sm font-bold pl-5">View counts over time</h3>
               <br></br>
-              <ViewChart data={viewData.reverse()}></ViewChart>
+              <ViewChart data={localViewData.reverse()}></ViewChart>
             </div>
           )}
         </div>
