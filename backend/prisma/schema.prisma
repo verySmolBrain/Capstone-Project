@@ -212,7 +212,7 @@ model Campaign {
     end DateTime
     isActive Boolean @default(false)
     views Int @default(0)
-    viewData String[]
+    viewData Int[]
     collections Collection[]
     managers User[] @relation("managers")
     reviews CampaignReview[]

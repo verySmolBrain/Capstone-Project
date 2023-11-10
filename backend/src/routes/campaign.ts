@@ -138,7 +138,7 @@ export default async function (fastify: FastifyInstance) {
    * Increments campaign view count by 1
    * @returns void
    */
-  fastify.put('/campaign/:name/view', async (req: FastifyRequest<{ Params: { name: string; timestamp: string } }>) => {
+  fastify.put('/campaign/:name/view', async (req: FastifyRequest<{ Params: { name: string; timestamp: number } }>) => {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)
     const { name, timestamp } = req.params
