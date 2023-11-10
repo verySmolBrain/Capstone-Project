@@ -235,7 +235,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               })}
             </Carousel>
           </div>
-          {role === Role.MANAGER && (
+          {(role === Role.MANAGER || role === Role.ADMIN) && (
             <div className="pt-5">
               <h3 className="text-sm font-bold pl-5">View counts over time</h3>
               <br></br>
