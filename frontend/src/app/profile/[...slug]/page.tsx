@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/tooltip'
 import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
 import { PersonalProfileRating } from '@/components/ui/button/personal-profile-rating'
+import { TradeButton } from '@/components/ui/button/trade-button'
 
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
@@ -165,7 +166,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 {profile?.description}
               </p>
             </div>
-            <div className="ml-auto flex flex-row">
+            <div className="ml-auto flex flex-row gap-2">
               <div className="flex flex-col overflow-hidden pr-4 max-w-min gap-2">
                 <Link href={`/profile/reviews/${profile.name}`}>
                   <h2 className="text-xl font-semibold text-right hover:underline">
@@ -183,6 +184,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               ) : (
                 <ChatButton user={profile?.name} />
               )}
+              {role === Role.USER && <TradeButton user={profile?.name} />}
             </div>
           </div>
           <div className="container gap-4 pb-6">

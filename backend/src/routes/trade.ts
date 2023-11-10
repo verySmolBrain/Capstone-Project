@@ -1,18 +1,98 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyRequest } from 'fastify'
+import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
+import { throwInvalidActionError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
   /*
    * GET /trade
-   * returns all trades of a user
+   * returns all sell offer trades of a user
    * @param {string} query
    * @returns {object} trades
    */
-  fastify.get('/trade', async () => {
-    return
+  fastify.get('/trade/sell', async (req: FastifyRequest) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+
+    const trades = await prisma.trade.findMany({
+      where: {
+        sellerId: extractId(token),
+        status: {
+          in: ['PENDING'],
+        },
+      },
+      include: {
+        buyer: true,
+        seller: true,
+        collectable: true,
+      },
+    })
+
+    return trades
   })
 
   /*
-   * GET /trade/:id
+   * GET /trade
+   * returns all sell offer trades of a user
+   * @param {string} query
+   * @returns {object} trades
+   */
+  fastify.get('/trade/buy', async (req: FastifyRequest) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+
+    const trades = await prisma.trade.findMany({
+      where: {
+        buyerId: extractId(token),
+        status: {
+          in: ['PENDING'],
+        },
+      },
+      include: {
+        buyer: true,
+        seller: true,
+        collectable: true,
+      },
+    })
+
+    return trades
+  })
+
+  /*
+   * GET /trade
+   * returns all sell offer trades of a user
+   * @param {string} query
+   * @returns {object} trades
+   */
+  fastify.get('/trade/history', async (req: FastifyRequest) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+
+    const trades = await prisma.trade.findMany({
+      where: {
+        OR: [
+          {
+            buyerId: extractId(token),
+          },
+          {
+            sellerId: extractId(token),
+          },
+        ],
+        status: {
+          in: ['FINISHED', 'DECLINED', 'ACCEPTED'],
+        },
+      },
+      include: {
+        buyer: true,
+        seller: true,
+        collectable: true,
+      },
+    })
+
+    return trades
+  })
+
+  /*
+   * GET /trade/:username
    * returns a trade by id
    * @param {string} id
    * @returns {object} trade
@@ -33,14 +113,74 @@ export default async function (fastify: FastifyInstance) {
    * @param {number} price
    * @returns {object} trade
    */
+  fastify.post(
+    '/trade',
+    async (
+      req: FastifyRequest<{ Body: { userId: string; collectableId: string; price: string; sellOrBuy: boolean } }>
+    ) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
+
+      const { userId, collectableId, price, sellOrBuy } = req.body
+      const ourUserId = extractId(token)
+
+      if (userId === ourUserId) {
+        throwInvalidActionError('trade', 'You cannot trade with yourself')
+      }
+
+      const trade = await prisma.trade.create({
+        data: {
+          buyer: {
+            connect: { id: sellOrBuy ? userId : ourUserId },
+          },
+          seller: {
+            connect: { id: sellOrBuy ? ourUserId : userId },
+          },
+          collectable: {
+            connect: { name: collectableId },
+          },
+          price: Number.parseInt(price),
+          createdAt: new Date(),
+        },
+        include: {
+          buyer: true,
+          seller: true,
+          collectable: true,
+        },
+      })
+
+      return trade
+    }
+  )
 
   /*
-   * PUT /trade/status/:id
+   * PUT /trade/status/:id/:status
    * updates a trade's status by id
    * @param {string} id
-   * @param {string} status
+   * @param {string} statuss
    * @returns {object} trade
    */
+
+  fastify.put(
+    '/trade/status/:id/:status',
+    async (req: FastifyRequest<{ Params: { id: string; status: 'DECLINED' | 'ACCEPTED' | 'FINISHED' } }>) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
+
+      const { id, status } = req.params
+
+      const trade = await prisma.trade.update({
+        where: {
+          id: Number.parseInt(id),
+        },
+        data: {
+          status: status,
+        },
+      })
+
+      return trade
+    }
+  )
 
   /*
    * PUT /trade/collectable/:id

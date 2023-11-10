@@ -131,6 +131,7 @@ type Trade = {
   collectableId: string
   status: Status
   price: number
+  createdAt: Date
 }
 
 type Achievement = {
