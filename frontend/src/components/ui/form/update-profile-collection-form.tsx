@@ -188,7 +188,7 @@ export function UpdateProfileCollectionForm(props: {
               <FormItem>
                 <FormLabel>Collectable Count</FormLabel>
                 <FormControl>
-                  <Input placeholder="0" {...field} />
+                  <Input placeholder="1" {...field} />
                 </FormControl>
                 <FormDescription className="pb-3">
                   How many of this collectable do you own?

@@ -74,12 +74,15 @@ model UserReview {
 }
 
 model Achievement {
-  name        String  @id @unique
+  id          String @id
+  name        String  @unique
   description String
   image       String?
-  users       Profile[]
+  users       Profile[] @allow('all', true)
 
-  @@allow('read', true)
+  collection  Collection @relation(fields: [id], references: [name])
+
+  @@allow('all', true)
   @@allow('all', auth().role == ADMIN)
 }
 
@@ -225,6 +228,7 @@ model Collection {
 
   collectables Collectable[]  @relation('collection')
   collections Campaign[]
+  achievement Achievement?
 
 
   @@allow('read', true)

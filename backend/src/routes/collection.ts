@@ -22,6 +22,13 @@ export default async function (fastify: FastifyInstance) {
           name: name,
           image: image,
           tags: tags,
+          achievement: {
+            create: {
+              name: name,
+              description: 'Complete ' + name,
+              image: 'https://archives.bulbagarden.net/media/upload/d/dd/Boulder_Badge.png',
+            },
+          },
         },
       })
       return collection
@@ -55,6 +62,7 @@ export default async function (fastify: FastifyInstance) {
       where: { name: name },
       include: {
         collectables: true,
+        achievement: true,
       },
     })
     return collection

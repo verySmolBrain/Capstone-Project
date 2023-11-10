@@ -15,15 +15,6 @@ import { ChatButton } from '@/components/ui/button/chat-button'
 import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
 import { Role } from '@/lib/utils'
 import { ReviewProfileRating } from '@/components/ui/button/review-profile-rating'
-
-enum profileCollection {
-  INVENTORY,
-  WISHLIST,
-  WARES,
-}
-
-const default_img =
-  'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import {
   Tooltip,
@@ -34,6 +25,21 @@ import {
 import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
 import { PersonalProfileRating } from '@/components/ui/button/personal-profile-rating'
 
+enum profileCollection {
+  INVENTORY,
+  WISHLIST,
+  WARES,
+}
+
+const default_profile =
+  'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
+
+const default_img =
+  'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
+
+const default_badge =
+  'https://archives.bulbagarden.net/media/upload/d/dd/Boulder_Badge.png'
+
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
   const [role, setRole] = React.useState<Role>(Role.NULL)
@@ -41,6 +47,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [inventory, setInventory] = React.useState<CollectionCollectable>()
   const [wares, setWares] = React.useState<CollectableCount[]>()
   const [wishlist, setWishlist] = React.useState<CollectableCount[]>()
+  const [achievements, setAchievements] = React.useState<Achievement[]>([])
 
   const router = useRouter()
 
@@ -99,6 +106,12 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     { refreshInterval: 3000 }
   )
 
+  const { data: achievementsData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/achievement`,
+    fetcher,
+    { refreshInterval: 3000 }
+  )
+
   React.useEffect(() => {
     if (profileData?.data) {
       setProfile(profileData?.data)
@@ -119,6 +132,9 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     if (roleData) {
       setRole((roleData?.role as Role) ?? Role.NULL)
     }
+    if (achievementsData) {
+      setAchievements(achievementsData)
+    }
   }, [
     profileData?.data,
     ownProfileData?.data,
@@ -127,10 +143,8 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     waresData,
     wishlistData,
     roleData,
+    achievementsData,
   ])
-
-  const default_profile =
-    'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
 
   return profile ? (
     <>
@@ -186,6 +200,49 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
             </div>
           </div>
           <div className="container gap-4 pb-6">
+            <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
+              <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
+                {isOwnProfile ? 'My' : 'Their'} Achievements
+              </h2>
+            </div>
+            <div className="container border rounded-2xl pt-6 pb-6">
+              <Carousel>
+                {achievements?.map((achievement, i) => {
+                  const hasAchievement = achievement.users.find(
+                    (u) => u.id == profile.id
+                  )
+                  return (
+                    <div key={i} className="pt-5">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="mt-6 mb-6 mr-3 ml-3 w-auto">
+                              <Link href={`/achievement/${achievement.id}`}>
+                                <Image
+                                  src={achievement.image ?? default_badge}
+                                  width={125}
+                                  height={125}
+                                  className={
+                                    'rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3 border-primary border-1' +
+                                    (!hasAchievement ? ' grayscale' : '')
+                                  }
+                                  alt={achievement.id}
+                                />
+                              </Link>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="md:text-base w-full text-center">
+                              {achievement.name}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )
+                })}
+              </Carousel>
+            </div>
             <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
                 {isOwnProfile ? 'My' : 'Their'} Collectables
@@ -358,6 +415,3 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     <LoadingScreen />
   )
 }
-
-// search bar?
-// later on collectable stats should show people looking for and willing to trade
