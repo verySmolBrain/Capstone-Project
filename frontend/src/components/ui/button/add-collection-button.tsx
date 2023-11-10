@@ -12,9 +12,11 @@ import {
 } from '@/components/ui/dialog'
 import { CreateCollectableForm } from '../form/create-collectable-form'
 
-export function AddCollectionButton() {
+export function AddCollectionButton({ mutate }: { mutate: () => void }) {
+  const [open, setOpen] = React.useState(false)
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Plus className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
@@ -25,7 +27,7 @@ export function AddCollectionButton() {
           <DialogTitle>Add a collection to this campaign</DialogTitle>
         </DialogHeader>
         <div>
-          <CreateCollectableForm />
+          <CreateCollectableForm setOpen={setOpen} mutate={mutate} />
         </div>
       </DialogContent>
     </Dialog>

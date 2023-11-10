@@ -87,16 +87,16 @@ model Achievement {
 }
 
 /// @@allow('read', true)
-/// @@allow('create', auth().id == sellerId || auth().id == buyerId)
+/// @@allow('create, update', auth().id == sellerId || auth().id == buyerId)
 model Trade {
-    id Int @id() @default(autoincrement())
+    id Int @id() @unique() @default(autoincrement())
     seller Profile @relation("seller", fields: [sellerId], references: [id])
     sellerId String
     buyer Profile @relation("buyer", fields: [buyerId], references: [id])
     buyerId String
     collectable Collectable @relation(fields: [collectableName], references: [name])
     collectableName String
-    /// @allow('update', auth().id == sellerId)
+    /// @allow('update', auth().id == sellerId || auth().id == buyerId)
     status Status @default(PENDING)
     price Int
     createdAt DateTime @default(now())

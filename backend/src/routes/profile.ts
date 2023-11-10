@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { throwNotUniqueError } from '@Source/utils/error'
 import { generateUsername, getUserId } from '@Source/utils/utils'
+import { Role } from '@prisma/client'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -94,6 +95,35 @@ export default async function (fastify: FastifyInstance) {
       },
     })
     return profile
+  })
+
+  /*
+   *  GET /profile
+   *  Returns a;; user profiles that match role
+   *  @returns {object} user
+   */
+  fastify.get('/profile/role/:role', async (req: FastifyRequest<{ Params: { role: string } }>) => {
+    const token = req.headers['authorization'] as string
+
+    const prisma = await requestHandler(token)
+    const { role } = req.params
+
+    console.log(Role[role as keyof typeof Role])
+
+    const profiles = await prisma.profile.findMany({
+      where: {
+        user: {
+          role: Role[role as keyof typeof Role],
+        },
+      },
+      include: {
+        inventory: true,
+        wares: true,
+        wishlist: true,
+      },
+    })
+
+    return profiles
   })
 
   /*
