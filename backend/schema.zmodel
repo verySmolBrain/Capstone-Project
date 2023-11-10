@@ -245,7 +245,7 @@ model Campaign {
   isActive   Boolean  @default(false)
   
   views      Int      @default(0) @@allow('update', true)
-  viewData   Int[]    @@allow('update', true)
+  viewData   String[]    @@allow('update', true)
 
   collections Collection[]
   managers   User[] @relation('managers')

@@ -138,41 +138,23 @@ export default async function (fastify: FastifyInstance) {
    * Increments campaign view count by 1
    * @returns void
    */
-  fastify.put('/campaign/:name/view', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+  fastify.put('/campaign/:name/view', async (req: FastifyRequest<{ Params: { name: string; timestamp: string } }>) => {
     const token = req.headers['authorization'] as string
     const prisma = await requestHandler(token)
-    const { name } = req.params
+    const { name, timestamp } = req.params
 
     // Increment campaign view count by one
     await prisma.campaign.update({
       where: { name: name },
       data: { views: { increment: 1 } },
     })
-  })
 
-  /*
-   * PUT /campaigns/viewData
-   * Declares new data point for view data for every campaign
-   * @returns void
-   */
-  fastify.put('/campaigns/viewData', async (req) => {
-    const token = req.headers['authorization'] as string
-    const prisma = await requestHandler(token)
-    const campaigns = await prisma.campaign.findMany()
-
-    for (const campaign of campaigns) {
-      if (campaign) {
-        // Add a new campaign view data point
-        await prisma.campaign.update({
-          where: { name: campaign.name },
-          data: {
-            viewData: {
-              push: campaign.views,
-            },
-          },
-        })
-      }
-    }
+    await prisma.campaign.update({
+      where: { name: name },
+      data: {
+        viewData: { push: timestamp },
+      },
+    })
   })
 
   /*
