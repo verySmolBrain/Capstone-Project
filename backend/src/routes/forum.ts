@@ -164,7 +164,7 @@ export default async function (fastify: FastifyInstance) {
    *  @returns {object} report
    */
   fastify.post(
-    '/forum/:commentId',
+    '/forum/report/:commentId',
     async (
       req: FastifyRequest<{
         Params: { commentId: string }
@@ -174,7 +174,7 @@ export default async function (fastify: FastifyInstance) {
 
       const prisma = await requestHandler(token)
 
-      const report = await prisma.CommentReports.create({
+      const report = await prisma.commentReports.create({
         data: {
           comment: {
             connect: {
@@ -192,7 +192,7 @@ export default async function (fastify: FastifyInstance) {
    *  Gets the number of reports on a comment
    *  @returns {object} report
    */
-  fastify.post(
+  fastify.get(
     '/forum/reports/:commentId',
     async (
       req: FastifyRequest<{
@@ -203,13 +203,21 @@ export default async function (fastify: FastifyInstance) {
 
       const prisma = await requestHandler(token)
 
-      // Retrieve the cardinality of CommentReports for the specified Comment
-      const commentReportsCount = await prisma.commentReports.count({
-        where: {
-          id: Number(req.params.commentId),
-        },
+      // Retrieve the comment and its associated reports count
+      const commentWithReports = await prisma.comment.findUnique({
+        where: { id: Number(req.params.commentId) },
+        include: {
+          reports: {}
+        }
       });
-      return commentReportsCount
+      if (commentWithReports != null) {
+        const reportsCount = commentWithReports.reports.length;
+        return reportsCount
+      } else {
+        const reportsCount = 0;
+        return reportsCount
+      }
+
     }
   )
 }
