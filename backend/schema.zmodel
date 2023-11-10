@@ -86,26 +86,27 @@ model Achievement {
 // Trade Schemas ---------------------------------------------------------------
 
 model Trade {
-  id            String      @id
+  id            Int         @id @default(autoincrement())
   seller        Profile     @relation('seller', fields: [sellerId], references: [id])
   sellerId      String
   buyer         Profile     @relation('buyer', fields: [buyerId], references: [id])
   buyerId       String
   collectable   Collectable @relation(fields: [collectableName], references: [name])
   collectableName String
-  status        Status      @default(PENDING) @@allow('update', auth().id == sellerId)
+  status        Status      @default(PENDING) @allow('update', auth().id == sellerId)
   price         Int
+  createdAt     DateTime    @default(now())
 
   @@allow('read', true)
-  @@allow('create' , auth().id == sellerId)
+  @@allow('create' , auth().id == sellerId || auth().id == buyerId)
 }
 
 enum Status {
   PENDING
   ACCEPTED
   DECLINED
+  FINISHED
 }
-
 // Chat Schemas ----------------------------------------------------------------
 
 model Chat {
@@ -240,8 +241,9 @@ model Campaign {
   isActive   Boolean  @default(false)
   
   views      Int      @default(0) @@allow('update', true)
-  collections Collection[]
+  viewData   Int[]    @@allow('update', true)
 
+  collections Collection[]
   managers   User[] @relation('managers')
 
   reviews  CampaignReview[]
