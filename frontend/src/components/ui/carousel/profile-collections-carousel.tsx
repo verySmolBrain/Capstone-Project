@@ -115,7 +115,6 @@ export function ProfileCollectionCarousel({
                   <ScrollArea>
                     <div className="w-full flex flex-row flex-wrap items-center justify-center gap-4">
                       {activeCollection?.collectables.map((collectable, i) => {
-                        console.log(collectable)
                         const count = inventory[key]?.collectables.find(
                           (inventoryCollectable) =>
                             inventoryCollectable.name === collectable.name

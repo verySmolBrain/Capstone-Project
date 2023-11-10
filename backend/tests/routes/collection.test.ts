@@ -169,3 +169,39 @@ describe('/collection:name', () => {
     await app.close()
   })
 })
+
+
+/*
+* DELETE /collection/:collectionName/:collectableName
+* Removes a collectable from a collection by name
+* @param {string} collection
+* @param {string} collectable
+* @returns {object} collection
+*/
+
+ describe('/collection/:collectionName/:collectableName', () => {
+   it('Successfully deletes collection - return 200', async () => {
+     prismaMockInstance.collection.update.mockResolvedValueOnce({
+       name: "My Collection",
+       image: "collection.jpg",
+       tags: ["collection", "hobby"],
+   })
+ 
+     const app = await build({})
+     const response = await app.inject({
+       method: 'DELETE',
+       url: '/collection/:collectionName/:collectableName',
+       headers: {
+         Authorization: 'Bearer your-token-here',
+       },
+       query: {
+        collectableName: "nerf",
+        collectionName: "ogerpon"
+       },
+     })
+ 
+     expect(response.statusCode).toBe(200)
+     expect(response.statusMessage).toBe('OK')
+     await app.close()
+   })
+ })

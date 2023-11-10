@@ -36,7 +36,35 @@ describe('/chat:receiverName', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe("{\"id\":3}")
+  })
 
+  it('Successful chat creation (empty old chat) - return 200', async () => {
+    prismaMockInstance.chat.findFirst.mockResolvedValueOnce(null)
+    prismaMockInstance.chat.create.mockResolvedValueOnce({id: 4})
+
+    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      name: 'stringadsf',
+      description: null,
+      image: null,
+      reputation: 1,
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'POST',
+      url: '/chat/:receiverName',
+      headers: {
+        Authorization: 'double',
+      },
+      query: {
+        receiverName: 'a'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("{\"id\":4}")
   })
 
   it('Chat creation message Oneself Error - return 400', async () => {

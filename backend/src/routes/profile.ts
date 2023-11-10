@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { throwNotUniqueError } from '@Source/utils/error'
 import { generateUsername, getUserId } from '@Source/utils/utils'
+import { Role } from '@prisma/client'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -55,7 +56,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   *  GET /role
+   *  GET /role/:name
    *  Returns the given user's role
    *  @returns {string} role
    */
@@ -94,6 +95,35 @@ export default async function (fastify: FastifyInstance) {
       },
     })
     return profile
+  })
+
+  /*
+   *  GET /profile
+   *  Returns a;; user profiles that match role
+   *  @returns {object} user
+   */
+  fastify.get('/profile/role/:role', async (req: FastifyRequest<{ Params: { role: string } }>) => {
+    const token = req.headers['authorization'] as string
+
+    const prisma = await requestHandler(token)
+    const { role } = req.params
+
+    console.log(Role[role as keyof typeof Role])
+
+    const profiles = await prisma.profile.findMany({
+      where: {
+        user: {
+          role: Role[role as keyof typeof Role],
+        },
+      },
+      include: {
+        inventory: true,
+        wares: true,
+        wishlist: true,
+      },
+    })
+
+    return profiles
   })
 
   /*
@@ -190,54 +220,95 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   *  PUT /profile/review
-   *  Updates the user's review score
+   *  GET /profile/reviews/:name
+   *  Gets the user's reviews
    *  @param {float} review
-   *  @returns a {review: float, description: string}
-   */
-  fastify.put(
-    '/profile/review',
-    async (
-      req: FastifyRequest<{ Body: { rating: number; comment: string; revieweeId: string; reviewerId: string } }>
-    ) => {
-      const token = req.headers['authorization'] as string
-      const { rating, comment, revieweeId, reviewerId } = req.body
-      const prisma = await requestHandler(token)
-
-      const newReview = await prisma.review.create({
-        data: {
-          rating: rating,
-          comment: comment,
-          revieweeId: revieweeId,
-          reviewerId: reviewerId,
-        },
-      })
-
-      return newReview
-    }
-  )
-
-  /*
-   *  GET /profile/reviews
-   *  Gets the user's review scores
-   *  @param {float} review
-   *  @returns a list of {review: float, description: string}
+   *  @returns a list of {profile: Profile, review: float, description: string}
    */
 
-  fastify.get('/profile/reviews', async (req) => {
+  fastify.get('/reviews/profile/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
     const token = req.headers['authorization'] as string
+    const { name } = req.params
     const prisma = await requestHandler(token)
-    const profile = await prisma.profile.findUniqueOrThrow({
+
+    const reviews = await prisma.userReview.findMany({
       where: {
-        id: extractId(token),
+        reviewee: {
+          name: name,
+        },
       },
-      include: { receivedReviews: true },
+      include: {
+        reviewer: true,
+      },
     })
-    const extractedReviews = profile.receivedReviews.map((review) => ({
-      review: review.rating,
-      description: review.comment,
-    }))
+
+    const extractedReviews = reviews.map((review) => {
+      return {
+        reviewer: review.reviewer,
+        review: review.rating,
+        description: review.comment,
+      }
+    })
 
     return extractedReviews
   })
+
+  /**
+   *  PUT /profile/reviews/:name
+   *  Creates a new review for the user
+   *  @param {float} review
+   *  @param {string} description
+   *  @returns a list of {review: float, description: string}
+   */
+
+  fastify.put(
+    '/reviews/profile/:name',
+    async (req: FastifyRequest<{ Params: { name: string }; Body: { review: number; description: string } }>) => {
+      const token = req.headers['authorization'] as string
+
+      const { name } = req.params
+      const { review, description } = req.body
+      const prisma = await requestHandler(token)
+
+      const findReview = await prisma.userReview.findFirst({
+        where: {
+          revieweeId: extractId(token),
+          reviewerId: await getUserId(name, prisma),
+        },
+      })
+
+      if (findReview) {
+        const updatedReview = await prisma.userReview.update({
+          where: {
+            id: findReview.id,
+          },
+          data: {
+            rating: review,
+            comment: description,
+          },
+        })
+
+        return updatedReview
+      }
+
+      const createdReview = await prisma.userReview.create({
+        data: {
+          rating: review,
+          comment: description,
+          reviewer: {
+            connect: {
+              id: extractId(token),
+            },
+          },
+          reviewee: {
+            connect: {
+              name: name,
+            },
+          },
+        },
+      })
+
+      return createdReview
+    }
+  )
 }

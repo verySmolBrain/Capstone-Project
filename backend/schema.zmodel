@@ -47,16 +47,20 @@ model Profile {
   purchases    Trade[]       @relation('buyer')
   reputation   Float           @default(0)
 
-  givenReviews    Review[]  @relation('reviewer')
-  receivedReviews Review[]  @relation('reviewee')
+  givenUserReviews    UserReview[]  @relation('reviewer')
+  receivedUserReviews UserReview[]  @relation('reviewee')
+  givenCampaignReviews   CampaignReview[]  @relation('reviewer')
+
   chats   Chat[]            @relation("ChatsUsers")
+  posts   Post[]
+  comments Comment[]
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)
   @@allow('all', auth().role == ADMIN)
 }
 
-model Review {
+model UserReview {
   id         Int   @id @default(autoincrement())
   rating     Int
   comment    String
@@ -70,38 +74,42 @@ model Review {
 }
 
 model Achievement {
-  name        String  @id @unique
+  id          String @id
+  name        String  @unique
   description String
   image       String?
-  users       Profile[]
+  users       Profile[] @allow('all', true)
 
-  @@allow('read', true)
+  collection  Collection @relation(fields: [id], references: [name])
+
+  @@allow('all', true)
   @@allow('all', auth().role == ADMIN)
 }
 
 // Trade Schemas ---------------------------------------------------------------
 
 model Trade {
-  id            String      @id
+  id            Int         @id @unique @default(autoincrement())
   seller        Profile     @relation('seller', fields: [sellerId], references: [id])
   sellerId      String
   buyer         Profile     @relation('buyer', fields: [buyerId], references: [id])
   buyerId       String
   collectable   Collectable @relation(fields: [collectableName], references: [name])
   collectableName String
-  status        Status      @default(PENDING) @allow('update', auth().id == sellerId)
+  status        Status      @default(PENDING) @allow('update', auth().id == sellerId || auth().id == buyerId)
   price         Int
+  createdAt     DateTime    @default(now())
 
   @@allow('read', true)
-  @@allow('create' , auth().id == sellerId)
+  @@allow('create, update' , auth().id == sellerId || auth().id == buyerId)
 }
 
 enum Status {
   PENDING
   ACCEPTED
   DECLINED
+  FINISHED
 }
-
 // Chat Schemas ----------------------------------------------------------------
 
 model Chat {
@@ -126,6 +134,61 @@ model Message {
   @@allow('all', senderId == auth().id)
   @@allow('read', chat.users?[user.id == auth().id])
   @@allow('all', auth().role == ADMIN)
+}
+
+// Forum Schemas ---------------------------------------------------------------
+
+model Post {
+    id          Int       @id @default(autoincrement())
+    title       String
+    description String
+    image       String?
+    tags        String[]
+    
+    campaign   Campaign?  @relation(fields: [campaignName], references: [name])
+    campaignName String?
+    
+    author      Profile   @relation(fields: [authorId], references: [id])
+    authorId    String
+    
+    comments    Comment[] @@allow('create', true)
+
+    createdAt  DateTime  @default(now())
+    
+    @@allow('read', true)
+    @@allow('all', auth().role == ADMIN || auth().id == authorId)
+}
+
+model Comment {
+    id         Int       @id @default(autoincrement())
+
+    parentCommend     Comment?  @relation('subComment', fields: [parentCommentId], references: [id])
+    parentCommentId   Int?
+    subComment Comment[] @relation('subComment')
+
+    post       Post      @relation(fields: [postId], references: [id])
+    postId     Int
+
+    author     Profile   @relation(fields: [authorId], references: [id])
+    authorId   String
+
+    content    String
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+
+    reports    CommentReports[]
+
+    @@allow('read', true)
+    @@allow('all', auth().role == ADMIN || auth().id == authorId)
+}
+
+model CommentReports {
+    commentId        Int       @id @default(autoincrement())
+
+    comment  Comment   @relation(fields: [commentId], references: [id])
+
+    @@allow('read, create', true)
+    @@allow('all', auth().role == ADMIN)
 }
 
 // Collectable Schemas ---------------------------------------------------------
@@ -166,6 +229,7 @@ model Collection {
 
   collectables Collectable[]  @relation('collection')
   collections Campaign[]
+  achievement Achievement?
 
 
   @@allow('read', true)
@@ -179,11 +243,32 @@ model Campaign {
   start      DateTime @default(now())
   end        DateTime
   isActive   Boolean  @default(false)
+  
+  views      Int      @default(0) @@allow('update', true)
+  viewData   Int[]    @@allow('update', true)
 
   collections Collection[]
-
   managers   User[] @relation('managers')
+
+  reviews  CampaignReview[]
+
+  posts    Post[]
 
   @@allow('read', true)
   @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
+}
+
+model CampaignReview {
+  id           Int   @id @default(autoincrement())
+  rating       Int
+  comment      String
+
+  campaignName String
+  campaign     Campaign @relation(fields: [campaignName], references: [name])
+
+  reviewer   Profile @relation('reviewer', fields: [reviewerId], references: [id])
+  reviewerId String
+
+  @@allow('read', true)
+  @@allow('all', auth().role == ADMIN || auth().id == reviewer.id)
 }

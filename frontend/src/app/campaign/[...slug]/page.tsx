@@ -14,10 +14,19 @@ import { RemoveCollectionFromCampaignButton } from '@/components/ui/button/remov
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Role } from '@/lib/utils'
+import ForumList from '@/components/ui/page/forum-list'
+import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-button'
+import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
+import { CollectibleChart } from '@/components/ui/page/campaign-collectible-chart'
+import { ForumStats } from '@/components/ui/page/campaign-forum-stats'
+import { ViewChart } from '@/components/ui/page/campaign-view-chart'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
   const [role, setRole] = React.useState<Role>()
+
+  let data: ChartData = []
+  const viewData = []
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -56,6 +65,50 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     }
   }, [campaignResult, roleResult, params.slug])
 
+  React.useEffect(() => {
+    const updatePageView = async () => {
+      const supabase = createClientComponentClient<Database>()
+      const token = (await supabase.auth.getSession()).data.session
+        ?.access_token
+
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${params.slug}/view`,
+        {
+          method: 'PUT',
+          headers: {
+            'update-type': 'name',
+            authorization: token!,
+          },
+        }
+      )
+    }
+
+    updatePageView()
+  }, [params.slug])
+
+  if (campaign) {
+    data = campaign.collections.map((x) => ({
+      name: x.name,
+      value: x.collectables.length,
+    }))
+
+    if (campaign.viewData.length < 5) {
+      for (let i = 0; i < campaign.viewData.length; i++) {
+        viewData.push({
+          name: `${i * 5} minutes ago`,
+          Views: campaign.viewData[campaign.viewData.length - i - 1],
+        })
+      }
+    } else {
+      for (let i = 0; i < 5; i++) {
+        viewData.push({
+          name: `${i * 5} minutes ago`,
+          Views: campaign.viewData[campaign.viewData.length - i - 1],
+        })
+      }
+    }
+  }
+
   return campaign ? (
     <>
       <GeneralNavBar />
@@ -83,7 +136,28 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
           </div>
           <h2 className="text-2xl font-semibold truncate">{campaign?.name}</h2>
           <hr />
-          <div className="flex flex-row flex-wrap gap-2  pb-3">
+          <div className="flex items-top justify-between">
+            <div className="flex flex-row flex-wrap gap-2 pb-3 w-28 items-center">
+              {role === Role.USER ? (
+                <ReviewCampaignButton campaign={campaign.name} />
+              ) : (
+                <ManagerCampaignRating campaign={campaign.name} />
+              )}
+            </div>
+            <div>
+              {campaign.isActive && (
+                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
+                  {`Active | ${campaign.views} views`}
+                </p>
+              )}
+              {!campaign.isActive && (
+                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
+                  {`Inactive`}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-row flex-wrap gap-2 pb-3">
             <p className="text-sm font-normal break-words pt-1">Tags:</p>
             {campaign?.tags.map((tag, i) => {
               return (
@@ -96,9 +170,23 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               )
             })}
           </div>
-          <p className="text-sm font-normal break-words lg:w-[60%] xl:w-[70%]">
-            Status: {campaign.isActive ? 'Active' : 'Inactive'}
+          <hr></hr>
+
+          <h3 className="text-1xl font-bold">Stats at a glance</h3>
+          <p className="text-sm font-normal break-words">
+            {`${campaign.collections.reduce(
+              (accumulator, curr) => accumulator + curr.collectables.length,
+              0
+            )} collectable(s) across ${campaign.collections.length} ${
+              campaign.collections.length > 1 ? 'collections' : 'collection'
+            }`}
           </p>
+          <div className="-mt-10">
+            <CollectibleChart data={data}></CollectibleChart>
+            {(role === Role.MANAGER || role === Role.ADMIN) && (
+              <ForumStats campaign={campaign.name} />
+            )}
+          </div>
         </div>
 
         <div className="container gap-4 pb-3 md:pb-6 pt-3 md:pt-6 lg:max-w-[calc(100vw-600px)]">
@@ -147,8 +235,16 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               })}
             </Carousel>
           </div>
+          {(role === Role.MANAGER || role === Role.ADMIN) && (
+            <div className="pt-5">
+              <h3 className="text-sm font-bold pl-5">View counts over time</h3>
+              <br></br>
+              <ViewChart data={viewData.reverse()}></ViewChart>
+            </div>
+          )}
         </div>
       </section>
+      <ForumList campaign={params.slug} />
     </>
   ) : (
     <LoadingScreen />

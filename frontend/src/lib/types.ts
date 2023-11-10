@@ -18,11 +18,36 @@ enum Role {
   NULL,
 }
 
+type ProfileReview = {
+  reviewer: {
+    id: string
+    name: string
+    description: string | null
+    image: string | null
+    reputation: number
+  }
+  review: number
+  description: string
+}
+
+type CampaignReview = {
+  reviewer: {
+    id: string
+    name: string
+    description: string | null
+    image: string | null
+    reputation: number
+  }
+  review: number
+  description: string
+}
+
 type Collection = {
   name: string
   image?: string
   tags: string[]
   collectables: Collectable[]
+  achievement: Achievement
 }
 
 type Collectable = {
@@ -40,6 +65,46 @@ type Campaign = {
   start: Date
   end: Date
   managers: User[]
+  views: number
+  viewData: number[]
+}
+
+type ForumPost = {
+  author: {
+    id: string
+    name: string
+    description: string | null
+    image: string | null
+    reputation: number
+  }
+  comments: PostComment[]
+} & {
+  id: number
+  title: string
+  description: string
+  image: string | null
+  tags: string[]
+  campaignName: string | null
+  authorId: string
+  createdAt: Date
+}
+
+type PostComment = {
+  author: {
+    id: string
+    name: string
+    description: string | null
+    image: string | null
+    reputation: number
+  }
+} & {
+  id: number
+  parentCommentId: number | null
+  postId: number
+  authorId: string
+  content: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 type UserProfile = {
@@ -69,6 +134,7 @@ type Trade = {
   collectableId: string
   status: Status
   price: number
+  createdAt: Date
 }
 
 type Achievement = {
@@ -77,6 +143,7 @@ type Achievement = {
   description: string
   image: string
   users: UserProfile[]
+  collection: Collection
 }
 
 type Review = {
@@ -130,6 +197,7 @@ type Profile = {
   inventory: CollectableCount[]
   wishlist: CollectableCount[]
   wares: CollectableCount[]
+  achievements: Achievement[]
 }
 
 type CollectionCollectable = {
@@ -160,3 +228,5 @@ type CollectableCount = {
   wishlist: Profile[]
   wares: Profile[]
 }
+
+type ChartData = { name: string; value: number }[]

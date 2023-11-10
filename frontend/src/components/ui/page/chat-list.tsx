@@ -7,6 +7,7 @@ import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Loader2 } from 'lucide-react'
+import * as emoji from 'node-emoji'
 
 export default function ChatList() {
   const [chats, setChats] = React.useState<FormattedChat[]>()
@@ -84,7 +85,7 @@ export default function ChatList() {
                       </div>
                       <div className="text-500 truncate">
                         {chat?.latestMessage?.content
-                          ? chat.latestMessage.content
+                          ? emoji.emojify(chat.latestMessage.content)
                           : ''}
                       </div>
                     </div>
