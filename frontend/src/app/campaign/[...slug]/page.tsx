@@ -80,7 +80,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             </div>
             <div className="pt-4">
               {role === Role.MANAGER && (
-                <EditCampaignButton></EditCampaignButton>
+                <EditCampaignButton name={campaign.name} mutate={mutate} />
               )}
             </div>
           </div>

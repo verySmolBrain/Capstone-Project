@@ -32,6 +32,28 @@ export const createCollectionSchema = z.object({
   ),
 })
 
+export const updateCollectionSchema = z.object({
+  image: z
+    .custom<File>(
+      (val) => val instanceof File,
+      'Required to import at least one image'
+    )
+    .refine(
+      (file) => Number(file.size) <= Number(MAX_IMAGE_SIZE),
+      `File size should be less than 50kb`
+    )
+    .refine(
+      (file) => ALLOWED_IMAGE_TYPES.includes(file.type),
+      'Only these types are allowed .jpg, .jpeg, .png, .svg and .webp'
+    ),
+  tags: z.array(
+    z.object({
+      id: z.string(),
+      text: z.string(),
+    })
+  ),
+})
+
 export const addCollectionCampaignSchema = z.object({
   name: z.string(),
 })

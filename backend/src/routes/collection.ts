@@ -69,6 +69,35 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
+   *  PUT
+   *  Updates a collection
+   *  @param {string} name
+   *  @param {string} newName
+   *  @param {string} image
+   *  @param {string[]} tags
+   */
+  fastify.put(
+    '/collection/:name',
+    async (req: FastifyRequest<{ Params: { name: string }; Body: { image: string; tags: string[] } }>) => {
+      const token = req.headers['authorization'] as string
+      const { name } = req.params
+      const { image, tags } = req.body
+
+      const prisma = await requestHandler(token)
+      const collection = await prisma.collection.update({
+        where: {
+          name: name,
+        },
+        data: {
+          image: image,
+          tags: tags,
+        },
+      })
+      return collection
+    }
+  )
+
+  /*
    * PUT /collection/:collectionName/:collectableName
    * Adds a collectable to a collection by name
    * @param {string} name
