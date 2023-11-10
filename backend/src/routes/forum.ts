@@ -157,4 +157,59 @@ export default async function (fastify: FastifyInstance) {
       return comment
     }
   )
+
+  /*
+   *  POST /forum/report/:commentId
+   *  Reports a comment on a post
+   *  @returns {object} report
+   */
+  fastify.post(
+    '/forum/:commentId',
+    async (
+      req: FastifyRequest<{
+        Params: { commentId: string }
+      }>
+    ) => {
+      const token = req.headers['authorization'] as string
+
+      const prisma = await requestHandler(token)
+
+      const report = await prisma.CommentReports.create({
+        data: {
+          comment: {
+            connect: {
+              id: Number(req.params.commentId),
+            },
+          },
+        },
+      })
+      return report
+    }
+  )
+
+  /*
+   *  GET /forum/reports/:commentId
+   *  Gets the number of reports on a comment
+   *  @returns {object} report
+   */
+  fastify.post(
+    '/forum/reports/:commentId',
+    async (
+      req: FastifyRequest<{
+        Params: { commentId: string }
+      }>
+    ) => {
+      const token = req.headers['authorization'] as string
+
+      const prisma = await requestHandler(token)
+
+      // Retrieve the cardinality of CommentReports for the specified Comment
+      const commentReportsCount = await prisma.commentReports.count({
+        where: {
+          id: Number(req.params.commentId),
+        },
+      });
+      return commentReportsCount
+    }
+  )
 }
