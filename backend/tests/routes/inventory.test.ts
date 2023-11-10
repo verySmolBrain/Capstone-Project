@@ -40,7 +40,7 @@ describe('/inventory', () => {
     expect(response.body).toBe('{}')
     await app.close()
   })
-  
+
   it('Successfully retrieves inventory of a user (inventory with collectables) - return 200', async () => {
     const mockProfile = {
       inventory: [
@@ -76,7 +76,9 @@ describe('/inventory', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body.startsWith("{\"Collection1\":{\"image\":\"image1\",\"collectables\":[{\"id\":1,\"name\":null,\"count\":10,")).toBe(true)
+    expect(
+      response.body.startsWith('{"Collection1":{"image":"image1","collectables":[{"id":1,"name":null,"count":10,')
+    ).toBe(true)
     await app.close()
   })
 
@@ -121,11 +123,11 @@ describe('/inventory', () => {
 })
 
 /*
-  *  GET /inventory/:name
-  *  Returns the given users inventory
-  *  @param {string} name
-  *  @returns {object} inventory
-*/
+ *  GET /inventory/:name
+ *  Returns the given users inventory
+ *  @param {string} name
+ *  @returns {object} inventory
+ */
 
 describe('/inventory/:name', () => {
   it('Successfully retrieves inventory of a user by name - return 200', async () => {
@@ -160,16 +162,17 @@ describe('/inventory/:name', () => {
         Authorization: 'Bearer your-token-here',
       },
       query: {
-        name: 'okiedogi'
-      }
+        name: 'okiedogi',
+      },
     })
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body.startsWith("{\"Collection1\":{\"image\":\"image1\",\"collectables\":[{\"id\":1,\"name\":null,\"count\":10,")).toBe(true)
+    expect(
+      response.body.startsWith('{"Collection1":{"image":"image1","collectables":[{"id":1,"name":null,"count":10,')
+    ).toBe(true)
     await app.close()
   })
 })
-
 
 /*
  *  PUT /inventory
@@ -233,7 +236,6 @@ describe('/inventory', () => {
   })
 })
 
-
 /*
  *  PUT /inventory
  *  Update the user's inventory
@@ -248,7 +250,7 @@ describe('/inventory/:collectable', () => {
       count: 1,
       inventoryId: '1',
       wishlistId: 'okiedogi',
-      waresId: 'okidogi'
+      waresId: 'okidogi',
     })
 
     prismaMockInstance.collectableCount.update.mockResolvedValue({
@@ -257,8 +259,10 @@ describe('/inventory/:collectable', () => {
       count: 1,
       inventoryId: '1',
       wishlistId: 'okiedogi',
-      waresId: 'okidogi'
+      waresId: 'okidogi',
     })
+
+    prismaMockInstance.collection.findMany.mockResolvedValue([])
 
     const app = await build({})
     const response = await app.inject({
@@ -268,7 +272,7 @@ describe('/inventory/:collectable', () => {
         Authorization: 'Bearer your-token-here',
       },
       query: {
-        collectable: 'aa'
+        collectable: 'aa',
       },
       body: {
         count: 1,
@@ -290,17 +294,19 @@ describe('/inventory/:collectable', () => {
       count: 1,
       inventoryId: '1',
       wishlistId: 'okiedogi',
-      waresId: 'okidogi'
+      waresId: 'okidogi',
     })
-    
+
     prismaMockInstance.collectableCount.update.mockResolvedValue({
       id: 1,
       name: 'a',
       count: 1,
       inventoryId: '1',
       wishlistId: 'okiedogi',
-      waresId: 'okidogi'
+      waresId: 'okidogi',
     })
+
+    prismaMockInstance.collection.findMany.mockResolvedValue([])
 
     const app = await build({})
     const response = await app.inject({
@@ -310,7 +316,7 @@ describe('/inventory/:collectable', () => {
         Authorization: 'Bearer your-token-here',
       },
       query: {
-        collectable: 'aa'
+        collectable: 'aa',
       },
       body: {
         count: 1,
@@ -325,11 +331,11 @@ describe('/inventory/:collectable', () => {
 })
 
 /*
-  * DELETE /inventory/:collectable
-  * Update the user's inventory
-  * @param {string} collectable
-  * @returns {object} inventory
-  */
+ * DELETE /inventory/:collectable
+ * Update the user's inventory
+ * @param {string} collectable
+ * @returns {object} inventory
+ */
 
 describe('/inventory/:collectable', () => {
   it('Successfully deletes a users inventory - return 200', async () => {
@@ -339,7 +345,7 @@ describe('/inventory/:collectable', () => {
       count: 1,
       inventoryId: '1',
       wishlistId: 'okiedogi',
-      waresId: 'okidogi'
+      waresId: 'okidogi',
     })
 
     prismaMockInstance.collectableCount.delete.mockResolvedValue({
@@ -348,8 +354,10 @@ describe('/inventory/:collectable', () => {
       count: 1,
       inventoryId: '1',
       wishlistId: 'okiedogi',
-      waresId: 'okidogi'
+      waresId: 'okidogi',
     })
+
+    prismaMockInstance.collection.findMany.mockResolvedValue([])
 
     const app = await build({})
     const response = await app.inject({
@@ -359,7 +367,7 @@ describe('/inventory/:collectable', () => {
         Authorization: 'Bearer your-token-here',
       },
       query: {
-        collectable: 'aa'
+        collectable: 'aa',
       },
     })
 
@@ -380,12 +388,12 @@ describe('/inventory/:collectable', () => {
         Authorization: 'Bearer your-token-here',
       },
       query: {
-        collectable: 'aa'
+        collectable: 'aa',
       },
     })
 
     expect(response.statusCode).toBe(400)
-    expect(response.statusMessage).toBe("Bad Request")
+    expect(response.statusMessage).toBe('Bad Request')
     await app.close()
   })
 })

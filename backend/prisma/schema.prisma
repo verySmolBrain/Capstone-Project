@@ -74,13 +74,16 @@ model UserReview {
     reviewerId String
 }
 
-/// @@allow('read', true)
+/// @@allow('all', true)
 /// @@allow('all', auth().role == ADMIN)
 model Achievement {
-    name String @id() @unique()
+    id String @id()
+    name String @unique()
     description String
     image String?
+    /// @allow('all', true)
     users Profile[]
+    collection Collection @relation(fields: [id], references: [name])
 }
 
 /// @@allow('read', true)
@@ -194,8 +197,11 @@ model Collection {
     tags String[]
     collectables Collectable[] @relation("collection")
     collections Campaign[]
+    achievement Achievement?
 }
 
+/// @@allow('update', true)
+/// @@allow('update', true)
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Campaign {
@@ -205,6 +211,8 @@ model Campaign {
     start DateTime @default(now())
     end DateTime
     isActive Boolean @default(false)
+    views Int @default(0)
+    viewData Int[]
     collections Collection[]
     managers User[] @relation("managers")
     reviews CampaignReview[]

@@ -11,6 +11,7 @@ import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import { CreatePostCommentButton } from '@/components/ui/button/create-post-comment-button'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { AvatarFallback } from '@radix-ui/react-avatar'
+import Link from 'next/link'
 
 dayjs.extend(relativeTime)
 
@@ -53,7 +54,13 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
         <div className="flex flex-row justify-between w-full pb-4">
           <p className="text-2xl font-semibold truncate">{forumPost.title}</p>
           <p className="text-xs">
-            Posted by {forumPost.author.name}{' '}
+            Posted by{' '}
+            <Link
+              href={`../profile/${forumPost.author.name}`}
+              className="hover:underline"
+            >
+              {forumPost.author.name}
+            </Link>{' '}
             {dayjs(forumPost.createdAt).fromNow()}
           </p>
         </div>
@@ -106,7 +113,13 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
                       </Avatar>
                     </p>
                     <p className="text-xs">
-                      Commented by {c.author.name}{' '}
+                      Commented by{' '}
+                      <Link
+                        href={`../profile/${c.author.name}`}
+                        className="hover:underline"
+                      >
+                        {c.author.name}
+                      </Link>{' '}
                       {dayjs(c.createdAt).fromNow()}
                     </p>
                   </div>

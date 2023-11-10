@@ -10,10 +10,16 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Skeleton } from '@/components/ui/skeleton'
-import { EditCampaignButton } from '@/components/ui/button/edit-campaign-button'
 import { Role } from '@/lib/utils'
 import { AddCollectableCollectionButton } from '@/components/ui/button/add-collectable-collection-button'
 import { RemoveCollectableCollectionButton } from '@/components/ui/button/remove-collectable-from-collection-button'
+import { EditAchievementButton } from '@/components/ui/button/edit-achievement-button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 export default function CollectionPage({
   params,
@@ -82,13 +88,44 @@ export default function CollectionPage({
             </div>
             <div className="pt-4">
               {role === Role.MANAGER && (
-                <EditCampaignButton></EditCampaignButton>
+                <EditAchievementButton
+                  id={collection.name}
+                  mutate={collectionMutate}
+                />
               )}
             </div>
           </div>
-          <h2 className="text-2xl font-semibold truncate">
-            {collection?.name}
-          </h2>
+          <div className="flex flex-row">
+            <h2 className="text-2xl font-semibold truncate pr-3 pt-2">
+              {collection?.name}{' '}
+            </h2>
+            <div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-45">
+                      <Link href={`/achievement/${collection.achievement.id}`}>
+                        <Image
+                          src={collection.achievement.image}
+                          width={45}
+                          height={45}
+                          className="rounded-full object-cover transition-transform duration-300 transform hover:-translate-y-3 border-primary border-1"
+                          alt="Achievement Image"
+                        />
+                      </Link>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="md:text-base w-full text-center">
+                      {collection.achievement.name} -{' '}
+                      {collection.achievement.description}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+
           <hr />
           <div className="flex flex-row flex-wrap gap-2 pb-3">
             <p className="text-sm font-normal break-words pt-1">Tags:</p>

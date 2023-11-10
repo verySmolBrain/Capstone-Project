@@ -6,6 +6,7 @@ import { Rating } from '@smastrom/react-rating'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 import useSWR from 'swr'
+import Link from 'next/link'
 
 export function ManagerCampaignRating({ campaign }: { campaign: string }) {
   const [rating, setRating] = React.useState(0)
@@ -51,8 +52,10 @@ export function ManagerCampaignRating({ campaign }: { campaign: string }) {
     <>
       {' '}
       <Rating className="overflow-hidden" value={rating} readOnly />
-      <span className="text-sm font-medium leading-none">
-        ( Reviews: {campaignReviews.length} )
+      <span className="text-sm font-medium leading-none hover:underline">
+        <Link href={`/campaign/reviews/${campaign}`}>
+          Reviews: {campaignReviews.length}
+        </Link>
       </span>
     </>
   )

@@ -14,6 +14,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 import { ReviewCampaignForm } from '../form/review-campaign-form'
+import Link from 'next/link'
 
 export function ReviewCampaignButton({ campaign }: { campaign: string }) {
   const [open, setOpen] = React.useState(false)
@@ -68,10 +69,12 @@ export function ReviewCampaignButton({ campaign }: { campaign: string }) {
             setUserSetRating(r)
           }}
         />
-        <span className="text-sm font-medium leading-none">
-          ( Reviews: {campaignReviews.length} )
-        </span>
       </DialogTrigger>
+      <span className="text-sm font-medium leading-none hover:underline">
+        <Link href={`/campaign/reviews/${campaign}`}>
+          Reviews: {campaignReviews.length}
+        </Link>
+      </span>
       <DialogContent className="w-auto m-20">
         <DialogHeader>
           <DialogTitle>Review Campaign</DialogTitle>

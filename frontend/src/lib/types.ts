@@ -47,6 +47,7 @@ type Collection = {
   image?: string
   tags: string[]
   collectables: Collectable[]
+  achievement: Achievement
 }
 
 type Collectable = {
@@ -64,6 +65,8 @@ type Campaign = {
   start: Date
   end: Date
   managers: User[]
+  views: number
+  viewData: number[]
 }
 
 type ForumPost = {
@@ -140,6 +143,7 @@ type Achievement = {
   description: string
   image: string
   users: UserProfile[]
+  collection: Collection
 }
 
 type Review = {
@@ -193,6 +197,7 @@ type Profile = {
   inventory: CollectableCount[]
   wishlist: CollectableCount[]
   wares: CollectableCount[]
+  achievements: Achievement[]
 }
 
 type CollectionCollectable = {
@@ -223,3 +228,5 @@ type CollectableCount = {
   wishlist: Profile[]
   wares: Profile[]
 }
+
+type ChartData = { name: string; value: number }[]
