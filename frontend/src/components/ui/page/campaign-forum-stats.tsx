@@ -5,7 +5,7 @@ import { Database } from '@/lib/database.types'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
+import Link from 'next/link'
 
 export function ForumStats({ campaign }: { campaign: string }) {
   const [forumPosts, setForumPosts] = React.useState<ForumPost[]>()
@@ -71,20 +71,24 @@ export function ForumStats({ campaign }: { campaign: string }) {
               : 0}{' '}
             comment(s) by {uniqueCommenterCount} user(s)
           </p>
-        </div>
-        <div>
-          <br />
-          <br />
-
+          <hr></hr>
           <p>
             Latest post{' '}
-            {forumPosts
+            {forumPosts && forumPosts.length > 0
               ? `${dayjs(
                   forumPosts[forumPosts.length - 1].createdAt
-                ).fromNow()} by ${
-                  forumPosts[forumPosts.length - 1].author.name
-                }`
+                ).fromNow()} by `
               : 'never'}
+            {forumPosts && forumPosts.length > 0 ? (
+              <Link
+                href={forumPosts[forumPosts.length - 1].author.name}
+                className="hover:underline"
+              >
+                {forumPosts[forumPosts.length - 1].author.name}
+              </Link>
+            ) : (
+              ''
+            )}
           </p>
         </div>
       </div>

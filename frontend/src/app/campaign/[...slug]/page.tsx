@@ -19,12 +19,14 @@ import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-but
 import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
 import { CollectibleChart } from '@/components/ui/page/campaign-collectible-chart'
 import { ForumStats } from '@/components/ui/page/campaign-forum-stats'
+import { ViewChart } from '@/components/ui/page/campaign-view-chart'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
   const [role, setRole] = React.useState<Role>()
 
   let data: ChartData = []
+  const viewData = []
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -89,6 +91,22 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       name: x.name,
       value: x.collectables.length,
     }))
+
+    if (campaign.viewData.length < 5) {
+      for (let i = 0; i < campaign.viewData.length; i++) {
+        viewData.push({
+          name: `${i * 5} minutes ago`,
+          Views: campaign.viewData[campaign.viewData.length - i - 1],
+        })
+      }
+    } else {
+      for (let i = 0; i < 5; i++) {
+        viewData.push({
+          name: `${i * 5} minutes ago`,
+          Views: campaign.viewData[campaign.viewData.length - i - 1],
+        })
+      }
+    }
   }
 
   return campaign ? (
@@ -215,6 +233,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               })}
             </Carousel>
           </div>
+          {role === Role.MANAGER && (
+            <div className="pt-5">
+              <h3 className="text-sm font-bold pl-5">View counts over time</h3>
+              <br></br>
+              <ViewChart data={viewData.reverse()}></ViewChart>
+            </div>
+          )}
         </div>
       </section>
       <ForumList campaign={params.slug} />

@@ -65,6 +65,7 @@ type Campaign = {
   end: Date
   managers: User[]
   views: number
+  viewData: number[]
 }
 
 type ForumPost = {
