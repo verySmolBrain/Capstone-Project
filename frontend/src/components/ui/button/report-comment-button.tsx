@@ -8,6 +8,7 @@ import { Database } from '@/lib/database.types'
 export function ReportCommentButton({ comment }: { comment: number }) {
   const [open, setOpen] = React.useState(false)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function onSubmit(data: FormData) {
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
