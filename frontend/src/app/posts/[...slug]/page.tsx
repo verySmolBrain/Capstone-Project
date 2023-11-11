@@ -12,6 +12,7 @@ import { CreatePostCommentButton } from '@/components/ui/button/create-post-comm
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { AvatarFallback } from '@radix-ui/react-avatar'
 import Link from 'next/link'
+import { ReportCommentButton } from '@/components/ui/button/report-comment-button'
 
 dayjs.extend(relativeTime)
 
@@ -125,6 +126,7 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
                   </div>
 
                   <p className="text-base">{c.content}</p>
+                  <ReportCommentButton comment={c.id} />
                 </div>
               ))}
             </section>

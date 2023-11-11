@@ -230,3 +230,9 @@ type CollectableCount = {
 }
 
 type ChartData = { name: string; value: number }[]
+
+type CommentReport = {
+  content: string
+  author: string
+  reports: number
+}

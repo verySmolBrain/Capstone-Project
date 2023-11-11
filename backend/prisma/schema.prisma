@@ -157,10 +157,12 @@ model Comment {
     reports CommentReports[]
 }
 
+/// @@allow('update', true)
 /// @@allow('read, create', true)
 /// @@allow('all', auth().role == ADMIN)
 model CommentReports {
     commentId Int @id() @default(autoincrement())
+    reportingUsers String[]
     comment Comment @relation(fields: [commentId], references: [id])
 }
 
