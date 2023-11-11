@@ -53,11 +53,15 @@ export default function ReportedCommentsList() {
               <div key={index}>
                 <a href={`/profile/${report.author}`}>
                   <div className="flex items-center gap-4 border rounded-2xl pt-6 pb-6">
-                    <div className="flex flex-col gap-4 overflow-hidden ml-6">
-                      <p className="text-1xl font-semibold truncate">
+                    <div className="flex flex-col gap-4 ml-6">
+                      <h3 className="text-1xl font-semibold truncate">
                         {report.author}
+                      </h3>
+                      <hr />
+                      <p>{report.content}</p>
+                      <p className="text-sm font-semibold">
+                        Number of reports: {report.reports}
                       </p>
-                      <div className="text-500 truncate">{report.content}</div>
                     </div>
                   </div>
                 </a>
