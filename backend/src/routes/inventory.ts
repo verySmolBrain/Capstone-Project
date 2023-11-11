@@ -120,17 +120,60 @@ export default async function (fastify: FastifyInstance) {
             inventoryId: extractId(token),
           },
         })
-        return
+      } else {
+        await prisma.collectableCount.update({
+          where: {
+            id: collectableCount.id,
+          },
+          data: {
+            count: req.body.count,
+          },
+        })
       }
 
-      prisma.collectableCount.update({
+      // collections associated with the collectable
+      const cc = await prisma.collection.findMany({
         where: {
-          id: collectableCount.id,
-        },
-        data: {
-          count: req.body.count,
+          collectables: {
+            some: {
+              name: req.params.collectable,
+            },
+          },
         },
       })
+      for (const c of cc) {
+        // check if user has completed the collection
+        const target = await prisma.collection.findFirstOrThrow({
+          where: { name: c.name },
+          include: { collectables: true },
+        })
+
+        const profile = await prisma.profile.findFirstOrThrow({
+          where: { id: extractId(token) },
+          include: { inventory: true, achievements: true },
+        })
+
+        const inventoryCollection = profile.inventory.filter((c) => target.collectables.find((a) => a.name == c.name))
+
+        if (inventoryCollection.length == target.collectables.length) {
+          const p = await prisma.profile.findFirstOrThrow({
+            where: { id: extractId(token) },
+            include: { achievements: true },
+          })
+          const achievement = await prisma.achievement.findFirstOrThrow({
+            where: { id: c.name },
+          })
+          p.achievements.push(achievement)
+          await prisma.profile.update({
+            where: { id: extractId(token) },
+            data: {
+              achievements: {
+                connect: p.achievements,
+              },
+            },
+          })
+        }
+      }
       return
     }
   )
@@ -161,6 +204,36 @@ export default async function (fastify: FastifyInstance) {
         id: collectableCount!.id,
       },
     })
+
+    // collections associated with the collctable
+    const cc = await prisma.collection.findMany({
+      where: {
+        collectables: {
+          some: {
+            name: req.params.collectable,
+          },
+        },
+      },
+    })
+    for (const c of cc) {
+      const profile = await prisma.profile.findFirstOrThrow({
+        where: { id: extractId(token) },
+        include: { inventory: true, achievements: true },
+      })
+      // remove achievement from profile if user had it
+      const hasAchievement = profile.achievements.find((a) => a.id == c.name)
+      if (hasAchievement) {
+        const tmp = profile.achievements.filter((a) => a.id != c.name)
+        await prisma.profile.update({
+          where: { id: extractId(token) },
+          data: {
+            achievements: {
+              set: tmp,
+            },
+          },
+        })
+      }
+    }
     return
   })
 }

@@ -8,7 +8,7 @@ import { PrismaClient } from '@prisma/client'
 // user A : a@test.com : f3d0c820-eb35-4edc-89d1-913a6a9b87cc
 // user B : b@test.com : 1bd1afa6-4b79-4888-bcaa-dfd2f4bf35f5
 // user C : c@test.com : 104d0ebb-558d-47fe-8c52-f257c6a238a8
-// user D : d@test.com : 618b9ac1-92e8-48d1-9552-b290553828a9
+// user D : d@test.com : 1054e834-0881-4019-bf13-49f9f9853e28
 
 // admin and manager do not have profiles
 // the manager has both campaigns
@@ -24,13 +24,13 @@ import { PrismaClient } from '@prisma/client'
 
 // stuff should have tags ctrl+f 'tags' to find them
 
-// collections: 'The Legendary Birds', 'The Lake Trio', 'The Treasures of Ruin', 'Bellsprout', 'Pikachu Clones'
+// collections: 'The Legendary Bird Trio', 'The Lake Trio', 'The Treasures of Ruin', 'Bellsprout', 'Pikachu Clones'
 // campaigns: 'The Legendary Bird Trio', 'Just BellSprout', 'Random Legendaries'
 // 'The Legendary Bird Trio' has the 'featured' tag
 // 'Just BellSprout' has the 'popular' tag
 
-// there are 4 achievements:
-// 'The Legendary Birds', 'The Lake Guardians', 'The Treasures of Ruin', 'Pikachu Clones'
+// there is an achievement for completing every collection:
+// 'Bird Brained', 'The Three Musketeers', 'Treasure Collector', 'Pikachu Power', 'Slenderman'
 
 const prisma = new PrismaClient()
 
@@ -146,91 +146,6 @@ async function main() {
         name: 'Pawmi',
         image: 'https://archives.bulbagarden.net/media/upload/f/fa/PawmiSVPPromo40.jpg',
         tags: ['Electric', 'Paldea', 'Pokemon'],
-      },
-    ],
-  })
-
-  const collections = [
-    await prisma.collection.create({
-      data: {
-        name: 'The Legendary Bird Trio',
-        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509727/collections/to9rbctzslsezy7lczhx.png',
-        collectables: {
-          connect: [{ name: 'Articuno' }, { name: 'Zapdos' }, { name: 'Moltres' }],
-        },
-        tags: ['Legendary', 'Legendary Birds', 'Kanto', 'Pokemon'],
-      },
-    }),
-    await prisma.collection.create({
-      data: {
-        name: 'The Lake Trio',
-        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509765/collections/fix7ya1oyjulkhdbty3i.png',
-        collectables: {
-          connect: [{ name: 'Uxie' }, { name: 'Mespirit' }, { name: 'Azelf' }],
-        },
-        tags: ['Legendary', 'Lake Guardians', 'Sinnoh', 'Pokemon'],
-      },
-    }),
-    await prisma.collection.create({
-      data: {
-        name: 'The Treasures of Ruin',
-        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509773/collections/ttavlkmrv8br1ewctpjm.png',
-        collectables: {
-          connect: [{ name: 'Wo-Chien' }, { name: 'Chien-Pao' }, { name: 'Ting-Lu' }, { name: 'Chi-Yu' }],
-        },
-        tags: ['Legendary', 'Treasures of Ruin', 'Paldea', 'Pokemon'],
-      },
-    }),
-    await prisma.collection.create({
-      data: {
-        name: 'Bellsprout',
-        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509900/collections/ih5adwceesev40ln8sfy.png',
-        collectables: {
-          connect: [{ name: 'Bellsprout' }],
-        },
-        tags: ['Grass', 'Poison', 'Pokemon'],
-      },
-    }),
-    await prisma.collection.create({
-      data: {
-        name: 'Pikachu Clones',
-        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509990/collections/twbw8c0guarkoio4x7qw.png',
-        collectables: {
-          connect: [
-            { name: 'Pikachu' },
-            { name: 'Marill' },
-            { name: 'Plusle' },
-            { name: 'Minun' },
-            { name: 'Pachirisu' },
-            { name: 'Emolga' },
-            { name: 'Dedenne' },
-            { name: 'Togedemaru' },
-            { name: 'Mimikyu' },
-            { name: 'Morpeko' },
-            { name: 'Pawmi' },
-          ],
-        },
-      },
-    }),
-  ]
-
-  const achievements = await prisma.achievement.createMany({
-    data: [
-      {
-        name: 'The Legendary Birds',
-        description: 'Collect all three legendary birds',
-      },
-      {
-        name: 'The Lake Guardians',
-        description: 'Collect all three lake guardians',
-      },
-      {
-        name: 'The Treasures of Ruin',
-        description: 'Collect all four treasures of ruin',
-      },
-      {
-        name: 'Pikachu Clones',
-        description: 'Collect all eleven pikachu clones',
       },
     ],
   })
@@ -573,6 +488,168 @@ async function main() {
       },
     },
   })
+
+  const collections = [
+    await prisma.collection.create({
+      data: {
+        name: 'The Legendary Bird Trio',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509727/collections/to9rbctzslsezy7lczhx.png',
+        collectables: {
+          connect: [{ name: 'Articuno' }, { name: 'Zapdos' }, { name: 'Moltres' }],
+        },
+        tags: ['Legendary', 'Legendary Birds', 'Kanto', 'Pokemon'],
+        achievement: {
+          create: {
+            name: 'Bird Brained',
+            description: 'Collect all three Legendary Birds',
+            image: 'https://archives.bulbagarden.net/media/upload/b/b5/Rainbow_Badge.png',
+          },
+        },
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'The Lake Trio',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509765/collections/fix7ya1oyjulkhdbty3i.png',
+        collectables: {
+          connect: [{ name: 'Uxie' }, { name: 'Mespirit' }, { name: 'Azelf' }],
+        },
+        tags: ['Legendary', 'Lake Guardians', 'Sinnoh', 'Pokemon'],
+        achievement: {
+          create: {
+            name: 'The Three Musketeers',
+            description: 'Collect all three Lake Guardians',
+            image: 'https://archives.bulbagarden.net/media/upload/1/12/Volcano_Badge.png',
+          },
+        },
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'The Treasures of Ruin',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509773/collections/ttavlkmrv8br1ewctpjm.png',
+        collectables: {
+          connect: [{ name: 'Wo-Chien' }, { name: 'Chien-Pao' }, { name: 'Ting-Lu' }, { name: 'Chi-Yu' }],
+        },
+        tags: ['Legendary', 'Treasures of Ruin', 'Paldea', 'Pokemon'],
+        achievement: {
+          create: {
+            name: 'Treasure Collector',
+            description: 'Collect all four Treasures of Ruin',
+            image: 'https://archives.bulbagarden.net/media/upload/9/9c/Cascade_Badge.png',
+          },
+        },
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'Bellsprout',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509900/collections/ih5adwceesev40ln8sfy.png',
+        collectables: {
+          connect: [{ name: 'Bellsprout' }],
+        },
+        tags: ['Grass', 'Poison', 'Pokemon'],
+        achievement: {
+          create: {
+            name: 'Slenderman',
+            description: 'Acquire the GOAT',
+            image: 'https://archives.bulbagarden.net/media/upload/7/7d/Soul_Badge.png',
+          },
+        },
+      },
+    }),
+    await prisma.collection.create({
+      data: {
+        name: 'Pikachu Clones',
+        image: 'https://res.cloudinary.com/dzwpe1yjo/image/upload/v1698509990/collections/twbw8c0guarkoio4x7qw.png',
+        collectables: {
+          connect: [
+            { name: 'Pikachu' },
+            { name: 'Marill' },
+            { name: 'Plusle' },
+            { name: 'Minun' },
+            { name: 'Pachirisu' },
+            { name: 'Emolga' },
+            { name: 'Dedenne' },
+            { name: 'Togedemaru' },
+            { name: 'Mimikyu' },
+            { name: 'Morpeko' },
+            { name: 'Pawmi' },
+          ],
+        },
+        achievement: {
+          create: {
+            name: 'Pikachu Power',
+            description: 'Collect all eleven Pikachu clones',
+            image: 'https://archives.bulbagarden.net/media/upload/a/a6/Thunder_Badge.png',
+          },
+        },
+      },
+    }),
+  ]
+
+  const pA = await prisma.profile.findFirstOrThrow({
+    where: { name: 'a' },
+    include: { achievements: true },
+  })
+  const achievementA = await prisma.achievement.findFirstOrThrow({ where: { name: 'Bird Brained' } })
+  pA.achievements.push(achievementA)
+
+  const pB = await prisma.profile.findFirstOrThrow({
+    where: { name: 'b' },
+    include: { achievements: true },
+  })
+  const achievementB = await prisma.achievement.findFirstOrThrow({ where: { name: 'The Three Musketeers' } })
+  pB.achievements.push(achievementB)
+
+  const pC = await prisma.profile.findFirstOrThrow({
+    where: { name: 'c' },
+    include: { achievements: true },
+  })
+  const achievementC = await prisma.achievement.findFirstOrThrow({ where: { name: 'Treasure Collector' } })
+  pC.achievements.push(achievementC)
+
+  const pD = await prisma.profile.findFirstOrThrow({
+    where: { name: 'd' },
+    include: { achievements: true },
+  })
+  const achievementD = await prisma.achievement.findFirstOrThrow({ where: { name: 'Slenderman' } })
+  pD.achievements.push(achievementD)
+
+  const achievements = [
+    await prisma.profile.update({
+      where: { name: 'a' },
+      data: {
+        achievements: {
+          connect: pA.achievements,
+        },
+      },
+    }),
+    await prisma.profile.update({
+      where: { name: 'b' },
+      data: {
+        achievements: {
+          connect: pB.achievements,
+        },
+      },
+    }),
+    await prisma.profile.update({
+      where: { name: 'c' },
+      data: {
+        achievements: {
+          connect: pC.achievements,
+        },
+      },
+    }),
+    await prisma.profile.update({
+      where: { name: 'd' },
+      data: {
+        achievements: {
+          connect: pD.achievements,
+        },
+      },
+    }),
+  ]
 
   const campaigns = [
     await prisma.campaign.create({

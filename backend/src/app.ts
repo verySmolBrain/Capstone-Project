@@ -15,6 +15,7 @@ import campaignRoute from '@Source/routes/campaign'
 import managerRoute from '@Source/routes/manager'
 import imageRoute from '@Source/routes/image'
 import searchRoute from '@Source/routes/search'
+import achievementRoute from '@Source/routes/achievement'
 import forumRoute from '@Source/routes/forum'
 
 export const build = async (opt: FastifyServerOptions) => {
@@ -38,6 +39,7 @@ export const build = async (opt: FastifyServerOptions) => {
   fastify.register(managerRoute)
   fastify.register(imageRoute)
   fastify.register(searchRoute)
+  fastify.register(achievementRoute)
   fastify.register(forumRoute)
 
   // checks if user is authenticated before every request

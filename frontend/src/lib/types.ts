@@ -47,6 +47,7 @@ type Collection = {
   image?: string
   tags: string[]
   collectables: Collectable[]
+  achievement: Achievement
 }
 
 type Collectable = {
@@ -133,6 +134,7 @@ type Trade = {
   collectableId: string
   status: Status
   price: number
+  createdAt: Date
 }
 
 type Achievement = {
@@ -141,6 +143,7 @@ type Achievement = {
   description: string
   image: string
   users: UserProfile[]
+  collection: Collection
 }
 
 type Review = {
@@ -194,6 +197,7 @@ type Profile = {
   inventory: CollectableCount[]
   wishlist: CollectableCount[]
   wares: CollectableCount[]
+  achievements: Achievement[]
 }
 
 type CollectionCollectable = {

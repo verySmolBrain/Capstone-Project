@@ -37,7 +37,7 @@ export const updateProfileCollectionSchema = z.object({
   count: z
     .string()
     .refine((val) => !isNaN(Number(val)), 'Count should be a number')
-    .refine((val) => Number(val) >= 0, 'Count should be a positive number')
+    .refine((val) => Number(val) > 0, 'Count should be greater than zero')
     .refine(
       (val) => Number.isInteger(Number(val)),
       'Count should be an integer'
