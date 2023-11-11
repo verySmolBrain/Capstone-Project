@@ -99,12 +99,9 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       value: x.collectables.length,
     }))
     const now = dayjs()
-    const currHourDates = campaign.viewData.filter(
-      (x) => dayjs(x).get('hour') === now.get('hour')
-    )
 
     for (let i = 0; i < 20; i++) {
-      const viewsInInterval = currHourDates.filter(
+      const viewsInInterval = campaign.viewData.filter(
         (x) => x < now.subtract(i, 'minutes').unix()
       ).length
 

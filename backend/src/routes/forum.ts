@@ -170,22 +170,42 @@ export default async function (fastify: FastifyInstance) {
     async (
       req: FastifyRequest<{
         Params: { commentId: string }
+        Body: { userId: string }
       }>
     ) => {
       const token = req.headers['authorization'] as string
-
+      const { commentId } = req.params
+      const { userId } = req.body
+      console.log(userId)
       const prisma = await requestHandler(token)
 
-      const report = await prisma.commentReports.create({
-        data: {
-          comment: {
-            connect: {
-              id: Number(req.params.commentId),
-            },
-          },
-        },
+      const currReport = await prisma.commentReports.findFirst({
+        where: { commentId: Number(commentId) },
       })
-      return report
+
+      if (currReport) {
+        if (!currReport?.reportingUsers.includes(userId)) {
+          await prisma.commentReports.update({
+            where: {
+              commentId: Number(commentId),
+            },
+            data: {
+              reportingUsers: { push: userId },
+            },
+          })
+        }
+      } else {
+        await prisma.commentReports.create({
+          data: {
+            comment: {
+              connect: {
+                id: Number(req.params.commentId),
+              },
+            },
+            reportingUsers: [userId],
+          },
+        })
+      }
     }
   )
 
@@ -209,17 +229,16 @@ export default async function (fastify: FastifyInstance) {
       const commentWithReports = await prisma.comment.findUnique({
         where: { id: Number(req.params.commentId) },
         include: {
-          reports: {}
-        }
-      });
+          reports: {},
+        },
+      })
       if (commentWithReports != null) {
-        const reportsCount = commentWithReports.reports.length;
+        const reportsCount = commentWithReports.reports.length
         return reportsCount
       } else {
-        const reportsCount = 0;
+        const reportsCount = 0
         return reportsCount
       }
-
     }
   )
 }
