@@ -182,6 +182,45 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
+
+
+  /*
+   * GET /trade/:collectableName
+   * returns all trades of a collectable
+   * @param {string} query
+   * @returns {date: unix timestamp, price: int} 
+   */
+  fastify.get('/trade/:collectableName', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const { name } = req.params
+
+    const trades = await prisma.trade.findMany({
+      where: {
+        status: {
+          in: ['FINISHED'],
+        },
+        collectableName: name
+      },
+      include: {
+        buyer: true,
+        seller: true,
+        collectable: true,
+      },
+    })
+
+    const tradeList = trades.map((trade) => {
+      const currentDate: Date = trade.createdAt;
+      currentDate.setUTCHours(0,0,0,0);
+      return {
+        date: currentDate.getTime(),
+        price: trade.price,
+      }
+    })
+
+    return tradeList
+  })
+
   /*
    * PUT /trade/collectable/:id
    * updates a trade's collectable by id
