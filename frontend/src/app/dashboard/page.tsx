@@ -32,9 +32,9 @@ export default function Dashboard() {
     MANAGER = 'MANAGER',
     ADMIN = 'ADMIN',
   }
+  const supabase = createClientComponentClient<Database>()
 
   const fetcher = async (url: string) => {
-    const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
     const res = await fetch(url, {

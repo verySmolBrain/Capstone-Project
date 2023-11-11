@@ -23,6 +23,7 @@ enum Status {
     PENDING
     ACCEPTED
     DECLINED
+    FINISHED
 }
 
 /// @@deny('update', true)
@@ -86,18 +87,19 @@ model Achievement {
 }
 
 /// @@allow('read', true)
-/// @@allow('create', auth().id == sellerId)
+/// @@allow('create, update', auth().id == sellerId || auth().id == buyerId)
 model Trade {
-    id String @id()
+    id Int @id() @unique() @default(autoincrement())
     seller Profile @relation("seller", fields: [sellerId], references: [id])
     sellerId String
     buyer Profile @relation("buyer", fields: [buyerId], references: [id])
     buyerId String
     collectable Collectable @relation(fields: [collectableName], references: [name])
     collectableName String
-    /// @allow('update', auth().id == sellerId)
+    /// @allow('update', auth().id == sellerId || auth().id == buyerId)
     status Status @default(PENDING)
     price Int
+    createdAt DateTime @default(now())
 }
 
 /// @@allow('create', true)
@@ -198,6 +200,8 @@ model Collection {
     achievement Achievement?
 }
 
+/// @@allow('update', true)
+/// @@allow('update', true)
 /// @@allow('read', true)
 /// @@allow('all', auth().role == ADMIN || auth().role == MANAGER)
 model Campaign {
@@ -207,6 +211,8 @@ model Campaign {
     start DateTime @default(now())
     end DateTime
     isActive Boolean @default(false)
+    views Int @default(0)
+    viewData Int[]
     collections Collection[]
     managers User[] @relation("managers")
     reviews CampaignReview[]
