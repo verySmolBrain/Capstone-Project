@@ -241,4 +241,41 @@ export default async function (fastify: FastifyInstance) {
       }
     }
   )
+
+  /*
+   *  GET /comment/reports
+   *  Gets a list of reported comments
+   *  @returns {object}[] report array
+   */
+  fastify.get('/comment/reports', async (req) => {
+    const token = req.headers['authorization'] as string
+
+    const prisma = await requestHandler(token)
+
+    // Retrieve the comment and its associated reports count
+    const commentReports = await prisma.commentReports.findMany()
+
+    commentReports.sort((a, b) => b.reportingUsers.length - a.reportingUsers.length)
+
+    const reportedComments = []
+    for (const commentReport of commentReports) {
+      const offendingComment = await prisma.comment.findFirst({
+        where: { id: Number(commentReport.commentId) },
+      })
+
+      const offendingCommenter = await prisma.profile.findFirst({
+        where: { id: offendingComment?.authorId },
+      })
+
+      if (offendingComment) {
+        reportedComments.push({
+          content: offendingComment.content,
+          author: offendingCommenter?.name,
+          reports: commentReport.reportingUsers.length,
+        })
+      }
+    }
+
+    return reportedComments
+  })
 }
