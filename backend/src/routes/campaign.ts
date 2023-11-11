@@ -138,24 +138,28 @@ export default async function (fastify: FastifyInstance) {
    * Increments campaign view count by 1
    * @returns void
    */
-  fastify.put('/campaign/:name/view', async (req: FastifyRequest<{ Params: { name: string; timestamp: number } }>) => {
-    const token = req.headers['authorization'] as string
-    const prisma = await requestHandler(token)
-    const { name, timestamp } = req.params
+  fastify.put(
+    '/campaign/:name/view',
+    async (req: FastifyRequest<{ Params: { name: string }; Body: { timestamp: number } }>) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
+      const { name } = req.params
+      const { timestamp } = req.body
 
-    // Increment campaign view count by one
-    await prisma.campaign.update({
-      where: { name: name },
-      data: { views: { increment: 1 } },
-    })
-
-    await prisma.campaign.update({
-      where: { name: name },
-      data: {
-        viewData: { push: timestamp },
-      },
-    })
-  })
+      // Increment campaign view count by one
+      await prisma.campaign.update({
+        where: { name: name },
+        data: { views: { increment: 1 } },
+      })
+      // Updates viewData with timestamp
+      await prisma.campaign.update({
+        where: { name: name },
+        data: {
+          viewData: { push: timestamp },
+        },
+      })
+    }
+  )
 
   /*
    * PUT /collection/:collectionName/:collectableName
