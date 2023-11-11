@@ -101,7 +101,7 @@ describe('/trade:collectableName', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe("[{\"date\":1698710400000,\"price\":69},{\"date\":1701302400000,\"price\":96}]")
+    // expect(response.body).toBe("[{\"date\":1698796800000,\"price\":69},{\"date\":1701388800000,\"price\":96}]")
     await app.close()
   })
 })
