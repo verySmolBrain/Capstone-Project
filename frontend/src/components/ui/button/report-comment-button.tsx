@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../dialog'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Button } from '../button'
+import { toast } from '../use-toast'
 
 export function ReportCommentButton({ comment }: { comment: number }) {
   const [open, setOpen] = React.useState(false)
@@ -26,7 +27,17 @@ export function ReportCommentButton({ comment }: { comment: number }) {
         body: JSON.stringify({ userId: reportingUser }),
       }
     )
-    console.log(res)
+    setOpen(false)
+    if (!res.ok) {
+      return toast({
+        title: 'Uh Oh! Something went wrong!',
+        description: res?.statusText,
+        variant: 'destructive',
+      })
+    }
+    return toast({
+      title: "Thanks for the report! We'll investigate this shortly.",
+    })
   }
 
   return (
