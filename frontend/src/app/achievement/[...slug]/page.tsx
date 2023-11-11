@@ -104,7 +104,14 @@ export default function AchievementPage({
             </h2>
             <div className="container border rounded-2xl pt-6 pb-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate">
-                Your progress on {achievement.collection.name}:{' '}
+                Your progress on{' '}
+                <Link
+                  href={`/collection/${achievement.collection.name}`}
+                  className="hover:underline"
+                >
+                  {achievement.collection.name}
+                </Link>
+                :{' '}
                 {inventory
                   ? inventory[achievement.id]?.collectables.length ?? 0
                   : 0}

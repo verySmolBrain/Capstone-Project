@@ -39,6 +39,7 @@ import {
 import { profilePictureUpdateSchema } from '@/lib/validation/update-details'
 import NextImage from 'next/image'
 import { Label } from '@radix-ui/react-label'
+import useSWR from 'swr'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -80,6 +81,7 @@ export function EditCollectionForm(props: {
   mutate: () => void
 }) {
   const [isLoading, setIsLoading] = React.useState(false)
+  const [collection, setCollection] = React.useState<Collection>()
 
   const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
   const [image, setImage] = React.useState<string>('')
@@ -88,6 +90,12 @@ export function EditCollectionForm(props: {
     null
   )
   const [zoom, setZoom] = React.useState(1)
+
+  const collectionTags: Tag[] = React.useMemo(() => {
+    return collection
+      ? collection?.tags.map((tag) => ({ id: tag, text: tag }))
+      : []
+  }, [collection])
 
   const [tags, setTags] = React.useState<Tag[]>([])
 
@@ -149,10 +157,40 @@ export function EditCollectionForm(props: {
 
     return toast({
       title: 'Success!',
-      description: 'The collection was successfully created!',
+      description: 'The collection was successfully updated!',
       variant: 'default',
     })
   }
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const session = (await supabase.auth.getSession()).data.session
+    const token = session?.access_token
+
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+
+    if (res?.ok) {
+      return await res.json()
+    }
+  }
+  const { data: collectionData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/${props.id}`,
+    fetcher
+  )
+
+  React.useEffect(() => {
+    if (collectionData) {
+      setCollection(collectionData)
+    }
+    if (!tags.length) {
+      setTags(collectionTags)
+    }
+  }, [collectionData, collectionTags, tags.length])
 
   return (
     <div className="grid gap-6 w-fill overflow-y-auto max-h-[600px] no-scrollbar">
@@ -179,7 +217,9 @@ export function EditCollectionForm(props: {
                 name="tags"
                 render={({ field }) => (
                   <FormItem className="flex flex-col items-start">
-                    <FormLabel className="text-left">Edit Tags</FormLabel>
+                    <FormLabel className="text-left">
+                      Edit Collection Tags
+                    </FormLabel>
                     <FormControl>
                       <TagInput
                         {...field}
@@ -194,7 +234,7 @@ export function EditCollectionForm(props: {
                     </FormControl>
                     <FormDescription>
                       These are the keywords that will be used to categorize
-                      your new collection.
+                      your collection.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

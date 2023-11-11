@@ -22,11 +22,11 @@ export function EditCollectionButton(props: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="p-2">
-          <Pencil />
+        <Button variant="outline" size="icon">
+          <Pencil className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="container flex flex-col">
+      <DialogContent className="w-auto">
         <DialogHeader>
           <DialogTitle>Edit Details</DialogTitle>
           <div className="flex flex-row gap-4 justify-center">

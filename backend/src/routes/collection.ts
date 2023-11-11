@@ -26,7 +26,7 @@ export default async function (fastify: FastifyInstance) {
             create: {
               name: name,
               description: 'Complete ' + name,
-              image: 'https://archives.bulbagarden.net/media/upload/d/dd/Boulder_Badge.png',
+              image: 'https://archives.bulbagarden.net/media/upload/6/6b/Marsh_Badge.png',
             },
           },
         },
