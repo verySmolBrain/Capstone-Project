@@ -159,4 +159,67 @@ export default async function (fastify: FastifyInstance) {
       return comment
     }
   )
+
+  /*
+   *  POST /forum/report/:commentId
+   *  Reports a comment on a post
+   *  @returns {object} report
+   */
+  fastify.post(
+    '/forum/report/:commentId',
+    async (
+      req: FastifyRequest<{
+        Params: { commentId: string }
+      }>
+    ) => {
+      const token = req.headers['authorization'] as string
+
+      const prisma = await requestHandler(token)
+
+      const report = await prisma.commentReports.create({
+        data: {
+          comment: {
+            connect: {
+              id: Number(req.params.commentId),
+            },
+          },
+        },
+      })
+      return report
+    }
+  )
+
+  /*
+   *  GET /forum/reports/:commentId
+   *  Gets the number of reports on a comment
+   *  @returns {object} report
+   */
+  fastify.get(
+    '/forum/reports/:commentId',
+    async (
+      req: FastifyRequest<{
+        Params: { commentId: string }
+      }>
+    ) => {
+      const token = req.headers['authorization'] as string
+
+      const prisma = await requestHandler(token)
+
+      // Retrieve the comment and its associated reports count
+      const commentWithReports = await prisma.comment.findUnique({
+        where: { id: Number(req.params.commentId) },
+        include: {
+          reports: {}
+        }
+      });
+      if (commentWithReports != null) {
+        const reportsCount = commentWithReports.reports.length;
+        return reportsCount
+      } else {
+        const reportsCount = 0;
+        return reportsCount
+      }
+
+    }
+  )
 }
