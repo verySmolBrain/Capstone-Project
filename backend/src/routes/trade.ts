@@ -182,13 +182,11 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-
-
   /*
    * GET /trade/:collectableName
    * returns all trades of a collectable
    * @param {string} query
-   * @returns {date: unix timestamp, price: int} 
+   * @returns {date: unix timestamp, price: int}
    */
   fastify.get('/trade/:collectableName', async (req: FastifyRequest<{ Params: { name: string } }>) => {
     const token = req.headers['authorization'] as string
@@ -198,9 +196,9 @@ export default async function (fastify: FastifyInstance) {
     const trades = await prisma.trade.findMany({
       where: {
         status: {
-          in: ['FINISHED'],
+          in: ['ACCEPTED'],
         },
-        collectableName: name
+        collectableName: name,
       },
       include: {
         buyer: true,
@@ -210,8 +208,7 @@ export default async function (fastify: FastifyInstance) {
     })
 
     const tradeList = trades.map((trade) => {
-      const currentDate: Date = trade.createdAt;
-      currentDate.setUTCHours(0,0,0,0);
+      const currentDate: Date = trade.createdAt
       return {
         date: currentDate.getTime(),
         price: trade.price,
