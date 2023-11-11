@@ -78,13 +78,13 @@ describe('/trade:collectableName', () => {
     prismaMockInstance.trade.findMany.mockResolvedValue([{
       status: Status.FINISHED, 
       collectableName: 'yabba', 
-      createdAt: new Date(2023, 10, 1),
+      createdAt: new Date(2023, 10),
       price: 69
     },
     // @ts-expect-error only populating necessary fields
     { status: Status.FINISHED,
       collectableName: 'yabba',
-      createdAt: new Date(2023, 10 ,2),
+      createdAt: new Date(2023, 11),
       price: 96
     }])
 
@@ -101,7 +101,7 @@ describe('/trade:collectableName', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe("[{\"date\":1698710400000,\"price\":69},{\"date\":1698796800000,\"price\":96}]")
+    expect(response.body).toBe("[{\"date\":1698710400000,\"price\":69},{\"date\":1701302400000,\"price\":96}]")
     await app.close()
   })
 })
