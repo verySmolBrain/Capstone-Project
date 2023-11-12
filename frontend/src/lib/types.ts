@@ -76,6 +76,7 @@ type ForumPost = {
     description: string | null
     image: string | null
     reputation: number
+    user: User
   }
   comments: PostComment[]
 } & {

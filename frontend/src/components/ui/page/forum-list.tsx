@@ -9,6 +9,7 @@ import { CreateForumPostButton } from '../button/create-forum-post-button'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { Role } from '@/lib/utils'
 
 dayjs.extend(relativeTime)
 
@@ -67,10 +68,26 @@ export default function ForumList({ campaign }: { campaign: string }) {
                     <p className="text-2xl font-semibold truncate">
                       {forumPost.title}
                     </p>
-                    <p className="text-xs">
-                      Posted by {forumPost.author.name}{' '}
-                      {dayjs(forumPost.createdAt).fromNow()}
-                    </p>
+                    <div>
+                      <p className="text-xs">
+                        Posted by {forumPost.author.name}{' '}
+                        {dayjs(forumPost.createdAt).fromNow()}
+                      </p>
+                      <div className="float-right pt-2">
+                        {(forumPost.author.user.role.toString() as Role) ===
+                          Role.MANAGER && (
+                          <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-secondary rounded-2xl max-w-fit min-w-[150px]">
+                            Campaign Manager
+                          </p>
+                        )}{' '}
+                        {(forumPost.author.user.role.toString() as Role) ===
+                          Role.ADMIN && (
+                          <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-destructive rounded-2xl max-w-fit min-w-[100px]">
+                            Admin
+                          </p>
+                        )}{' '}
+                      </div>
+                    </div>
                   </div>
 
                   <p className="line-clamp-3 w-full break-all">

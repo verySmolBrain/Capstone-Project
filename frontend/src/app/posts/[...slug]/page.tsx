@@ -13,6 +13,7 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { AvatarFallback } from '@radix-ui/react-avatar'
 import Link from 'next/link'
 import { ReportCommentButton } from '@/components/ui/button/report-comment-button'
+import { Role } from '@/lib/utils'
 
 dayjs.extend(relativeTime)
 
@@ -54,16 +55,32 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
       <div className="container w-[400px] md:w-[600px] lg:w-[800px] flex flex-col gap-2 border rounded-2xl justify-start items-start pr-4 pl-4 pb-4 pt-4 mt-4 mb-2">
         <div className="flex flex-row justify-between w-full pb-4">
           <p className="text-2xl font-semibold truncate">{forumPost.title}</p>
-          <p className="text-xs">
-            Posted by{' '}
-            <Link
-              href={`../profile/${forumPost.author.name}`}
-              className="hover:underline"
-            >
-              {forumPost.author.name}
-            </Link>{' '}
-            {dayjs(forumPost.createdAt).fromNow()}
-          </p>
+          <div>
+            <p className="text-xs">
+              Posted by{' '}
+              <Link
+                href={`../profile/${forumPost.author.name}`}
+                className="hover:underline"
+              >
+                {forumPost.author.name}
+              </Link>{' '}
+              {dayjs(forumPost.createdAt).fromNow()}
+            </p>
+            <div className="float-right pt-2">
+              {(forumPost.author.user.role.toString() as Role) ===
+                Role.MANAGER && (
+                <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-secondary rounded-2xl max-w-fit min-w-[150px]">
+                  Campaign Manager
+                </p>
+              )}{' '}
+              {(forumPost.author.user.role.toString() as Role) ===
+                Role.ADMIN && (
+                <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-destructive rounded-2xl max-w-fit min-w-[100px]">
+                  Admin
+                </p>
+              )}{' '}
+            </div>
+          </div>
         </div>
 
         <p>{forumPost.description}</p>
@@ -113,16 +130,32 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
                         </AvatarFallback>
                       </Avatar>
                     </p>
-                    <p className="text-xs">
-                      Commented by{' '}
-                      <Link
-                        href={`../profile/${c.author.name}`}
-                        className="hover:underline"
-                      >
-                        {c.author.name}
-                      </Link>{' '}
-                      {dayjs(c.createdAt).fromNow()}
-                    </p>
+                    <div>
+                      <p className="text-xs">
+                        Commented by{' '}
+                        <Link
+                          href={`../profile/${c.author.name}`}
+                          className="hover:underline"
+                        >
+                          {c.author.name}
+                        </Link>{' '}
+                        {dayjs(c.createdAt).fromNow()}
+                      </p>
+                      <div className="float-right pt-2">
+                        {(forumPost.author.user.role.toString() as Role) ===
+                          Role.MANAGER && (
+                          <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-secondary rounded-2xl max-w-fit min-w-[150px]">
+                            Campaign Manager
+                          </p>
+                        )}{' '}
+                        {(forumPost.author.user.role.toString() as Role) ===
+                          Role.ADMIN && (
+                          <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-destructive rounded-2xl max-w-fit min-w-[100px]">
+                            Admin
+                          </p>
+                        )}{' '}
+                      </div>
+                    </div>
                   </div>
 
                   <p className="text-base">{c.content}</p>
