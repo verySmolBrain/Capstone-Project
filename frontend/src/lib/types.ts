@@ -236,3 +236,8 @@ type CommentReport = {
   author: string
   reports: number
 }
+
+type PriceData = {
+  date: string
+  price: number
+}[]
