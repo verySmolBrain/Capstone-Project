@@ -8,6 +8,17 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Carousel } from '@/components/ui/carousel'
+import Link from 'next/link'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+
+const default_profile =
+  'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
 import { CollectiblePriceChart } from '@/components/ui/page/collectible-price-chart'
 
 export default function CollectablePage({
@@ -16,6 +27,7 @@ export default function CollectablePage({
   params: { slug: string }
 }) {
   const [collectable, setCollectable] = React.useState<Collectable>()
+  const [profiles, setProfiles] = React.useState<Profile[]>([])
 
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
@@ -40,11 +52,19 @@ export default function CollectablePage({
     fetcher
   )
 
+  const { data: profileData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/search/users/wares/${params.slug}`,
+    fetcher
+  )
+
   React.useEffect(() => {
     if (result) {
       setCollectable(result)
     }
-  }, [result, params.slug])
+    if (profileData) {
+      setProfiles(profileData)
+    }
+  }, [result, params.slug, profileData])
 
   return collectable ? (
     <>
@@ -82,6 +102,54 @@ export default function CollectablePage({
                 )
               })}
             </div>
+          </div>
+        </div>
+        <div className="container flex flex-row flex-wrap gap-4 pb-6">
+          <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
+            <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
+              Users who are trading {collectable.name}
+            </h2>
+          </div>
+          <div className="container border rounded-2xl pt-6 pb-6">
+            {profiles.length ? (
+              <Carousel>
+                {profiles.map((user, i) => {
+                  return (
+                    <div key={i} className="pt-5">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="mt-6 mb-6 mr-3 ml-3 w-auto">
+                              <Link href={`/profile/${user.name}`}>
+                                <Image
+                                  src={user.image ?? default_profile}
+                                  sizes="(max-width: 475px) 6rem"
+                                  width={20}
+                                  height={20}
+                                  className="h-20 w-20 rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3 border-primary border-1"
+                                  alt="alt"
+                                />
+                              </Link>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="overflow-hidden w-full">
+                            <p className="md:text-base text-center truncate">
+                              {user.name}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )
+                })}
+              </Carousel>
+            ) : (
+              <div className="flex flex-col justify-center items-center h-[150px]">
+                <h2 className="place-self-center">
+                  No one is trading this collectable... &#128533;
+                </h2>
+              </div>
+            )}
           </div>
         </div>
         <CollectiblePriceChart slug={params.slug}></CollectiblePriceChart>

@@ -45,7 +45,11 @@ export default async function (fastify: FastifyInstance) {
         },
         include: {
           comments: true,
-          author: true,
+          author: {
+            include: {
+              user: true,
+            },
+          },
         },
       })
 
@@ -75,7 +79,11 @@ export default async function (fastify: FastifyInstance) {
         comments: {
           include: { author: { include: { user: true } } },
         },
-        author: { include: { user: true } },
+        author: {
+          include: {
+            user: true,
+          },
+        },
       },
     })
 
@@ -108,7 +116,11 @@ export default async function (fastify: FastifyInstance) {
               author: { include: { user: true } },
             },
           },
-          author: { include: { user: true } },
+          author: {
+            include: {
+              user: true,
+            },
+          },
         },
       })
 
@@ -151,7 +163,11 @@ export default async function (fastify: FastifyInstance) {
           createdAt: new Date(),
         },
         include: {
-          author: true,
+          author: {
+            include: {
+              user: true,
+            },
+          },
         },
       })
 

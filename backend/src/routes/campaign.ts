@@ -93,7 +93,6 @@ export default async function (fastify: FastifyInstance) {
    * @param {string} image
    * @param {Date} startDate
    * @param {Date} endDate
-   * @param {collection[]} collections
    * @returns {object} campaign
    */
   fastify.put(
@@ -103,16 +102,16 @@ export default async function (fastify: FastifyInstance) {
         Params: { name: string }
         Body: {
           image: string
+          tags: string[]
           startDate: Date
           endDate: Date
-          collections: collectionConnect[]
           isActive: boolean | undefined
         }
       }>
     ) => {
       const token = req.headers['authorization'] as string
       const { name } = req.params
-      const { image, startDate, endDate, isActive } = req.body
+      const { image, tags, startDate, endDate, isActive } = req.body
       const prisma = await requestHandler(token)
 
       const campaign = await prisma.campaign.update({
@@ -121,12 +120,10 @@ export default async function (fastify: FastifyInstance) {
         },
         data: {
           image: image,
+          tags: tags,
           start: startDate,
           end: endDate,
           isActive: isActive ?? true,
-          collections: {
-            connect: req.body.collections,
-          },
         },
       })
       return campaign
@@ -332,4 +329,100 @@ export default async function (fastify: FastifyInstance) {
       return campaignReview
     }
   )
+  /*
+   * GET /campaign/metrics/post/:name
+   * Returns a campaign's post metrics by name
+   * @returns {object} {string, int}
+  */
+  fastify.get('/campaign/metrics/post/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+    const prisma = await requestHandler(token)
+
+    const campaign = await prisma.campaign.findFirstOrThrow({
+      where: { name: name },
+      include: { posts: true },
+    })
+    const occurrencesMap: {date: string, Posts: number}[] = [];
+
+    // Populating hash map {date(rounded by day): date, occurence: int}
+    campaign.posts.forEach((post) => {
+      const date = new Date(post.createdAt)
+      date.setUTCHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to zero - to round
+
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+      const year = date.getFullYear().toString().slice(-2);
+      const formattedDate = `${day}/${month}/${year}`;
+
+      const existingMetricIndex = occurrencesMap.findIndex((metric) => metric.date === formattedDate);
+
+      // If the time exists, update its price
+      if (existingMetricIndex !== -1) {
+        occurrencesMap.at(existingMetricIndex)!.Posts += 1;
+      } else {
+        // If the time does not exist, add a new entry to the array
+        occurrencesMap.push({date: formattedDate, Posts: 1});
+      }
+    })
+    return occurrencesMap
+  })
+
+  /*
+   * GET /campaign/metrics/posters/:name
+   * Returns a campaign's post metrics by name
+   * @returns {object} {string, int}
+  */
+  fastify.get('/campaign/metrics/posters/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+    const prisma = await requestHandler(token)
+
+    const campaign = await prisma.campaign.findFirstOrThrow({
+      where: { name: name },
+      include: { posts: true },
+    })
+    const occurrencesMap: {Poster: string, Posts: number}[] = [];
+
+    for (const post of campaign.posts) {
+      const authorName = await prisma.profile.findFirstOrThrow({
+        where: {id: post.authorId}
+      })
+      const existingMetricIndex = occurrencesMap.findIndex((metric) => metric.Poster === authorName?.name);
+
+      // If the time exists, update its price
+      if (existingMetricIndex !== -1) {
+        occurrencesMap.at(existingMetricIndex)!.Posts += 1;
+      } else {
+        // If the poster does not exist, add a new entry to the array
+        occurrencesMap.push({Poster: authorName!.name, Posts: 1});
+      }
+    }
+    return occurrencesMap;
+  })
+
+  /*
+   * GET /campaign/metrics/review/:name
+   * Returns a campaign's average reviews
+   * @returns number
+  */
+  fastify.get('/campaign/metrics/reviews/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+    const prisma = await requestHandler(token)
+
+    const campaign = await prisma.campaign.findFirstOrThrow({
+      where: { name: name },
+      include: { reviews : true },
+    })
+    const totalRatings = campaign.reviews.reduce((sum, review) => sum + review.rating, 0);
+
+    const numberOfReviews = campaign.reviews.length;
+
+    if (numberOfReviews === 0) {
+      return 0; // Avoid division by zero
+    }
+    const averageRating = totalRatings / numberOfReviews;
+    return averageRating;
+  })
 }

@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Role } from '@/lib/utils'
 import { AddCollectableCollectionButton } from '@/components/ui/button/add-collectable-collection-button'
 import { RemoveCollectableCollectionButton } from '@/components/ui/button/remove-collectable-from-collection-button'
-import { EditAchievementButton } from '@/components/ui/button/edit-achievement-button'
+import { EditCollectionButton } from '@/components/ui/button/edit-collection-button'
 import {
   Tooltip,
   TooltipContent,
@@ -88,7 +88,7 @@ export default function CollectionPage({
             </div>
             <div className="pt-4">
               {role === Role.MANAGER && (
-                <EditAchievementButton
+                <EditCollectionButton
                   id={collection.name}
                   mutate={collectionMutate}
                 />

@@ -6,7 +6,6 @@ import { CalendarIcon, Loader2Icon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import * as React from 'react'
-import useSWR from 'swr'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -46,14 +45,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Tag, TagInput } from '../tags'
 import { Switch } from '@/components/ui/switch'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../select'
-import { ScrollArea } from '../scroll-area'
+import useSWR from 'swr'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -95,7 +87,6 @@ const ALLOWED_IMAGE_TYPES = [
 ]
 
 const FormSchema = z.object({
-  name: z.string(),
   image: z
     .custom<File>(
       (val) => val instanceof File,
@@ -121,16 +112,16 @@ const FormSchema = z.object({
       text: z.string(),
     })
   ),
-  collection: z.string(),
   isActive: z.boolean().default(false).optional(),
 })
 
-export function CreateCampaignForm(props: {
+export function EditCampaignForm(props: {
+  name: string
   setOpen: (a: boolean) => void
   mutate: () => void
 }) {
+  const [campaign, setCampaign] = React.useState<Campaign>()
   const [isLoading, setIsLoading] = React.useState(false)
-  const [collections, setCollections] = React.useState<Collectable[]>()
   const [tags, setTags] = React.useState<Tag[]>([])
   const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
   const [image, setImage] = React.useState<string>('')
@@ -139,6 +130,11 @@ export function CreateCampaignForm(props: {
     null
   )
   const [zoom, setZoom] = React.useState(1)
+
+  const campaignTags: Tag[] = React.useMemo(() => {
+    return campaign ? campaign?.tags.map((tag) => ({ id: tag, text: tag })) : []
+  }, [campaign])
+
   const form = useForm<z.infer<typeof FormSchema>>({
     mode: 'onChange',
     resolver: zodResolver(FormSchema),
@@ -158,6 +154,48 @@ export function CreateCampaignForm(props: {
     setIsLoading(false)
   }
 
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setIsLoading(true)
+    const supabase = createClientComponentClient<Database>()
+    const token = (await supabase.auth.getSession()).data.session?.access_token
+
+    const createResult = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${props.name}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: token!,
+        },
+        body: JSON.stringify({
+          image: image,
+          startDate: data.range.from,
+          endDate: data.range.to,
+          tags: data.tags.map((tag) => tag.text),
+          isActive: data.isActive,
+        }),
+      }
+    )
+
+    setIsLoading(false)
+
+    if (!createResult?.ok) {
+      return toast({
+        title: 'Uh Oh! Something went wrong!',
+        description: createResult?.statusText,
+        variant: 'destructive',
+      })
+    }
+
+    props.mutate()
+    props.setOpen(false)
+    return toast({
+      title: 'Success!',
+      description: 'The campaign was successfully updated!',
+      variant: 'default',
+    })
+  }
+
   const fetcher = async (url: string) => {
     const supabase = createClientComponentClient<Database>()
     const session = (await supabase.auth.getSession()).data.session
@@ -175,60 +213,19 @@ export function CreateCampaignForm(props: {
       return await res.json()
     }
   }
-  const { data: collectionData } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection`,
+  const { data: campaignData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${props.name}`,
     fetcher
   )
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setIsLoading(true)
-    const supabase = createClientComponentClient<Database>()
-    const token = (await supabase.auth.getSession()).data.session?.access_token
-
-    const createResult = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: token!,
-        },
-        body: JSON.stringify({
-          name: data.name,
-          image: image,
-          startDate: data.range.from,
-          endDate: data.range.to,
-          collection: [{ name: data.collection }],
-          tags: data.tags.map((tag) => tag.text),
-          isActive: data.isActive,
-        }),
-      }
-    )
-
-    setIsLoading(false)
-
-    if (!createResult?.ok) {
-      const { message } = await createResult.json()
-      return toast({
-        title: 'Uh Oh! Something went wrong!',
-        description: message,
-        variant: 'destructive',
-      })
-    }
-
-    props.mutate()
-    props.setOpen(false)
-    return toast({
-      title: 'Success!',
-      description: 'The campaign was successfully created!',
-      variant: 'default',
-    })
-  }
   React.useEffect(() => {
-    if (collectionData) {
-      setCollections(collectionData)
+    if (campaignData) {
+      setCampaign(campaignData)
     }
-  }, [collectionData])
+    if (!tags.length) {
+      setTags(campaignTags)
+    }
+  }, [campaignData, campaignTags, tags.length])
 
   return (
     <div className="grid gap-6 w-fill overflow-y-auto max-h-[600px] no-scrollbar pl-3 pr-3">
@@ -255,56 +252,6 @@ export function CreateCampaignForm(props: {
           >
             <FormField
               control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Campaign Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Pikachu Stampede" {...field} />
-                  </FormControl>
-                  <FormDescription>Pick something catchy!</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="collection"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Campaign Collection</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a collection to add" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="max-h-80">
-                      <ScrollArea>
-                        {collections?.map((collection) => (
-                          <SelectItem
-                            key={collection.name}
-                            value={collection.name}
-                          >
-                            {collection.name}
-                          </SelectItem>
-                        ))}
-                      </ScrollArea>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Please only add collections that you are in charge of. We
-                    have no way of checking!
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="tags"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start">
@@ -323,7 +270,7 @@ export function CreateCampaignForm(props: {
                   </FormControl>
                   <FormDescription>
                     These are the keywords that will be used to categorize your
-                    new campaign. Try featured or popular!
+                    campaign. Try featured or popular!
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

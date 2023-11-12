@@ -69,9 +69,10 @@ export function CreateTradeForm(props: {
 
     if (!response?.ok) {
       console.log(response)
+      const { message } = await response.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: response?.statusText,
+        description: message,
         variant: 'destructive',
       })
     }

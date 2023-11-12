@@ -31,9 +31,10 @@ async function onArchive(campaign: string, mutate: () => void) {
   )
 
   if (!response?.ok) {
+    const { message } = await response?.json()
     return toast({
       title: 'Uh Oh! Something went wrong!',
-      description: response?.statusText,
+      description: message,
       variant: 'destructive',
     })
   }

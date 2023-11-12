@@ -98,18 +98,36 @@ export default async function (fastify: FastifyInstance) {
       const token = req.headers['authorization'] as string
       const prisma = await requestHandler(token)
 
+      const collectable = req.params.collectable
+      const count = req.body.count
+
       const collectableCount = await prisma.collectableCount.findFirst({
         where: {
-          name: req.params.collectable,
+          name: collectable,
           waresId: extractId(token),
         },
       })
+      const { inventory } = await prisma.profile.findUniqueOrThrow({
+        where: {
+          id: extractId(token),
+        },
+        select: { inventory: { select: collectableCountSelect } },
+      })
+
+      const inventoryCollectable = inventory.find((c) => c.name === collectable)
+      if (!inventoryCollectable) {
+        throwInvalidActionError('update wares', 'Collectable not found in inventory')
+      }
+
+      if (inventoryCollectable!.count < count) {
+        throwInvalidActionError('update wares', 'Not enough collectables in inventory')
+      }
 
       if (!collectableCount) {
         await prisma.collectableCount.create({
           data: {
-            name: req.params.collectable,
-            count: req.body.count,
+            name: collectable,
+            count: count,
             waresId: extractId(token),
           },
         })
@@ -121,7 +139,7 @@ export default async function (fastify: FastifyInstance) {
           id: collectableCount.id,
         },
         data: {
-          count: req.body.count,
+          count: count,
         },
       })
       return

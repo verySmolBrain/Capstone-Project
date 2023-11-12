@@ -19,11 +19,14 @@ import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-but
 import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
 import { CollectibleChart } from '@/components/ui/page/campaign-collectible-chart'
 import { ForumStats } from '@/components/ui/page/campaign-forum-stats'
-import { ViewChart } from '@/components/ui/page/campaign-view-chart'
+import { ViewChart, ViewGraph, ViewPosters } from '@/components/ui/page/campaign-view-chart'
 import dayjs from 'dayjs'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
+  const [postMetrics, setMetrics] = React.useState<{ date: string; Posts: number }[]>([]);
+  const [postersMetrics, setPosterMetrics] = React.useState<{ Poster: string; Posts: number }[]>([]);
+
   const [role, setRole] = React.useState<Role>()
 
   let data: ChartData = []
@@ -56,6 +59,26 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role`,
     fetcher
   )
+
+  const { data: occurrencesObjectResult } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/metrics/post/${params.slug}`,
+    fetcher
+  )
+
+  const { data: topPosters } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/metrics/posters/${params.slug}`,
+    fetcher
+  )
+
+  React.useEffect(() => {
+    if (occurrencesObjectResult) {
+      setMetrics(occurrencesObjectResult)
+    }
+    if (topPosters) {
+      setPosterMetrics(topPosters)
+    }
+  }, [occurrencesObjectResult, topPosters]);
+
 
   React.useEffect(() => {
     if (campaignResult) {
@@ -92,6 +115,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
 
     updatePageView()
   }, [params.slug])
+
 
   if (campaign) {
     data = campaign.collections.map((x) => ({
@@ -133,7 +157,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             </div>
             <div className="pt-4">
               {role === Role.MANAGER && (
-                <EditCampaignButton></EditCampaignButton>
+                <EditCampaignButton name={campaign.name} mutate={mutate} />
               )}
             </div>
           </div>
@@ -149,12 +173,12 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             </div>
             <div>
               {campaign.isActive && (
-                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
+                <p className="flex flex-row justify-center items-centertext-sm bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
                   {`Active | ${campaign.views} views`}
                 </p>
               )}
               {!campaign.isActive && (
-                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
+                <p className="flex flex-row justify-center items-centertext-sm bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
                   {`Inactive`}
                 </p>
               )}
@@ -239,10 +263,30 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             </Carousel>
           </div>
           {(role === Role.MANAGER || role === Role.ADMIN) && (
-            <div className="pt-5">
-              <h3 className="text-sm font-bold pl-5">View counts over time</h3>
-              <br></br>
-              <ViewChart data={localViewData.reverse()}></ViewChart>
+            <div>
+              {/* First Row */}
+              <div className="flex">
+                <div className="pt-5 pr-5">
+                  <h3 className="text-sm font-bold">View Counts Over Time</h3>
+                  <br></br>
+                  <ViewChart data={localViewData.reverse()}></ViewChart>
+                </div>
+              
+                <div className="pt-5 pl-5">
+                  <h3 className="text-sm font-bold">Post Metrics Over Time</h3>
+                  <br></br>
+                  <ViewGraph data={postMetrics}></ViewGraph>
+                </div>
+              </div>
+
+              {/* Second Row */}
+              <div className="flex">
+                <div className="pt-5 pr-5">
+                  <h3 className="text-sm font-bold">Top Forum Posters</h3>
+                  <br></br>
+                  <ViewPosters data={postersMetrics}></ViewPosters>
+                </div>
+              </div>
             </div>
           )}
         </div>

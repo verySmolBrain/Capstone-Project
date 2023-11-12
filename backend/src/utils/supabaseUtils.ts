@@ -10,12 +10,12 @@ export const supabase = (): SupabaseClient => {
   return SupabaseService.getInstance()
 }
 
-export const prisma = new PrismaClient()
+export const rawPrisma = new PrismaClient()
 
 export async function requestHandler(token: string) {
   const { data: user } = await supabase().auth.getUser(token)
 
-  const { role } = (await prisma.user.findFirst({
+  const { role } = (await rawPrisma.user.findFirst({
     where: {
       id: extractId(token),
     },
@@ -39,7 +39,7 @@ export async function requestHandler(token: string) {
    *  applied to your query!
    */
 
-  return enhance(prisma, { user: { id: user?.user?.id, role: role } })
+  return enhance(rawPrisma, { user: { id: user?.user?.id, role: role } })
 }
 
 export const validateUser = async (token: string): Promise<boolean> => {

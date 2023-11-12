@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { createCollectableSchema } from '@/lib/validation/collectable'
+import { updateCollectionSchema } from '@/lib/validation/collection'
 import {
   Form,
   FormControl,
@@ -39,6 +39,7 @@ import {
 import { profilePictureUpdateSchema } from '@/lib/validation/update-details'
 import NextImage from 'next/image'
 import { Label } from '@radix-ui/react-label'
+import useSWR from 'swr'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -72,16 +73,15 @@ export default async function getCroppedImg(
 
 // -----------------------------------------------------------------------------
 
-type FormData = z.infer<typeof createCollectableSchema>
+type FormData = z.infer<typeof updateCollectionSchema>
 
-export function CreateCollectableForm({
-  setOpen,
-  mutate,
-}: {
-  setOpen: (bool: boolean) => void
+export function EditCollectionForm(props: {
+  id: string
+  setOpen: (a: boolean) => void
   mutate: () => void
 }) {
   const [isLoading, setIsLoading] = React.useState(false)
+  const [collection, setCollection] = React.useState<Collection>()
 
   const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
   const [image, setImage] = React.useState<string>('')
@@ -91,11 +91,17 @@ export function CreateCollectableForm({
   )
   const [zoom, setZoom] = React.useState(1)
 
+  const collectionTags: Tag[] = React.useMemo(() => {
+    return collection
+      ? collection?.tags.map((tag) => ({ id: tag, text: tag }))
+      : []
+  }, [collection])
+
   const [tags, setTags] = React.useState<Tag[]>([])
 
   const form = useForm<FormData>({
     mode: 'onChange',
-    resolver: zodResolver(createCollectableSchema),
+    resolver: zodResolver(updateCollectionSchema),
   })
 
   // image functions
@@ -118,30 +124,16 @@ export function CreateCollectableForm({
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/image/collectable/upload`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'update-type': 'image',
-          authorization: token!,
-        },
-        body: JSON.stringify({ image: image, name: data.name }),
-      }
-    )
-
     const tags = data.tags.map((tag) => tag.text)
     const body = {
-      name: data.name,
-      image: (await response.json()).image,
+      image: image,
       tags: tags,
     }
 
     const createResult = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collectable`,
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/${props.id}`,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           authorization: token!,
@@ -153,23 +145,52 @@ export function CreateCollectableForm({
     setIsLoading(false)
 
     if (!createResult?.ok) {
-      const { message } = await createResult.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: message,
+        description: createResult?.statusText,
         variant: 'destructive',
       })
     }
 
-    setOpen(false)
-    mutate()
+    props.setOpen(false)
+    props.mutate()
 
     return toast({
       title: 'Success!',
-      description: 'The collectable was successfully created!',
+      description: 'The collection was successfully updated!',
       variant: 'default',
     })
   }
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const session = (await supabase.auth.getSession()).data.session
+    const token = session?.access_token
+
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+
+    if (res?.ok) {
+      return await res.json()
+    }
+  }
+  const { data: collectionData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/collection/${props.id}`,
+    fetcher
+  )
+
+  React.useEffect(() => {
+    if (collectionData) {
+      setCollection(collectionData)
+    }
+    if (!tags.length) {
+      setTags(collectionTags)
+    }
+  }, [collectionData, collectionTags, tags.length])
 
   return (
     <div className="grid gap-6 w-fill overflow-y-auto max-h-[600px] no-scrollbar">
@@ -189,30 +210,16 @@ export function CreateCollectableForm({
           </div>
         )}
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            id="createCollectionForm"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} id="editCollectionForm">
             <div className="grid gap-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Collectable Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Pikachu" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="tags"
                 render={({ field }) => (
                   <FormItem className="flex flex-col items-start">
-                    <FormLabel className="text-left">Tags</FormLabel>
+                    <FormLabel className="text-left">
+                      Edit Collection Tags
+                    </FormLabel>
                     <FormControl>
                       <TagInput
                         {...field}
@@ -227,7 +234,7 @@ export function CreateCollectableForm({
                     </FormControl>
                     <FormDescription>
                       These are the keywords that will be used to categorize
-                      your new collectable.
+                      your collection.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -239,7 +246,7 @@ export function CreateCollectableForm({
                 render={({ field: { onChange } }) => (
                   <>
                     <FormItem>
-                      <FormLabel>Collectable Image</FormLabel>
+                      <FormLabel>Edit Collection Image</FormLabel>
                       <FormControl>
                         <Input
                           type="file"
@@ -278,7 +285,7 @@ export function CreateCollectableForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Choose an image for your collectable.
+                        Choose an image for your collection.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -312,7 +319,7 @@ export function CreateCollectableForm({
         )}
         <Button
           type="submit"
-          form="createCollectionForm"
+          form="editCollectionForm"
           disabled={isLoading}
           className="w-auto justify-self-end transition-transform duration-300 transform active:translate-y-3"
         >
@@ -323,14 +330,14 @@ export function CreateCollectableForm({
         <DialogContent className="max-w-[350px] sm:max-w-[425px] md:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Crop Image</DialogTitle>
-            <DialogDescription>Crop your collectable here!</DialogDescription>
+            <DialogDescription>Crop your collection here!</DialogDescription>
           </DialogHeader>
           <div className="min-h-[350px] sm:min-h-[425px] relative border-2">
             <Cropper
               image={image}
               crop={crop}
               zoom={zoom}
-              aspect={1 / 1}
+              aspect={63 / 88}
               onCropComplete={onCropComplete}
               onCropChange={setCrop}
               onZoomChange={setZoom}
