@@ -24,23 +24,6 @@ export async function POST(request: Request) {
     })
   }
 
-  const token = supabase_response?.data?.session?.access_token
-  const create_profile_resp = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/user`,
-    {
-      method: 'POST',
-      headers: {
-        authorization: token!,
-      },
-    }
-  )
-
-  if (!create_profile_resp.ok) {
-    return new NextResponse('Error creating profile', {
-      status: 500,
-    })
-  }
-
   return NextResponse.redirect(`${requestUrl.origin}/dashboard`, {
     status: 301,
   })

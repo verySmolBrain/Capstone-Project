@@ -37,7 +37,6 @@ enum profileCollection {
   WISHLIST,
   WARES,
 }
-
 type FormData = z.infer<typeof updateProfileCollectionSchema>
 
 export function UpdateProfileCollectionForm(props: {
@@ -97,14 +96,15 @@ export function UpdateProfileCollectionForm(props: {
     }
 
     setIsLoading(false)
-
     if (!response?.ok) {
+      const { message } = await response?.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: response?.statusText,
+        description: message,
         variant: 'destructive',
       })
     }
+
     props.setOpen(false)
     props.mutate()
     return toast({
@@ -173,10 +173,12 @@ export function UpdateProfileCollectionForm(props: {
                     </ScrollArea>
                   </SelectContent>
                 </Select>
-                <FormDescription>
-                  Please only add collectables that you own. We have no way of
-                  checking!
-                </FormDescription>
+                {props.type === profileCollection.INVENTORY && (
+                  <FormDescription>
+                    Please only add collectables that you own. We have no way of
+                    checking!
+                  </FormDescription>
+                )}
                 <FormMessage />
               </FormItem>
             )}
@@ -184,15 +186,28 @@ export function UpdateProfileCollectionForm(props: {
           <FormField
             control={form.control}
             name="count"
+            defaultValue="1"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Collectable Count</FormLabel>
                 <FormControl>
                   <Input placeholder="1" {...field} />
                 </FormControl>
-                <FormDescription className="pb-3">
-                  How many of this collectable do you own?
-                </FormDescription>
+                {props.type === profileCollection.INVENTORY && (
+                  <FormDescription className="pb-3">
+                    How many of this collectable do you own?
+                  </FormDescription>
+                )}
+                {props.type === profileCollection.WARES && (
+                  <FormDescription className="pb-3">
+                    How many of this collectable are you selling?
+                  </FormDescription>
+                )}
+                {props.type === profileCollection.WISHLIST && (
+                  <FormDescription className="pb-3">
+                    How many of this collectable do want?
+                  </FormDescription>
+                )}
               </FormItem>
             )}
           />

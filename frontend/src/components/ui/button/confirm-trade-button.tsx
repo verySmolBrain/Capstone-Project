@@ -37,9 +37,13 @@ export function ConfirmTradeButton({
 
     mutate()
 
+    const { status } = await res.json()
     return toast({
       title: 'Success!',
-      description: 'Trade was successfully confirmed!',
+      description:
+        status === 'PENDING'
+          ? 'You have successfully confirmed the trade! Now waiting for the other user to confirm.'
+          : 'You have successfully confirmed the trade! The trade is now complete.',
       variant: 'default',
     })
   }
