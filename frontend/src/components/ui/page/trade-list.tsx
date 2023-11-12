@@ -18,15 +18,18 @@ import {
   TooltipTrigger,
 } from '../tooltip'
 import { DeclineTradeButton } from '../button/decline-trade-button'
+import { PendingSpan } from '../span/PendingSpan'
 
 dayjs.extend(relativeTime)
 
 export default function TradeList({
   tradeType,
   isOwnProfile,
+  profile,
 }: {
   tradeType: 'sell' | 'buy' | 'history'
   isOwnProfile: boolean
+  profile?: Profile
 }) {
   const [trades, setTrades] = React.useState<Trade[]>([])
 
@@ -53,9 +56,17 @@ export default function TradeList({
     { refreshInterval: 2500 }
   )
 
+  const hasUserConfirmed = (trade: Trade) => {
+    if (!profile) {
+      return false
+    }
+
+    const isUserBuyer = trade.buyer.id === profile.id
+    return isUserBuyer ? trade.buyerConfirmed : trade.sellerConfirmed
+  }
+
   React.useEffect(() => {
     if (tradeData) {
-      console.log(tradeData)
       setTrades(tradeData)
     }
   }, [tradeData])
@@ -78,9 +89,9 @@ export default function TradeList({
                 key={index}
                 className="container w-[400px] md:w-[600px] lg:w-[800px] flex flex-col gap-2 border rounded-2xl justify-start items-start pr-4 pl-4 pb-4 pt-4 h-[500px]"
               >
-                <div className="flex flex-col md:flex-row justify-between w-full gap-2">
+                <div className="flex flex-col md:flex-row justify-between w-full gap-1">
                   <div className="flex flex-row gap-2 ">
-                    <p className="text-2xl font-semibold truncate underline">
+                    <p className="text-xl font-semibold truncate underline">
                       {trade.buyer.name}
                     </p>
                   </div>
@@ -92,6 +103,7 @@ export default function TradeList({
                       {' '}
                       {dayjs(trade.createdAt).fromNow()}
                     </p>
+                    <p className="text-xs">for ${trade.price}</p>
                   </div>
                 </div>
 
@@ -117,7 +129,7 @@ export default function TradeList({
                           </TooltipTrigger>
                           <TooltipContent>
                             <p className="md:text-base w-full text-center">
-                              {trade.collectable.name}
+                              {trade.collectable.name} for ${trade.price}
                             </p>
                           </TooltipContent>
                         </Tooltip>
@@ -126,12 +138,17 @@ export default function TradeList({
                       <Skeleton className="object-cover h-full w-full rounded-2xl" />
                     )}
                     <div className="flex flex-row pb-4 gap-2">
-                      {isOwnProfile && trade.status === 'PENDING' && (
-                        <ConfirmTradeButton
-                          tradeId={trade.id}
-                          mutate={mutate}
-                        />
-                      )}
+                      {isOwnProfile &&
+                        trade.status === 'PENDING' &&
+                        !hasUserConfirmed(trade) && (
+                          <ConfirmTradeButton
+                            tradeId={trade.id}
+                            mutate={mutate}
+                          />
+                        )}
+                      {isOwnProfile &&
+                        trade.status === 'PENDING' &&
+                        hasUserConfirmed(trade) && <PendingSpan />}
                       {isOwnProfile && trade.status === 'PENDING' && (
                         <DeclineTradeButton
                           tradeId={trade.id}

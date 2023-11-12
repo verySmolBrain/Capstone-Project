@@ -11,7 +11,7 @@ import {
 } from '../dialog'
 import { CreateTradeForm } from '../form/create-trade-form'
 
-export function CreateTradeButton() {
+export function CreateTradeButton({ user }: { user?: Profile }) {
   const [open, setOpen] = React.useState(false)
 
   return (
@@ -25,7 +25,7 @@ export function CreateTradeButton() {
         <DialogHeader>
           <DialogTitle>Create Trade</DialogTitle>
         </DialogHeader>
-        <CreateTradeForm setOpen={setOpen} />
+        <CreateTradeForm setOpen={setOpen} user={user} />
       </DialogContent>
     </Dialog>
   )

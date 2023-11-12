@@ -168,6 +168,29 @@ export default async function (fastify: FastifyInstance) {
       const prisma = await requestHandler(token)
 
       const { id, status } = req.params
+      const ourUserId = extractId(token)
+
+      if (status === 'ACCEPTED') {
+        const trade = await prisma.trade.findUnique({
+          where: {
+            id: Number.parseInt(id),
+          },
+        })
+
+        const updateTradeConfirmation = await prisma.trade.update({
+          where: {
+            id: Number.parseInt(id),
+          },
+          data: {
+            buyerConfirmed: trade?.buyerId === ourUserId ? true : undefined,
+            sellerConfirmed: trade?.sellerId === ourUserId ? true : undefined,
+          },
+        })
+
+        if (!updateTradeConfirmation.buyerConfirmed || !updateTradeConfirmation.sellerConfirmed) {
+          return updateTradeConfirmation
+        }
+      }
 
       const trade = await prisma.trade.update({
         where: {
