@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { collectionConnect } from '@Source/utils/types'
+import { promises } from 'dns'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -346,8 +347,6 @@ export default async function (fastify: FastifyInstance) {
       where: { name: name },
       include: { posts: true },
     })
-
-
     const occurrencesMap: {date: string, Posts: number}[] = [];
 
     // Populating hash map {date(rounded by day): date, occurence: int}
@@ -371,6 +370,39 @@ export default async function (fastify: FastifyInstance) {
       }
     })
     return occurrencesMap
+  })
+
+  /*
+   * GET /campaign/metrics/posters/:name
+   * Returns a campaign's post metrics by name
+   * @returns {object} {string, int}
+  */
+  fastify.get('/campaign/metrics/posters/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const { name } = req.params
+    const prisma = await requestHandler(token)
+
+    const campaign = await prisma.campaign.findFirstOrThrow({
+      where: { name: name },
+      include: { posts: true },
+    })
+    const occurrencesMap: {Poster: string, Posts: number}[] = [];
+
+    for (const post of campaign.posts) {
+      const authorName = await prisma.profile.findFirstOrThrow({
+        where: {id: post.authorId}
+      })
+      const existingMetricIndex = occurrencesMap.findIndex((metric) => metric.Poster === authorName?.name);
+
+      // If the time exists, update its price
+      if (existingMetricIndex !== -1) {
+        occurrencesMap.at(existingMetricIndex)!.Posts += 1;
+      } else {
+        // If the poster does not exist, add a new entry to the array
+        occurrencesMap.push({Poster: authorName!.name, Posts: 1});
+      }
+    }
+    return occurrencesMap;
   })
 
   /*
