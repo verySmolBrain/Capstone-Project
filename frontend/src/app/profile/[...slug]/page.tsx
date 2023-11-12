@@ -51,7 +51,6 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [wares, setWares] = React.useState<CollectableCount[]>()
   const [wishlist, setWishlist] = React.useState<CollectableCount[]>()
   const [achievements, setAchievements] = React.useState<Achievement[]>([])
-
   const router = useRouter()
 
   const fetcher = async (url: string) => {
@@ -228,7 +227,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 <ChatButton user={profile?.name} />
               )}
               {role === Role.USER && <TradeButton user={profile?.name} />}
-              {viewerRole === Role.ADMIN && (
+              {viewerRole === Role.ADMIN && !profile.banned && (
                 <BanUserButton user={profile?.id} />
               )}
             </div>

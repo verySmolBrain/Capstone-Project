@@ -38,6 +38,7 @@ model User {
     campaigns Campaign[] @relation("managers")
 }
 
+/// @@allow('all', true)
 /// @@allow('create,read', true)
 /// @@allow('update,delete', auth() == user)
 /// @@allow('all', auth().role == ADMIN)
@@ -60,6 +61,7 @@ model Profile {
     chats Chat[] @relation("ChatsUsers")
     posts Post[]
     comments Comment[]
+    banned Boolean @default(false)
 }
 
 /// @@allow('read', true)
