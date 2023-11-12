@@ -33,7 +33,10 @@ import { Input } from '../input'
 
 type FormData = z.infer<typeof createTradeSchema>
 
-export function CreateTradeForm(props: { setOpen: (a: boolean) => void }) {
+export function CreateTradeForm(props: {
+  setOpen: (a: boolean) => void
+  user?: Profile
+}) {
   const [isLoading, setIsLoading] = React.useState(false)
   const [collectables, setCollectables] = React.useState<Collectable[]>()
   const [profiles, setProfiles] = React.useState<Profile[]>()
@@ -169,6 +172,7 @@ export function CreateTradeForm(props: { setOpen: (a: boolean) => void }) {
           <FormField
             control={form.control}
             name="userId"
+            defaultValue={props.user?.id}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>User</FormLabel>

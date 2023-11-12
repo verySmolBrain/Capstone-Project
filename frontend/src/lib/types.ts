@@ -135,6 +135,8 @@ type Trade = {
   status: Status
   price: number
   createdAt: Date
+  buyerConfirmed: boolean
+  sellerConfirmed: boolean
 }
 
 type Achievement = {

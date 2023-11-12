@@ -100,6 +100,9 @@ model Trade {
   price         Int
   createdAt     DateTime    @default(now())
 
+  buyerConfirmed  Boolean   @default(false) @allow('update', auth().id == buyerId)
+  sellerConfirmed Boolean   @default(false) @allow('update', auth().id == sellerId)
+
   @@allow('read', true)
   @@allow('create, update' , auth().id == sellerId || auth().id == buyerId)
 }
