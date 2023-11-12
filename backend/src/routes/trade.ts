@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
-import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
+import { requestHandler, extractId, rawPrisma } from '@Source/utils/supabaseUtils'
 import { throwInvalidActionError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
@@ -128,6 +128,20 @@ export default async function (fastify: FastifyInstance) {
         throwInvalidActionError('trade', 'You cannot trade with yourself')
       }
 
+      const collectableExists = await prisma.collectableCount.findFirst({
+        where: {
+          name: collectableId,
+          inventoryId: sellOrBuy ? ourUserId : userId,
+          count: {
+            gt: 0,
+          },
+        },
+      })
+
+      if (!collectableExists) {
+        throwInvalidActionError('trade', 'Collectable not found in sellers inventory')
+      }
+
       const trade = await prisma.trade.create({
         data: {
           buyer: {
@@ -157,7 +171,7 @@ export default async function (fastify: FastifyInstance) {
    * PUT /trade/status/:id/:status
    * updates a trade's status by id
    * @param {string} id
-   * @param {string} statuss
+   * @param {string} status
    * @returns {object} trade
    */
 
@@ -171,7 +185,7 @@ export default async function (fastify: FastifyInstance) {
       const ourUserId = extractId(token)
 
       if (status === 'ACCEPTED') {
-        const trade = await prisma.trade.findUnique({
+        const trade = await prisma.trade.findUniqueOrThrow({
           where: {
             id: Number.parseInt(id),
           },
@@ -182,13 +196,60 @@ export default async function (fastify: FastifyInstance) {
             id: Number.parseInt(id),
           },
           data: {
-            buyerConfirmed: trade?.buyerId === ourUserId ? true : undefined,
-            sellerConfirmed: trade?.sellerId === ourUserId ? true : undefined,
+            buyerConfirmed: trade.buyerId === ourUserId ? true : undefined,
+            sellerConfirmed: trade.sellerId === ourUserId ? true : undefined,
           },
         })
 
         if (!updateTradeConfirmation.buyerConfirmed || !updateTradeConfirmation.sellerConfirmed) {
           return updateTradeConfirmation
+        }
+
+        const sellerCollectableCount = await rawPrisma.collectableCount.findFirstOrThrow({
+          where: {
+            name: trade.collectableName,
+            inventoryId: trade.sellerId,
+            count: { gte: 1 },
+          },
+        })
+
+        await rawPrisma.collectableCount.update({
+          where: {
+            id: sellerCollectableCount.id,
+          },
+          data: {
+            count: {
+              decrement: 1,
+            },
+          },
+        })
+
+        const buyerCollectableCount = await rawPrisma.collectableCount.findFirst({
+          where: {
+            name: trade.collectableName,
+            inventoryId: trade.buyerId,
+          },
+        })
+
+        if (!buyerCollectableCount) {
+          await rawPrisma.collectableCount.create({
+            data: {
+              name: trade.collectableName,
+              count: 1,
+              inventoryId: trade.buyerId,
+            },
+          })
+        } else {
+          await rawPrisma.collectableCount.update({
+            where: {
+              id: buyerCollectableCount.id,
+            },
+            data: {
+              count: {
+                increment: 1,
+              },
+            },
+          })
         }
       }
 

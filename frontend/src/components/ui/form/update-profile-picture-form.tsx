@@ -120,9 +120,10 @@ export function UpdateProfilePictureForm() {
     setIsLoading(false)
 
     if (!response.ok) {
+      const { message } = await response.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: response.statusText,
+        description: message,
         variant: 'destructive',
       })
     }

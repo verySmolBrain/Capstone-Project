@@ -43,9 +43,10 @@ export function CreateManagerForm() {
     setIsLoading(false)
 
     if (!signUpResult?.ok) {
+      const { message } = await signUpResult.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: signUpResult?.statusText,
+        description: message,
         variant: 'destructive',
       })
     }
