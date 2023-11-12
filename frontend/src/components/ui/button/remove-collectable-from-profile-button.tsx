@@ -64,7 +64,9 @@ async function onDelete(
   }
 
   if (!response?.ok) {
-    const { message } = await response.json()
+    const { message } = (await response?.json()) ?? {
+      message: 'Error encountered',
+    }
     return toast({
       title: 'Uh Oh! Something went wrong!',
       description: message,
