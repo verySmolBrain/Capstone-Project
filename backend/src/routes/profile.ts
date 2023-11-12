@@ -326,7 +326,7 @@ export default async function (fastify: FastifyInstance) {
     const { id } = req.params
     const prisma = await requestHandler(token)
     const currProfile = await prisma.profile.findFirst({ where: { id: id } })
-    if (currProfile) {
+    if (currProfile && !currProfile.name.startsWith('BANNED-')) {
       await prisma.profile.update({
         where: { id: id },
         data: {
