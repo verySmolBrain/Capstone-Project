@@ -45,6 +45,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Tag, TagInput } from '../tags'
 import { Switch } from '@/components/ui/switch'
+import useSWR from 'swr'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -119,6 +120,7 @@ export function EditCampaignForm(props: {
   setOpen: (a: boolean) => void
   mutate: () => void
 }) {
+  const [campaign, setCampaign] = React.useState<Campaign>()
   const [isLoading, setIsLoading] = React.useState(false)
   const [tags, setTags] = React.useState<Tag[]>([])
   const [imageAvailable, setImageAvailable] = React.useState<boolean>(false)
@@ -128,6 +130,11 @@ export function EditCampaignForm(props: {
     null
   )
   const [zoom, setZoom] = React.useState(1)
+
+  const campaignTags: Tag[] = React.useMemo(() => {
+    return campaign ? campaign?.tags.map((tag) => ({ id: tag, text: tag })) : []
+  }, [campaign])
+
   const form = useForm<z.infer<typeof FormSchema>>({
     mode: 'onChange',
     resolver: zodResolver(FormSchema),
@@ -188,6 +195,37 @@ export function EditCampaignForm(props: {
       variant: 'default',
     })
   }
+
+  const fetcher = async (url: string) => {
+    const supabase = createClientComponentClient<Database>()
+    const session = (await supabase.auth.getSession()).data.session
+    const token = session?.access_token
+
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: token!,
+      },
+    })
+
+    if (res?.ok) {
+      return await res.json()
+    }
+  }
+  const { data: campaignData } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/${props.name}`,
+    fetcher
+  )
+
+  React.useEffect(() => {
+    if (campaignData) {
+      setCampaign(campaignData)
+    }
+    if (!tags.length) {
+      setTags(campaignTags)
+    }
+  }, [campaignData, campaignTags, tags.length])
 
   return (
     <div className="grid gap-6 w-fill overflow-y-auto max-h-[600px] no-scrollbar pl-3 pr-3">

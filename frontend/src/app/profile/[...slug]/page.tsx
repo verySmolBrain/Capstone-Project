@@ -158,7 +158,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
               sizes="(max-width: 475px) 6rem"
               width={20}
               height={20}
-              className="h-20 w-20 rounded-full"
+              className="h-20 w-20 rounded-full "
               alt="profile picture"
             />
             <div className="flex flex-col order-last gap-2 md:order-none w-screen md:w-fit">

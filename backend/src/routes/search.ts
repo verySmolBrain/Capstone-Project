@@ -292,4 +292,33 @@ export default async function (fastify: FastifyInstance) {
 
     return campaigns
   })
+
+  /*
+   * GET /search/users/wares/:collectableName
+   * Returns all user profiles who have the given collectable in their wares
+   * @param {string} collectableName
+   * @returns {object} profiles
+   */
+  fastify.get(
+    '/search/users/wares/:collectableName',
+    async (req: FastifyRequest<{ Params: { collectableName: string } }>) => {
+      const token = req.headers['authorization'] as string
+      const prisma = await requestHandler(token)
+      const collectableName = req.params.collectableName
+
+      const profiles = await prisma.profile.findMany({
+        where: {
+          wares: {
+            some: {
+              collectable: {
+                name: collectableName,
+              },
+            },
+          },
+        },
+      })
+
+      return profiles
+    }
+  )
 }
