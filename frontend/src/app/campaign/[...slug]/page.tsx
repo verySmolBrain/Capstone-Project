@@ -19,11 +19,13 @@ import { ReviewCampaignButton } from '@/components/ui/button/review-campaign-but
 import { ManagerCampaignRating } from '@/components/ui/button/manager-campaign-rating'
 import { CollectibleChart } from '@/components/ui/page/campaign-collectible-chart'
 import { ForumStats } from '@/components/ui/page/campaign-forum-stats'
-import { ViewChart } from '@/components/ui/page/campaign-view-chart'
+import { ViewChart, ViewGraph } from '@/components/ui/page/campaign-view-chart'
 import dayjs from 'dayjs'
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [campaign, setCampaign] = React.useState<Campaign>()
+  const [postMetrics, setMetrics] = React.useState<{ date: string; Posts: number }[]>([]);
+
   const [role, setRole] = React.useState<Role>()
 
   let data: ChartData = []
@@ -56,6 +58,20 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role`,
     fetcher
   )
+
+  const { data: occurrencesObjectResult } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/campaign/metrics/post/${params.slug}`,
+    fetcher
+  )
+
+  React.useEffect(() => {
+    if (occurrencesObjectResult) {
+      setMetrics(occurrencesObjectResult)
+      console.log('Occurrences Object:', occurrencesObjectResult);
+
+    }
+  }, [occurrencesObjectResult]);
+
 
   React.useEffect(() => {
     if (campaignResult) {
@@ -92,6 +108,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
 
     updatePageView()
   }, [params.slug])
+
 
   if (campaign) {
     data = campaign.collections.map((x) => ({
@@ -239,11 +256,20 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             </Carousel>
           </div>
           {(role === Role.MANAGER || role === Role.ADMIN) && (
-            <div className="pt-5">
-              <h3 className="text-sm font-bold pl-5">View counts over time</h3>
+            <div className="flex">
+            <div className="pt-5 pr-5">
+              <h3 className="text-sm font-bold">View counts over time</h3>
               <br></br>
               <ViewChart data={localViewData.reverse()}></ViewChart>
             </div>
+          
+            <div className="pt-5 pl-5">
+              <h3 className="text-sm font-bold">Post Metrics</h3>
+              <br></br>
+              <ViewGraph data={postMetrics}></ViewGraph>
+            </div>
+          </div>
+            
           )}
         </div>
       </section>
