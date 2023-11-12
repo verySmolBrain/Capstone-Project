@@ -1,7 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { collectionConnect } from '@Source/utils/types'
-import { promises } from 'dns'
 
 export default async function (fastify: FastifyInstance) {
   /*
