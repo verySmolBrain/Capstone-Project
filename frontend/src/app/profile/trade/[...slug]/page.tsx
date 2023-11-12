@@ -17,6 +17,7 @@ export default function TradeListPage({
 }: {
   params: { slug: string }
 }) {
+  const [profile, setProfile] = React.useState<Profile>()
   const [role, setRole] = React.useState<Role>(Role.NULL)
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
   const [tradeType, setTradeType] = React.useState<'sell' | 'buy' | 'history'>(
@@ -70,6 +71,7 @@ export default function TradeListPage({
 
   React.useEffect(() => {
     if (profileData?.data) {
+      setProfile(profileData?.data)
       if (ownProfileData?.data?.name === params.slug[0]) {
         setIsOwnProfile(true)
       }
@@ -86,7 +88,7 @@ export default function TradeListPage({
         <div className="container flex flex-col gap-4 w-full">
           <div className="flex flex-row w-full justify-between">
             <TypographyH2 text="Trades" />
-            {role === Role.USER && isOwnProfile && <CreateTradeButton />}
+            {role === Role.USER && <CreateTradeButton user={profile} />}
           </div>
 
           <div className="flex flex-row gap-4 justify-center pt-4">
@@ -113,7 +115,11 @@ export default function TradeListPage({
             </Button>
           </div>
 
-          <TradeList tradeType={tradeType} isOwnProfile={isOwnProfile} />
+          <TradeList
+            tradeType={tradeType}
+            isOwnProfile={isOwnProfile}
+            profile={profile}
+          />
         </div>
       </section>
     </div>

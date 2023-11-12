@@ -8,6 +8,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Skeleton } from '@/components/ui/skeleton'
+import { CollectiblePriceChart } from '@/components/ui/page/collectible-price-chart'
 
 export default function CollectablePage({
   params,
@@ -83,6 +84,7 @@ export default function CollectablePage({
             </div>
           </div>
         </div>
+        <CollectiblePriceChart slug={params.slug}></CollectiblePriceChart>
       </section>
     </>
   ) : (
