@@ -168,6 +168,29 @@ export default async function (fastify: FastifyInstance) {
       const prisma = await requestHandler(token)
 
       const { id, status } = req.params
+      const ourUserId = extractId(token)
+
+      if (status === 'ACCEPTED') {
+        const trade = await prisma.trade.findUnique({
+          where: {
+            id: Number.parseInt(id),
+          },
+        })
+
+        const updateTradeConfirmation = await prisma.trade.update({
+          where: {
+            id: Number.parseInt(id),
+          },
+          data: {
+            buyerConfirmed: trade?.buyerId === ourUserId ? true : undefined,
+            sellerConfirmed: trade?.sellerId === ourUserId ? true : undefined,
+          },
+        })
+
+        if (!updateTradeConfirmation.buyerConfirmed || !updateTradeConfirmation.sellerConfirmed) {
+          return updateTradeConfirmation
+        }
+      }
 
       const trade = await prisma.trade.update({
         where: {
@@ -181,6 +204,42 @@ export default async function (fastify: FastifyInstance) {
       return trade
     }
   )
+
+  /*
+   * GET /trade/:collectableName
+   * returns all trades of a collectable
+   * @param {string} query
+   * @returns {date: unix timestamp, price: int}
+   */
+  fastify.get('/trade/:collectableName', async (req: FastifyRequest<{ Params: { name: string } }>) => {
+    const token = req.headers['authorization'] as string
+    const prisma = await requestHandler(token)
+    const { name } = req.params
+
+    const trades = await prisma.trade.findMany({
+      where: {
+        status: {
+          in: ['ACCEPTED'],
+        },
+        collectableName: name,
+      },
+      include: {
+        buyer: true,
+        seller: true,
+        collectable: true,
+      },
+    })
+
+    const tradeList = trades.map((trade) => {
+      const currentDate: Date = trade.createdAt
+      return {
+        date: currentDate.getTime(),
+        price: trade.price,
+      }
+    })
+
+    return tradeList
+  })
 
   /*
    * PUT /trade/collectable/:id

@@ -100,6 +100,10 @@ model Trade {
     status Status @default(PENDING)
     price Int
     createdAt DateTime @default(now())
+    /// @allow('update', auth().id == buyerId)
+    buyerConfirmed Boolean @default(false)
+    /// @allow('update', auth().id == sellerId)
+    sellerConfirmed Boolean @default(false)
 }
 
 /// @@allow('create', true)
@@ -157,10 +161,12 @@ model Comment {
     reports CommentReports[]
 }
 
+/// @@allow('update', true)
 /// @@allow('read, create', true)
 /// @@allow('all', auth().role == ADMIN)
 model CommentReports {
     commentId Int @id() @default(autoincrement())
+    reportingUsers String[]
     comment Comment @relation(fields: [commentId], references: [id])
 }
 

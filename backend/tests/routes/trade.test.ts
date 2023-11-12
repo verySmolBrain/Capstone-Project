@@ -1,4 +1,6 @@
-// import { build } from '@Source/app'
+import { build } from '@Source/app'
+import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
+import { Status } from '@prisma/client'
 
 /*
  * GET /trade
@@ -66,5 +68,40 @@ describe('/trade', () => {
     // expect(response.statusCode).toBe(200)
     // expect(response.statusMessage).toBe('OK')
     // await app.close()
+  })
+})
+
+describe('/trade:collectableName', () => {
+  it('Successfully trade - return 200', async () => {
+    const app = await build({})
+    // @ts-expect-error only populating necessary fields
+    prismaMockInstance.trade.findMany.mockResolvedValue([{
+      status: Status.FINISHED, 
+      collectableName: 'yabba', 
+      createdAt: new Date(2023, 10),
+      price: 69
+    },
+    // @ts-expect-error only populating necessary fields
+    { status: Status.FINISHED,
+      collectableName: 'yabba',
+      createdAt: new Date(2023, 11),
+      price: 96
+    }])
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/trade/:collectableName',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: 'a'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    // expect(response.body).toBe("[{\"date\":1698796800000,\"price\":69},{\"date\":1701388800000,\"price\":96}]")
+    await app.close()
   })
 })

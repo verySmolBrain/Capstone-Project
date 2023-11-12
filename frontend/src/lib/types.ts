@@ -135,6 +135,8 @@ type Trade = {
   status: Status
   price: number
   createdAt: Date
+  buyerConfirmed: boolean
+  sellerConfirmed: boolean
 }
 
 type Achievement = {
@@ -230,3 +232,14 @@ type CollectableCount = {
 }
 
 type ChartData = { name: string; value: number }[]
+
+type CommentReport = {
+  content: string
+  author: string
+  reports: number
+}
+
+type PriceData = {
+  date: string
+  price: number
+}[]

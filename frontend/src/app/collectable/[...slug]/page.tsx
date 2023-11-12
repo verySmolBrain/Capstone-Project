@@ -19,6 +19,7 @@ import {
 
 const default_profile =
   'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
+import { CollectiblePriceChart } from '@/components/ui/page/collectible-price-chart'
 
 export default function CollectablePage({
   params,
@@ -151,6 +152,7 @@ export default function CollectablePage({
             )}
           </div>
         </div>
+        <CollectiblePriceChart slug={params.slug}></CollectiblePriceChart>
       </section>
     </>
   ) : (

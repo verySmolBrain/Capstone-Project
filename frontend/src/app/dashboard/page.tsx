@@ -17,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import ReportedCommentsList from '@/components/ui/page/reported-comments-list'
 
 const default_img =
   'https://upload.wikimedia.org/wikipedia/en/3/3b/Pokemon_Trading_Card_Game_cardback.jpg'
@@ -113,9 +114,17 @@ export default function Dashboard() {
                     href="/login"
                     className="hover:text-brand underline underline-offset-4"
                   >
-                    Have an account? Login here
+                    Already set up a manager account? Login here
                   </Link>
                 </p>
+              </div>
+              <br />
+              <hr />
+              <div className="pt-5">
+                <h1 className="text-2xl font-semibold tracking-tight">
+                  Reported comments
+                </h1>
+                <ReportedCommentsList />
               </div>
             </div>
           </div>

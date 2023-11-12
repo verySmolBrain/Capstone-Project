@@ -25,6 +25,7 @@ import {
 import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
 import { PersonalProfileRating } from '@/components/ui/button/personal-profile-rating'
 import { TradeButton } from '@/components/ui/button/trade-button'
+import { BanUserButton } from '@/components/ui/button/ban-user-button'
 
 enum profileCollection {
   INVENTORY,
@@ -44,6 +45,7 @@ const default_badge =
 export default function ProfilePage({ params }: { params: { slug: string } }) {
   const [profile, setProfile] = React.useState<Profile>()
   const [role, setRole] = React.useState<Role>(Role.NULL)
+  const [viewerRole, setViewerRole] = React.useState<Role>(Role.USER)
   const [isOwnProfile, setIsOwnProfile] = React.useState<boolean>(false)
   const [inventory, setInventory] = React.useState<CollectionCollectable>()
   const [wares, setWares] = React.useState<CollectableCount[]>()
@@ -114,6 +116,31 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
   )
 
   React.useEffect(() => {
+    const getViewerRole = async () => {
+      const supabase = createClientComponentClient<Database>()
+      const session = (await supabase.auth.getSession()).data.session
+      const token = session?.access_token
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/role`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: token!,
+          },
+        }
+      )
+      if (res.ok) {
+        const roleData = await res.json()
+        if (roleData.role === Role.ADMIN) {
+          setViewerRole(Role.ADMIN)
+        } else if (roleData.role === Role.MANAGER) {
+          setViewerRole(Role.MANAGER)
+        } else if (roleData.role === Role.USER) {
+          setViewerRole(Role.USER)
+        }
+      }
+    }
     if (profileData?.data) {
       setProfile(profileData?.data)
 
@@ -136,6 +163,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     if (achievementsData) {
       setAchievements(achievementsData)
     }
+    getViewerRole()
   }, [
     profileData?.data,
     ownProfileData?.data,
@@ -145,6 +173,7 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
     wishlistData,
     roleData,
     achievementsData,
+    viewerRole,
   ])
 
   return profile ? (
@@ -199,6 +228,9 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 <ChatButton user={profile?.name} />
               )}
               {role === Role.USER && <TradeButton user={profile?.name} />}
+              {viewerRole === Role.ADMIN && (
+                <BanUserButton user={profile?.id} />
+              )}
             </div>
           </div>
           <div className="container gap-4 pb-6">

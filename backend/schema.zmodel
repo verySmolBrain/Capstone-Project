@@ -100,6 +100,9 @@ model Trade {
   price         Int
   createdAt     DateTime    @default(now())
 
+  buyerConfirmed  Boolean   @default(false) @allow('update', auth().id == buyerId)
+  sellerConfirmed Boolean   @default(false) @allow('update', auth().id == sellerId)
+
   @@allow('read', true)
   @@allow('create, update' , auth().id == sellerId || auth().id == buyerId)
 }
@@ -184,6 +187,7 @@ model Comment {
 
 model CommentReports {
     commentId        Int       @id @default(autoincrement())
+    reportingUsers   String[]  @@allow('update', true)
 
     comment  Comment   @relation(fields: [commentId], references: [id])
 
