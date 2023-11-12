@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
+import 'dotenv/config'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
@@ -45,7 +46,11 @@ export default async function (fastify: FastifyInstance) {
         },
         include: {
           comments: true,
-          author: true,
+          author: {
+            include: {
+              user: true,
+            },
+          },
         },
       })
 
@@ -75,7 +80,11 @@ export default async function (fastify: FastifyInstance) {
         comments: {
           include: { author: true },
         },
-        author: true,
+        author: {
+          include: {
+            user: true,
+          },
+        },
       },
     })
 
@@ -108,7 +117,11 @@ export default async function (fastify: FastifyInstance) {
               author: true,
             },
           },
-          author: true,
+          author: {
+            include: {
+              user: true,
+            },
+          },
         },
       })
 
@@ -151,7 +164,11 @@ export default async function (fastify: FastifyInstance) {
           createdAt: new Date(),
         },
         include: {
-          author: true,
+          author: {
+            include: {
+              user: true,
+            },
+          },
         },
       })
 
