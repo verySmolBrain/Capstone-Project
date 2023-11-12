@@ -58,9 +58,10 @@ export function CreatePostCommentForm({
     setIsLoading(false)
 
     if (!updateResult?.ok) {
+      const { message } = await updateResult.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: updateResult?.statusText,
+        description: message,
         variant: 'destructive',
       })
     }

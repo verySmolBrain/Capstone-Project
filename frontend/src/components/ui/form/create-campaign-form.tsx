@@ -208,9 +208,10 @@ export function CreateCampaignForm(props: {
     setIsLoading(false)
 
     if (!createResult?.ok) {
+      const { message } = await createResult.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: createResult?.statusText,
+        description: message,
         variant: 'destructive',
       })
     }

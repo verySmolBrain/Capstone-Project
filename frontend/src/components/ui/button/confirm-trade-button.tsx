@@ -28,9 +28,10 @@ export function ConfirmTradeButton({
     )
 
     if (!res?.ok) {
+      const { message } = await res?.json()
       return toast({
         title: 'Uh Oh! Something went wrong!',
-        description: res?.statusText,
+        description: message,
         variant: 'destructive',
       })
     }
