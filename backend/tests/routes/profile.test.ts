@@ -135,6 +135,7 @@ describe('/profile - GET', () => {
       description: null,
       image: null,
       reputation: 1,
+      banned: false,
     })
 
     const response1 = await app.inject({
@@ -147,7 +148,9 @@ describe('/profile - GET', () => {
 
     expect(response1.statusCode).toBe(200)
     expect(response1.statusMessage).toBe('OK')
-    expect(response1.body).toBe('{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1}')
+    expect(response1.body).toBe(
+      '{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1,"banned":false}'
+    )
 
     await app.close()
   })
@@ -161,6 +164,7 @@ describe('/profile - GET', () => {
       description: null,
       image: null,
       reputation: 1,
+      banned: false,
     })
 
     const response1 = await app.inject({
@@ -194,6 +198,7 @@ describe('/profile/:name - GET', () => {
       description: null,
       image: null,
       reputation: 1,
+      banned: false,
     })
 
     const response1 = await app.inject({
@@ -209,7 +214,9 @@ describe('/profile/:name - GET', () => {
 
     expect(response1.statusCode).toBe(200)
     expect(response1.statusMessage).toBe('OK')
-    expect(response1.body).toBe('{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1}')
+    expect(response1.body).toBe(
+      '{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1,"banned":false}'
+    )
 
     await app.close()
   })
@@ -248,6 +255,7 @@ describe('/profile/name - PUT', () => {
       description: null,
       image: null,
       reputation: 1,
+      banned: false,
     })
 
     const response1 = await app.inject({
@@ -263,7 +271,9 @@ describe('/profile/name - PUT', () => {
 
     expect(response1.statusCode).toBe(200)
     expect(response1.statusMessage).toBe('OK')
-    expect(response1.body).toBe('{"id":"double","name":"New name","description":null,"image":null,"reputation":1}')
+    expect(response1.body).toBe(
+      '{"id":"double","name":"New name","description":null,"image":null,"reputation":1,"banned":false}'
+    )
 
     await app.close()
   })
@@ -278,6 +288,7 @@ describe('/profile/name - PUT', () => {
       description: null,
       image: null,
       reputation: 1,
+      banned: false,
     })
 
     const response1 = await app.inject({
@@ -304,6 +315,7 @@ describe('/profile/name - PUT', () => {
       description: null,
       image: null,
       reputation: 1,
+      banned: false,
     })
 
     const response1 = await app.inject({

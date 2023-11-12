@@ -45,6 +45,7 @@ describe('/search/:name', () => {
         description: null,
         image: null,
         reputation: 1,
+        banned: false,
       },
     ])
 
@@ -107,6 +108,7 @@ describe('/search/:name', () => {
         description: null,
         image: null,
         reputation: 1,
+        banned: false,
       },
     ])
 
@@ -296,6 +298,7 @@ describe('/search/user/:name', () => {
         description: null,
         image: null,
         reputation: 1,
+        banned: false,
       },
     ])
 
@@ -313,7 +316,9 @@ describe('/search/user/:name', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe('[{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1}]')
+    expect(response.body).toBe(
+      '[{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1,"banned":false}]'
+    )
     await app.close()
   })
   it('Search for users (no search text) - return 200', async () => {
@@ -324,6 +329,7 @@ describe('/search/user/:name', () => {
         description: null,
         image: null,
         reputation: 1,
+        banned: false,
       },
     ])
 
@@ -341,7 +347,9 @@ describe('/search/user/:name', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe('[{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1}]')
+    expect(response.body).toBe(
+      '[{"id":"double","name":"stringadsf","description":null,"image":null,"reputation":1,"banned":false}]'
+    )
     await app.close()
   })
 })

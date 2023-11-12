@@ -3,25 +3,26 @@ import { prismaMockInstance } from '@Test/__mocks__/utils/PrismaHandler'
 import { v2 as cloudinary } from 'cloudinary'
 
 /*
-   * POST /image/profile/upload
-   * Uploads a profile picture
-   * @param {Base64} image
-   * @returns {string} url
-*/
+ * POST /image/profile/upload
+ * Uploads a profile picture
+ * @param {Base64} image
+ * @returns {string} url
+ */
 
 describe('/image/profile/upload - post', () => {
   it('Successful profile upload - return 200', async () => {
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-        id: 'double',
-        name: 'Yap',
-        description: null,
-        image: "ah",
-        reputation: 1,
+      id: 'double',
+      name: 'Yap',
+      description: null,
+      image: 'ah',
+      reputation: 1,
+      banned: false,
     })
 
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({secure_url: 'its moorbin time'});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({ secure_url: 'its moorbin time' })
 
     const app = await build({})
     const response = await app.inject({
@@ -31,8 +32,8 @@ describe('/image/profile/upload - post', () => {
         Authorization: 'yobba',
       },
       body: {
-        image: "ah",
-      }
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(200)
@@ -41,16 +42,17 @@ describe('/image/profile/upload - post', () => {
 
   it('Unsuccessful profile upload - return 400', async () => {
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-        id: 'double',
-        name: 'Yap',
-        description: null,
-        image: "ah",
-        reputation: 1,
+      id: 'double',
+      name: 'Yap',
+      description: null,
+      image: 'ah',
+      reputation: 1,
+      banned: false,
     })
 
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({})
 
     const app = await build({})
     const response = await app.inject({
@@ -60,8 +62,8 @@ describe('/image/profile/upload - post', () => {
         Authorization: 'yobba',
       },
       body: {
-        image: "ah",
-      }
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(400)
@@ -83,19 +85,19 @@ describe('/image/profile/upload - post', () => {
   })
 })
 
-  /*
-   * POST /image/collectable/upload
-   * Uploads a collectable image
-   * @param {string} name
-   * @param {Base64} image
-   * @returns {string} url
-   */
+/*
+ * POST /image/collectable/upload
+ * Uploads a collectable image
+ * @param {string} name
+ * @param {Base64} image
+ * @returns {string} url
+ */
 
 describe('/image/collectable/upload - post (+name as param)', () => {
   it('Successful profile upload - return 200', async () => {
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({secure_url: 'its moorbin time'});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({ secure_url: 'its moorbin time' })
 
     const app = await build({})
     const response = await app.inject({
@@ -105,9 +107,9 @@ describe('/image/collectable/upload - post (+name as param)', () => {
         Authorization: 'yobba',
       },
       body: {
-        name: "Okiedogi",
-        image: "ah",
-      }
+        name: 'Okiedogi',
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(200)
@@ -115,10 +117,9 @@ describe('/image/collectable/upload - post (+name as param)', () => {
   })
 
   it('Unsuccessful profile upload - return 400', async () => {
-
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({})
 
     const app = await build({})
     const response = await app.inject({
@@ -128,9 +129,9 @@ describe('/image/collectable/upload - post (+name as param)', () => {
         Authorization: 'yobba',
       },
       body: {
-        name: "Okiedogi",
-        image: "ah",
-      }
+        name: 'Okiedogi',
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(400)
@@ -146,9 +147,9 @@ describe('/image/collectable/upload - post (+name as param)', () => {
         Authorization: '',
       },
       body: {
-        name: "Okiedogi",
-        image: "ah",
-      }
+        name: 'Okiedogi',
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(401)
@@ -157,18 +158,18 @@ describe('/image/collectable/upload - post (+name as param)', () => {
 })
 
 /*
-  * POST /image/collection/upload
-  * Uploads a collection image
-  * @param {string} name
-  * @param {Base64} image
-  * @returns {string} url
-*/
+ * POST /image/collection/upload
+ * Uploads a collection image
+ * @param {string} name
+ * @param {Base64} image
+ * @returns {string} url
+ */
 
 describe('/image/collection/upload - post', () => {
   it('Successful collection image upload - return 200', async () => {
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({secure_url: 'its moorbin time', url : 'okiedogi'});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({ secure_url: 'its moorbin time', url: 'okiedogi' })
 
     const app = await build({})
     const response = await app.inject({
@@ -178,21 +179,20 @@ describe('/image/collection/upload - post', () => {
         Authorization: 'yobba',
       },
       body: {
-        name: "Okiedogi",
-        image: "ah",
-      }
+        name: 'Okiedogi',
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe("{\"image\":\"okiedogi\"}")
+    expect(response.body).toBe('{"image":"okiedogi"}')
   })
 
   it('Unsuccessful collection image upload - return 400', async () => {
-
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({})
 
     const app = await build({})
     const response = await app.inject({
@@ -202,9 +202,9 @@ describe('/image/collection/upload - post', () => {
         Authorization: 'yobba',
       },
       body: {
-        name: "Okiedogi",
-        image: "ah",
-      }
+        name: 'Okiedogi',
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(400)
@@ -213,17 +213,17 @@ describe('/image/collection/upload - post', () => {
 })
 
 /*
-  * POST /image/campaign/upload
-  * Uploads a campaign image
-  * @param {string} name
-  * @param {Base64} image
-  * @returns {string} url
-*/
+ * POST /image/campaign/upload
+ * Uploads a campaign image
+ * @param {string} name
+ * @param {Base64} image
+ * @returns {string} url
+ */
 describe('/image/campaign/upload - post', () => {
   it('Successful campaign image upload - return 200', async () => {
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({secure_url: 'its moorbin time', url : 'okiedogi'});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({ secure_url: 'its moorbin time', url: 'okiedogi' })
 
     const app = await build({})
     const response = await app.inject({
@@ -233,21 +233,20 @@ describe('/image/campaign/upload - post', () => {
         Authorization: 'yobba',
       },
       body: {
-        name: "Okiedogi",
-        image: "ah",
-      }
+        name: 'Okiedogi',
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
-    expect(response.body).toBe("{\"image\":\"okiedogi\"}")
+    expect(response.body).toBe('{"image":"okiedogi"}')
   })
 
   it('Unsuccessful campaign image upload - return 400', async () => {
-
-    const uploadMock = jest.fn();
-    cloudinary.uploader.upload = uploadMock;
-    uploadMock.mockResolvedValue({});
+    const uploadMock = jest.fn()
+    cloudinary.uploader.upload = uploadMock
+    uploadMock.mockResolvedValue({})
 
     const app = await build({})
     const response = await app.inject({
@@ -257,9 +256,9 @@ describe('/image/campaign/upload - post', () => {
         Authorization: 'yobba',
       },
       body: {
-        name: "Okiedogi",
-        image: "ah",
-      }
+        name: 'Okiedogi',
+        image: 'ah',
+      },
     })
 
     expect(response.statusCode).toBe(400)
