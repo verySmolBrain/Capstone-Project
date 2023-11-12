@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
-import 'dotenv/config'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { getUserId } from '@Source/utils/utils'
 import { throwInvalidFieldError, throwMissingFieldError } from '@Source/utils/error'

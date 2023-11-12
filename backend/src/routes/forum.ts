@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
-import 'dotenv/config'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {

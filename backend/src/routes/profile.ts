@@ -3,6 +3,7 @@ import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { throwNotUniqueError } from '@Source/utils/error'
 import { generateUsername, getUserId } from '@Source/utils/utils'
 import { Role } from '@prisma/client'
+import { createClient } from '@supabase/supabase-js'
 
 export default async function (fastify: FastifyInstance) {
   /*
@@ -311,4 +312,32 @@ export default async function (fastify: FastifyInstance) {
       return createdReview
     }
   )
+
+  /*
+   *  PUT /user
+   *  Bans a user by removing their details
+   *  @returns {object} user
+   */
+  fastify.delete('/ban/:id', async (req: FastifyRequest<{ Params: { id: string } }>) => {
+    const supabase_url = process.env.SUPABASE_URL
+    const supabase_key = process.env.SUPABASE_SERVICE_KEY
+    const token = req.headers['authorization'] as string
+
+    const { id } = req.params
+    const prisma = await requestHandler(token)
+    const currProfile = await prisma.profile.findFirst({ where: { id: id } })
+    if (currProfile) {
+      await prisma.profile.update({
+        where: { id: id },
+        data: {
+          name: 'BANNED-' + currProfile.name,
+          description: 'This user has been banned for disruptive behaviour.',
+          image: null,
+        },
+      })
+
+      const supabase = createClient(supabase_url!, supabase_key!)
+      await supabase.auth.admin.deleteUser(id)
+    }
+  })
 }
