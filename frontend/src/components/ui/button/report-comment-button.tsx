@@ -4,25 +4,40 @@ import * as React from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../dialog'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
+import { Button } from '../button'
+import { toast } from '../use-toast'
 
 export function ReportCommentButton({ comment }: { comment: number }) {
   const [open, setOpen] = React.useState(false)
 
-  async function onSubmit(data: FormData) {
+  async function handleClick() {
     const supabase = createClientComponentClient<Database>()
     const token = (await supabase.auth.getSession()).data.session?.access_token
+    const reportingUser = (await supabase.auth.getSession()).data.session?.user
+      .id
 
-    await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/comment/${comment}/report`,
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/forum/report/${comment}`,
       {
-        method: 'update',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'update-type': 'description',
           authorization: token!,
         },
+        body: JSON.stringify({ userId: reportingUser }),
       }
     )
+    setOpen(false)
+    if (!res.ok) {
+      return toast({
+        title: 'Uh Oh! Something went wrong!',
+        description: res?.statusText,
+        variant: 'destructive',
+      })
+    }
+    return toast({
+      title: "Thanks for the report! We'll investigate this shortly.",
+    })
   }
 
   return (
@@ -35,9 +50,19 @@ export function ReportCommentButton({ comment }: { comment: number }) {
       <DialogContent className="w-auto">
         <DialogHeader>
           <p className="font-medium text-center">
-            Thanks for the heads up, we&apos;ll investigate this shortly
+            Are you sure you want to report?
           </p>
         </DialogHeader>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            size="sm"
+            className="transition-transform duration-300 transform active:translate-y-3"
+            onClick={handleClick}
+          >
+            Yes, report this comment
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   )

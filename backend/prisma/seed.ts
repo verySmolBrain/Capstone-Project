@@ -592,28 +592,28 @@ async function main() {
     where: { name: 'a' },
     include: { achievements: true },
   })
-  const achievementA = await prisma.achievement.findFirstOrThrow({ where: { id: 'Bird Brained' } })
+  const achievementA = await prisma.achievement.findFirstOrThrow({ where: { name: 'Bird Brained' } })
   pA.achievements.push(achievementA)
 
   const pB = await prisma.profile.findFirstOrThrow({
     where: { name: 'b' },
     include: { achievements: true },
   })
-  const achievementB = await prisma.achievement.findFirstOrThrow({ where: { id: 'The Three Musketeers' } })
+  const achievementB = await prisma.achievement.findFirstOrThrow({ where: { name: 'The Three Musketeers' } })
   pB.achievements.push(achievementB)
 
   const pC = await prisma.profile.findFirstOrThrow({
     where: { name: 'c' },
     include: { achievements: true },
   })
-  const achievementC = await prisma.achievement.findFirstOrThrow({ where: { id: 'Treasure Collector' } })
+  const achievementC = await prisma.achievement.findFirstOrThrow({ where: { name: 'Treasure Collector' } })
   pC.achievements.push(achievementC)
 
   const pD = await prisma.profile.findFirstOrThrow({
     where: { name: 'd' },
     include: { achievements: true },
   })
-  const achievementD = await prisma.achievement.findFirstOrThrow({ where: { id: 'Slenderman' } })
+  const achievementD = await prisma.achievement.findFirstOrThrow({ where: { name: 'Slenderman' } })
   pD.achievements.push(achievementD)
 
   const achievements = [

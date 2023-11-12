@@ -184,6 +184,7 @@ model Comment {
 
 model CommentReports {
     commentId        Int       @id @default(autoincrement())
+    reportingUsers   String[]  @@allow('update', true)
 
     comment  Comment   @relation(fields: [commentId], references: [id])
 
