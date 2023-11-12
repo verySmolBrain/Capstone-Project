@@ -10,10 +10,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { EditAchievemnetForm } from '../form/edit-achievement-form'
+import { EditCollectionForm } from '../form/edit-collection-form'
 
-export function EditCollectionButton() {
+export function EditCollectionButton(props: {
+  mutate: () => void
+  id: string
+}) {
+  const [open, setOpen] = React.useState(false)
+  const [editAchievement, setEditAchievement] = React.useState<boolean>(false)
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Pencil className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
@@ -21,9 +28,37 @@ export function EditCollectionButton() {
       </DialogTrigger>
       <DialogContent className="w-auto">
         <DialogHeader>
-          <DialogTitle>Edit collection details</DialogTitle>
+          <DialogTitle>Edit Details</DialogTitle>
+          <div className="flex flex-row gap-4 justify-center">
+            <Button
+              variant={editAchievement ? 'ghost' : 'secondary'}
+              onClick={() => setEditAchievement(!editAchievement)}
+            >
+              Edit Collection Details
+            </Button>
+            <Button
+              variant={editAchievement ? 'secondary' : 'ghost'}
+              onClick={() => setEditAchievement(!editAchievement)}
+            >
+              Edit Achievement Details
+            </Button>
+          </div>
         </DialogHeader>
-        collection details form
+        <div className="max-h-[600px]">
+          {editAchievement ? (
+            <EditAchievemnetForm
+              id={props.id}
+              mutate={props.mutate}
+              setOpen={setOpen}
+            />
+          ) : (
+            <EditCollectionForm
+              id={props.id}
+              mutate={props.mutate}
+              setOpen={setOpen}
+            />
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   )

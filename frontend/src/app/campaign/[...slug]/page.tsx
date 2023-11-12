@@ -133,7 +133,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             </div>
             <div className="pt-4">
               {role === Role.MANAGER && (
-                <EditCampaignButton></EditCampaignButton>
+                <EditCampaignButton name={campaign.name} mutate={mutate} />
               )}
             </div>
           </div>
@@ -149,12 +149,12 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
             </div>
             <div>
               {campaign.isActive && (
-                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
+                <p className="flex flex-row justify-center items-centertext-sm bg-green-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[150px]">
                   {`Active | ${campaign.views} views`}
                 </p>
               )}
               {!campaign.isActive && (
-                <p className="flex flex-row justify-center items-centertext-sm font-semibold bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
+                <p className="flex flex-row justify-center items-centertext-sm bg-red-700 max-w-fit rounded-2xl font-normal break-words lg:w-[60%] xl:w-[70%] min-w-[100px]">
                   {`Inactive`}
                 </p>
               )}

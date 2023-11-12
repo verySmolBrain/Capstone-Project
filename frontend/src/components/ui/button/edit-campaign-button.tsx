@@ -10,10 +10,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { EditCampaignForm } from '../form/edit-campaign-form'
 
-export function EditCampaignButton() {
+export function EditCampaignButton({
+  mutate,
+  name,
+}: {
+  mutate: () => void
+  name: string
+}) {
+  const [open, setOpen] = React.useState(false)
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           className="h-10 w-10 flex-shrink-0"
@@ -25,9 +34,9 @@ export function EditCampaignButton() {
       </DialogTrigger>
       <DialogContent className="w-auto">
         <DialogHeader>
-          <DialogTitle>Edit campaign details</DialogTitle>
+          <DialogTitle>Edit Campaign Details</DialogTitle>
         </DialogHeader>
-        campaign details form
+        <EditCampaignForm name={name} mutate={mutate} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   )

@@ -10,6 +10,12 @@ import { LoadingScreen } from '@/components/ui/page/loading-page'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/carousel'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 const default_profile =
   'https://upload.wikimedia.org/wikipedia/en/c/ce/Goomba.PNG'
@@ -97,14 +103,21 @@ export default function AchievementPage({
             <Skeleton className="h-60 xs:h-96" />
           )}
         </div>
-        <div className="container flex flex-row flex-wrap gap-4 justify-center">
+        <div className="container flex flex-row flex-wrap gap-4 justify-center pb-6">
           <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-semibold truncate">
               {achievement?.name} - {achievement?.description}
             </h2>
             <div className="container border rounded-2xl pt-6 pb-6">
               <h2 className="text-lg md:text-2xl font-semibold truncate">
-                Your progress on {achievement.collection.name}:{' '}
+                Your progress on{' '}
+                <Link
+                  href={`/collection/${achievement.collection.name}`}
+                  className="hover:underline"
+                >
+                  {achievement.collection.name}
+                </Link>
+                :{' '}
                 {inventory
                   ? inventory[achievement.id]?.collectables.length ?? 0
                   : 0}
@@ -144,37 +157,53 @@ export default function AchievementPage({
               </Carousel>
             </div>
           </div>
-          <div className="container border rounded-2xl pt-6 pb-6">
-            <h2 className="text-lg md:text-2xl font-semibold truncate">
-              Users who have this achievement
+          <div className="container flex flex-row flex-wrap gap-4 pb-6">
+            <div className="flex pb-3 md:pb-6 pt-3 md:pt-6">
+              <h2 className="text-lg md:text-2xl font-semibold truncate w-full">
+                Users who have this achievement
+              </h2>
+            </div>
+            <div className="container border rounded-2xl pt-6 pb-6">
               {achievement.users.length ? (
                 <Carousel>
                   {achievement.users.map((user, i) => {
                     return (
                       <div key={i} className="pt-5">
-                        <div className="group relative pl-4">
-                          <Link href={`/profile/${user.name}`}>
-                            <Image
-                              src={user.image ?? default_profile}
-                              height={45}
-                              width={45}
-                              className="h-20 w-20 rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3"
-                              alt="alt"
-                            />
-                          </Link>
-                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="mt-6 mb-6 mr-3 ml-3 w-auto">
+                                <Link href={`/profile/${user.name}`}>
+                                  <Image
+                                    src={user.image ?? default_profile}
+                                    sizes="(max-width: 475px) 6rem"
+                                    width={20}
+                                    height={20}
+                                    className="h-20 w-20 rounded-full object-cover transition-transform duration-300 transform hover:translate-y-3 border-primary border-1"
+                                    alt="alt"
+                                  ></Image>
+                                </Link>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="md:text-base w-full text-center">
+                                {user.name}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     )
                   })}
                 </Carousel>
               ) : (
-                <div className="flex flex-col justify-center items-center h-[200px]">
+                <div className="flex flex-col justify-center items-center h-[250px]">
                   <h2 className="place-self-center">
-                    Seems empty... You could be the first!
+                    No one has this achievement... You could be the first!
                   </h2>
                 </div>
               )}
-            </h2>
+            </div>
           </div>
         </div>
       </section>
