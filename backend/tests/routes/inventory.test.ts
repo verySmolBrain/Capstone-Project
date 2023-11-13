@@ -23,6 +23,7 @@ describe('/inventory', () => {
       description: null,
       image: null,
       reputation: 0,
+      banned: false,
     }
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce(mockProfile)
 
@@ -62,6 +63,7 @@ describe('/inventory', () => {
       description: null,
       image: null,
       reputation: 0,
+      banned: false,
     }
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce(mockProfile)
 
@@ -89,6 +91,7 @@ describe('/inventory', () => {
       description: null,
       image: null,
       reputation: 0,
+      banned: false,
     })
 
     const app = await build({})
@@ -151,6 +154,7 @@ describe('/inventory/:name', () => {
       description: null,
       image: null,
       reputation: 0,
+      banned: false,
     }
     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce(mockProfile)
 
@@ -196,6 +200,7 @@ describe('/inventory', () => {
       description: null,
       image: null,
       reputation: 0,
+      banned: false,
     }
     prismaMockInstance.profile.update.mockResolvedValueOnce(mockProfile)
 

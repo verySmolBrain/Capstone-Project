@@ -314,7 +314,7 @@ export default async function (fastify: FastifyInstance) {
   )
 
   /*
-   *  PUT /user
+   *  DELETE /ban/:id
    *  Bans a user by removing their details
    *  @returns {object} user
    */
@@ -326,18 +326,34 @@ export default async function (fastify: FastifyInstance) {
     const { id } = req.params
     const prisma = await requestHandler(token)
     const currProfile = await prisma.profile.findFirst({ where: { id: id } })
-    if (currProfile) {
+    if (currProfile && !currProfile.banned) {
       await prisma.profile.update({
         where: { id: id },
         data: {
           name: 'BANNED-' + currProfile.name,
           description: 'This user has been banned for disruptive behaviour.',
           image: null,
+          banned: true,
         },
       })
-
       const supabase = createClient(supabase_url!, supabase_key!)
       await supabase.auth.admin.deleteUser(id)
     }
+  })
+  /*
+   *  GET /banned
+   *  Returns the if the user is banned or not
+   *  @returns {boolean} banned status
+   */
+  fastify.get('/banned/:id', async (req: FastifyRequest<{ Params: { id: string } }>) => {
+    const token = req.headers['authorization'] as string
+
+    const prisma = await requestHandler(token)
+    const user = await prisma.profile.findUniqueOrThrow({
+      where: {
+        id: extractId(token),
+      },
+    })
+    return { banned: user.banned }
   })
 }

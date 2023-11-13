@@ -201,6 +201,8 @@ type Profile = {
   wishlist: CollectableCount[]
   wares: CollectableCount[]
   achievements: Achievement[]
+  banned: boolean
+  user: User
 }
 
 type CollectionCollectable = {

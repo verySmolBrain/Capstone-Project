@@ -54,6 +54,7 @@ model Profile {
   chats   Chat[]            @relation("ChatsUsers")
   posts   Post[]
   comments Comment[]
+  banned  Boolean  @default(false) @@allow('all', true)
 
   @@allow('create,read', true)
   @@allow('update,delete', auth() == user)

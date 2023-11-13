@@ -77,7 +77,7 @@ export default async function (fastify: FastifyInstance) {
       },
       include: {
         comments: {
-          include: { author: true },
+          include: { author: { include: { user: true } } },
         },
         author: {
           include: {
@@ -113,7 +113,7 @@ export default async function (fastify: FastifyInstance) {
         include: {
           comments: {
             include: {
-              author: true,
+              author: { include: { user: true } },
             },
           },
           author: {
