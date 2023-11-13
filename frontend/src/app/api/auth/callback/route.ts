@@ -29,9 +29,9 @@ export async function GET(request: NextRequest) {
   )
 
   if (!create_profile_resp.ok) {
-    return new NextResponse('Error creating profile', {
-      status: 500,
-    })
+    const supabase = createRouteHandlerClient<Database>({ cookies })
+    supabase.auth.signOut()
+    return NextResponse.redirect(`${requestUrl.origin}/banned`)
   }
 
   return NextResponse.redirect(requestUrl.origin)
