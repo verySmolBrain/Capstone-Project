@@ -213,7 +213,7 @@ export default async function (fastify: FastifyInstance) {
           },
         })
 
-        await rawPrisma.collectableCount.update({
+        const inventory = await rawPrisma.collectableCount.update({
           where: {
             id: sellerCollectableCount.id,
           },
@@ -224,6 +224,41 @@ export default async function (fastify: FastifyInstance) {
           },
         })
 
+        if (inventory.count === 0) {
+          await rawPrisma.collectableCount.delete({
+            where: {
+              id: sellerCollectableCount.id,
+            },
+          })
+        }
+
+        const sellerWaresCount = await rawPrisma.collectableCount.findFirst({
+          where: {
+            name: trade.collectableName,
+            waresId: trade.sellerId,
+          },
+        })
+
+        if (sellerWaresCount) {
+          const wares = await rawPrisma.collectableCount.update({
+            where: {
+              id: sellerWaresCount.id,
+            },
+            data: {
+              count: {
+                decrement: 1,
+              },
+            },
+          })
+
+          if (wares.count === 0) {
+            await rawPrisma.collectableCount.delete({
+              where: {
+                id: sellerWaresCount.id,
+              },
+            })
+          }
+        }
         const buyerCollectableCount = await rawPrisma.collectableCount.findFirst({
           where: {
             name: trade.collectableName,
@@ -250,6 +285,77 @@ export default async function (fastify: FastifyInstance) {
               },
             },
           })
+        }
+        const buyerWishlist = await rawPrisma.collectableCount.findFirst({
+          where: {
+            name: trade.collectableName,
+            wishlistId: trade.buyerId,
+          },
+        })
+
+        if (buyerWishlist) {
+          const wishlist = await rawPrisma.collectableCount.update({
+            where: {
+              id: buyerWishlist.id,
+            },
+            data: {
+              count: {
+                decrement: 1,
+              },
+            },
+          })
+
+          if (wishlist.count === 0) {
+            await rawPrisma.collectableCount.delete({
+              where: {
+                id: buyerWishlist.id,
+              },
+            })
+          }
+        }
+
+        // check for achievement completion
+        const cc = await prisma.collection.findMany({
+          where: {
+            collectables: {
+              some: {
+                name: trade.collectableName,
+              },
+            },
+          },
+        })
+        for (const c of cc) {
+          // check if user has completed the collection
+          const target = await prisma.collection.findFirstOrThrow({
+            where: { name: c.name },
+            include: { collectables: true },
+          })
+
+          const profile = await prisma.profile.findFirstOrThrow({
+            where: { id: trade.buyerId },
+            include: { inventory: true, achievements: true },
+          })
+
+          const inventoryCollection = profile.inventory.filter((c) => target.collectables.find((a) => a.name == c.name))
+
+          if (inventoryCollection.length == target.collectables.length) {
+            const p = await prisma.profile.findFirstOrThrow({
+              where: { id: trade.buyerId },
+              include: { achievements: true },
+            })
+            const achievement = await prisma.achievement.findFirstOrThrow({
+              where: { id: c.name },
+            })
+            p.achievements.push(achievement)
+            await rawPrisma.profile.update({
+              where: { id: trade.buyerId },
+              data: {
+                achievements: {
+                  connect: p.achievements,
+                },
+              },
+            })
+          }
         }
       }
 
