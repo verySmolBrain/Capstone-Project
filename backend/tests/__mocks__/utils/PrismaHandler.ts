@@ -16,7 +16,7 @@ jest.mock('@Source/utils/supabaseUtils', () => ({
 
 beforeEach(() => {
   mockReset(prismaMock)
-  // console.log = jest.fn()
+  console.log = jest.fn()
 })
 
 export const prismaMockInstance = prismaMock as unknown as DeepMockProxy<typeof prismaMock>
