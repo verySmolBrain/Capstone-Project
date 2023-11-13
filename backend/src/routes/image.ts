@@ -36,7 +36,10 @@ export default async function (fastify: FastifyInstance) {
       throw new uploadError()
     }
 
-    const changedImage = await prisma.profile.updateMany({
+    const changedImage = await prisma.profile.update({
+      where: {
+        id: extractId(token),
+      },
       data: {
         image: upload_res.url,
       },
