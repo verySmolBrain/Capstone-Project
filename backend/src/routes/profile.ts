@@ -192,7 +192,10 @@ export default async function (fastify: FastifyInstance) {
     const { description } = req.body
     const prisma = await requestHandler(token)
 
-    const changedDescription = await prisma.profile.updateMany({
+    const changedDescription = await prisma.profile.update({
+      where: {
+        id: extractId(token),
+      },
       data: {
         description: description,
       },
@@ -212,7 +215,10 @@ export default async function (fastify: FastifyInstance) {
     const { image } = req.body
     const prisma = await requestHandler(token)
 
-    const changedImage = await prisma.profile.updateMany({
+    const changedImage = await prisma.profile.update({
+      where: {
+        id: extractId(token),
+      },
       data: {
         image: image,
       },
