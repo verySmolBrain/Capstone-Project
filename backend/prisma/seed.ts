@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client'
 // admin : admin@test.com.au : 564620f7-f07c-49a0-b421-99e365b03b24
 // manager : manager@test.com : c6f5c8d1-c7e4-4ace-a053-920f82656950
 
-// user A : a@test.com : 21454210-8f3b-47cc-89cc-89a9ebc5c936
+// user A : a@test.com : f4875838-b801-4824-aa9a-42766f6bfa23
 // user B : b@test.com : 1bd1afa6-4b79-4888-bcaa-dfd2f4bf35f5
 // user C : c@test.com : 104d0ebb-558d-47fe-8c52-f257c6a238a8
 // user D : d@test.com : 1054e834-0881-4019-bf13-49f9f9853e28
@@ -271,7 +271,7 @@ async function main() {
 
   const a = await prisma.user.create({
     data: {
-      id: '21454210-8f3b-47cc-89cc-89a9ebc5c936',
+      id: 'f4875838-b801-4824-aa9a-42766f6bfa23',
       profile: {
         create: {
           name: 'a',

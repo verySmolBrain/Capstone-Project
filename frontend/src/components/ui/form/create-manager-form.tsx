@@ -31,7 +31,7 @@ export function CreateManagerForm() {
     const email = String(data.email)
     const password = String(data.password)
 
-    const signUpResult = await fetch('/api/auth/register', {
+    const signUpResult = await fetch('/api/auth/register/manager', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,34 +50,6 @@ export function CreateManagerForm() {
         variant: 'destructive',
       })
     }
-    const supabase = createClientComponentClient<Database>()
-    const token = (await supabase.auth.getSession()).data.session?.access_token
-    const supabase_response = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    console.log(
-      supabase_response.data.user?.id,
-      supabase_response.data.user?.email,
-      token
-    )
-
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_HOSTNAME}/manager`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'update-type': 'name',
-          authorization: token!,
-        },
-        body: JSON.stringify({
-          id: supabase_response.data.user?.id,
-        }),
-      }
-    )
-
-    console.log(res)
 
     if (signUpResult?.redirected && signUpResult?.url) {
       // We need to redirect manually as we're using fetch instead of form
