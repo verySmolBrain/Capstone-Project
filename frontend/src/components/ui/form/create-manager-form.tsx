@@ -26,8 +26,6 @@ export function CreateManagerForm() {
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
-    const email = String(data.email)
-    const password = String(data.password)
 
     const signUpResult = await fetch('/api/auth/register/manager', {
       method: 'POST',
