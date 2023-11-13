@@ -142,13 +142,13 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
                         {dayjs(c.createdAt).fromNow()}
                       </p>
                       <div className="float-right pt-2">
-                        {(forumPost.author.user.role.toString() as Role) ===
+                        {(c.author.user.role.toString() as Role) ===
                           Role.MANAGER && (
                           <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-secondary rounded-2xl max-w-fit min-w-[150px]">
                             Campaign Manager
                           </p>
                         )}{' '}
-                        {(forumPost.author.user.role.toString() as Role) ===
+                        {(c.author.user.role.toString() as Role) ===
                           Role.ADMIN && (
                           <p className="flex flex-row justify-center items-center text-sm font-semibold text-primary bg-destructive rounded-2xl max-w-fit min-w-[100px]">
                             Admin

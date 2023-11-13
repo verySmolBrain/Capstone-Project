@@ -97,13 +97,14 @@ export default function TradeList({
                   </div>
 
                   <div className="flex flex-row gap-2">
-                    <p className="text-xs">Posted by</p>
-                    <p className="text-xs underline">{trade.seller.name}</p>
-                    <p className="text-xs">
-                      {' '}
-                      {dayjs(trade.createdAt).fromNow()}
+                    <p className="text-s">Seller: </p>
+                    <p className="text-s underline">{trade.seller.name}</p>
+                    <p className="text-s">Buyer: </p>
+                    <p className="text-s underline">{trade.buyer.name}</p>
+                    <p className="text-s">
+                      | {dayjs(trade.createdAt).fromNow()}
                     </p>
-                    <p className="text-xs">for ${trade.price}</p>
+                    <p className="text-s">for ${trade.price}</p>
                   </div>
                 </div>
 

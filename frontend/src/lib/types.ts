@@ -97,6 +97,7 @@ type PostComment = {
     description: string | null
     image: string | null
     reputation: number
+    user: User
   }
 } & {
   id: number
