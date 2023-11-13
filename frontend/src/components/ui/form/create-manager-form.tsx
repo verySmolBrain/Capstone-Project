@@ -13,8 +13,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { userAuthSchema } from '@/lib/validation/auth'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/lib/database.types'
 
 type FormData = z.infer<typeof userAuthSchema>
 
