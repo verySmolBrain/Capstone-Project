@@ -75,8 +75,8 @@ describe('/collection', () => {
   * Returns a collection by name
   * @returns {object} collection
   */
-describe('/collection:name', () => {
-  it('Successfully creates collection - return 200', async () => {
+describe('/collection:name - GET', () => {
+  it('Successfully retrives collection - return 200', async () => {
     prismaMockInstance.collection.findFirstOrThrow.mockResolvedValueOnce({
       name: "My Collection",
       image: "collection.jpg",
@@ -102,14 +102,54 @@ describe('/collection:name', () => {
   })
 })
 
-  /*
-   * PUT /collection/:name
+/**
+   *  PUT
+   *  Updates a collection
+   *  @param {string} name
+   *  @param {string} newName
+   *  @param {string} image
+   *  @param {string[]} tags
+  */
+describe('/collection:name - PUT', () => {
+  it('Successfully u[dates] collection - return 200', async () => {
+    prismaMockInstance.collection.update.mockResolvedValueOnce({
+      name: "My Collection",
+      image: "collection.jpg",
+      tags: ["collection", "hobby"],
+  })
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/collection/:name',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        name: 'Yabbin',
+        newName: 'Yabbin',
+      },
+      body: {
+        image: 'Yabbin',
+        tages: ['Yabbin'],
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("{\"name\":\"My Collection\",\"image\":\"collection.jpg\",\"tags\":[\"collection\",\"hobby\"]}")
+
+    await app.close()
+  })
+})
+
+  /** 
+   * PUT /collection/:collectionName/:collectableName
    * Updates a collection by name
    * @param {string} name
    * @param {string} image
    * @returns {object} collection
    */
-describe('/collection/:collectionName/:collectableName', () => {
+describe('/collection/:collectionName/:collectableName - PUT', () => {
   it('Successfully creates collection - return 200', async () => {
     prismaMockInstance.collection.update.mockResolvedValueOnce({
       name: "My Collection",

@@ -236,11 +236,11 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
-   *  GET /campaign/reviews/:name
-   *  Gets the campaigns reviews
+  /** 
+   *  GET /reviews/campaign/:name
+   *  Gets the campaigns reviews by name
    *  @param {float} review
-   *  @returns a list of {campaign: Campaign, review: float, description: string}
+   *  @returns a list of {reviewer: Reviewer, review: float, description: string}
    */
 
   fastify.get('/reviews/campaign/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
@@ -271,7 +271,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /**
-   * POST /campaign/reviews/:name
+   * PUT /reviews/campaign/:name
    * Creates a review for a campaign
    * @param {float} review
    * @param {string} description
@@ -390,7 +390,7 @@ export default async function (fastify: FastifyInstance) {
       })
       const existingMetricIndex = occurrencesMap.findIndex((metric) => metric.Poster === authorName?.name);
 
-      // If the time exists, update its price
+      // If the user exists, update its post no
       if (existingMetricIndex !== -1) {
         occurrencesMap.at(existingMetricIndex)!.Posts += 1;
       } else {

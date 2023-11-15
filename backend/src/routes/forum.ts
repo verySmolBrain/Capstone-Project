@@ -3,7 +3,7 @@ import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
   /*
-   *  POST /forum/:campaignName/post
+   *  POST /:campaignName/forum
    *  Creates a post in the campaign forum
    *  @returns {object} chat
    */
@@ -129,7 +129,7 @@ export default async function (fastify: FastifyInstance) {
   )
 
   /*
-   *  PUT /forum/:campaignName/post/:postName
+   *  POST /forum/:postId
    *  Sends a message to the campaign forum
    *  @returns {object} chat
    */
