@@ -19,6 +19,7 @@ export function WelcomePage() {
             size: 'lg',
             params:
               'transition-transform duration-300 transform active:translate-y-3',
+            includeIcon: false,
           }}
           url={'/register'}
         />
