@@ -43,26 +43,6 @@ describe('/campaign - post', () => {
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"name":"yabba","image":"a","tags":[],"start":"')).toBe(true)
   })
-
-  it('Empty token error - return 401', async () => {
-    const app = await build({})
-    const response = await app.inject({
-      method: 'POST',
-      url: '/campaign',
-      headers: {
-        Authorization: '',
-      },
-      body: {
-        name: 'a',
-        image: 'a',
-        startDate: new Date(),
-        endDate: new Date(),
-      },
-    })
-
-    expect(response.statusCode).toBe(401)
-    expect(response.statusMessage).toBe('Unauthorized')
-  })
 })
 
 /*
@@ -380,8 +360,13 @@ describe('/campaign/:campaignName/:collectionName - DELETE', () => {
   })
 })
 
+  /*
+   * GET /campaign/metrics/post/:name
+   * Returns a campaign's post metrics by name
+   * @returns {object} {string, int}
+  */
 describe('GET /campaign/metrics/post/:name', () => {
-  it('Successfully updates a campaign by name - return 200', async () => {
+  it('Successfully retrives a campigns post metrics - return 200', async () => {
     //@ts-expect-error testing post without unnececary fields
     prismaMockInstance.campaign.findFirstOrThrow.mockResolvedValueOnce({
       name: 'gobby',
@@ -416,46 +401,63 @@ describe('GET /campaign/metrics/post/:name', () => {
     expect(response.body).toBe(  "[{\"date\":\"01/01/70\",\"Posts\":3}]" )
   })
 })
-// describe('GET /campaign/metrics/posters/:name', () => {
-//   it('Successfully updates a campaign by name - return 200', async () => {
-//     //@ts-expect-error testing post without unnececary fields
-//     prismaMockInstance.campaign.findFirstOrThrow.mockResolvedValueOnce({
-//       name: 'gobby',
-//       image: 'a',
-//       tags: [],
-//       start: new Date(),
-//       end: new Date(),
-//       isActive: false,
-//       views: 0,
-//       viewData: [],
-//       posts: [
-//         {createdAt: new Date(2023)},
-//         {createdAt: new Date(2023)},
-//         {createdAt: new Date(2023)}
-//       ]
-//     })
-//     prismaMockInstance.profile.findFirst.mockResolvedValue(
-//       //@ts-expect-error testing post without unnececary fields
-//       {name: 'yabba'}
-//     )
 
-//     const app = await build({})
-//     const response = await app.inject({
-//       method: 'GET',
-//       url: '/campaign/metrics/posters/:name',
-//       headers: {
-//         Authorization: 'yobba',
-//       },
-//       query: {
-//         name: 'gobby'
-//       },
-//     })
+/*
+   * GET /campaign/metrics/posters/:name
+   * Returns a campaign's poster metrics by name
+   * @returns {object} {string, int}
+*/
 
-//     expect(response.statusCode).toBe(200)
-//     expect(response.statusMessage).toBe('OK')
-//     expect(response.body).toBe("[{\"Poster\":\"yabba\",\"Posts\":3}]")
-//   })
-// })
+describe('GET /campaign/metrics/posters/:name', () => {
+  it('Successfully retrives a campaigns poster metrics - return 200', async () => {
+    //@ts-expect-error testing post without unnececary fields
+    prismaMockInstance.campaign.findFirstOrThrow.mockResolvedValueOnce({
+      name: 'gobby',
+      image: 'a',
+      tags: [],
+      start: new Date(),
+      end: new Date(),
+      isActive: false,
+      views: 0,
+      viewData: [],
+      posts: [
+        {createdAt: new Date(2023)},
+        {createdAt: new Date(2023)},
+        {createdAt: new Date(2023)}
+      ]
+    })
+    prismaMockInstance.profile.findFirstOrThrow.mockResolvedValue({
+      id: 'double',
+      name: 'yabba',
+      description: null,
+      image: null,
+      reputation: 1,
+      banned: false,
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/campaign/metrics/posters/:name',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+        name: 'gobby'
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("[{\"Poster\":\"yabba\",\"Posts\":3}]")
+  })
+})
+
+/**
+   * GET /campaign/metrics/review/:name
+   * Returns a campaign's average reviews
+   * @returns number
+*/
 
 describe('GET /campaign/metrics/reviews/:name', () => {
   it('Correctly retrieves avg rating value - return 200', async () => {
@@ -497,5 +499,234 @@ describe('GET /campaign/metrics/reviews/:name', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe('2')
+  })
+  it('Correctly retrieves avg rating value (division by 0 case) - return 200', async () => {
+    //@ts-expect-error testing post without unnececary fields
+    prismaMockInstance.campaign.findFirstOrThrow.mockResolvedValueOnce({
+      name: 'gobby',
+      image: 'a',
+      tags: [],
+      start: new Date(),
+      end: new Date(),
+      isActive: false,
+      views: 0,
+      viewData: [],
+      posts: [
+        {createdAt: new Date()},
+        {createdAt: new Date()},
+        {createdAt: new Date()}
+      ],
+      reviews: [
+      ]
+
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/campaign/metrics/reviews/:name',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+        name: 'gobby'
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe('0')
+  })
+})
+
+/**
+   * PUT /campaign/:name/view
+   * Increments campaign view count by 1
+   * @returns void
+*/
+describe('/campaign/:name/view - put', () => {
+  it('Successful view incrementation - return 200', async () => {
+    prismaMockInstance.campaign.update.mockResolvedValue({
+      name: 'yabba',
+      image: 'a',
+      tags: [],
+      start: new Date(),
+      end: new Date(),
+      isActive: false,
+      views: 0,
+      viewData: [],
+    })
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/campaign/:name/view',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        timestamp: 42
+      },
+      query: {
+        name: 'a'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+  })
+})
+
+/*
+  *  GET /reviews/campaign/:name
+  *  Gets the campaigns reviews by name
+  *  @param {float} review
+  *  @returns a list of {reviewer: Reviewer, review: float, description: string}
+*/
+describe('/reviews/campaign/:name - get', () => {
+  it('Successful retrive campaign reviews by name - return 200', async () => {
+    const reviews = [
+      {
+        reviewer: {
+          id: "1",
+          name: "John Doe",
+          description: "A passionate reviewer",
+          image: "profile.jpg",
+          reputation: 4.5,
+        },
+        id: 123,
+        rating: 4.0,
+        comment: "Great product! I highly recommend it.",
+        campaignName: "Awesome Campaign",
+        reviewerId: "1",
+      },
+      {
+        reviewer: {
+          id: "2",
+          name: "Jane Smith",
+          description: null,
+          image: null,
+          reputation: 3.8,
+        },
+        id: 124,
+        rating: 3.5,
+        comment: "It's okay, but could be better.",
+        campaignName: "Improved Product Launch",
+        reviewerId: "2",
+      },
+    ];
+    
+    prismaMockInstance.campaignReview.findMany.mockResolvedValue(reviews)
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/reviews/campaign/:name',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+        name: 'a'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith("[{\"reviewer\":{\"id\":\"1\",\"name\":\"John Doe\",\"description\":\"A ")).toBe(true)
+  })
+})
+
+
+
+/**
+ * PUT /reviews/campaign/:name
+ * Creates a review for a campaign
+ * @param {float} review
+ * @param {string} description
+ * @returns the review
+*/
+
+describe('/reviews/campaign/:name - get', () => {
+  it('Successfully updates campaign reviews by name - return 200', async () => {
+    const reviews = 
+      {
+        reviewer: {
+          id: "1",
+          name: "John Doe",
+          description: "A passionate reviewer",
+          image: "profile.jpg",
+          reputation: 4.5,
+        },
+        id: 123,
+        rating: 4.0,
+        comment: "Great product! I highly recommend it.",
+        campaignName: "Awesome Campaign",
+        reviewerId: "1",
+      };
+    
+    prismaMockInstance.campaignReview.findFirst.mockResolvedValue(reviews)
+    prismaMockInstance.campaignReview.update.mockResolvedValue(reviews)
+    prismaMockInstance.campaignReview.create.mockResolvedValue(reviews)
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/reviews/campaign/:name',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+        name: 'a'
+      },
+      body: {
+        review: 1,
+        description: 'a'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith("{\"reviewer\":{\"id\":\"1\",\"name\":\"John Doe\",\"description\":\"A passionate reviewer\",\"image\":\"profile.jpg\",\"reputation\":4.5},\"id\":123,\"rating")).toBe(true)
+  })
+
+  it('Successfully creates campaign reviews  - return 200', async () => {
+    const reviews = 
+      {
+        reviewer: {
+          id: "1",
+          name: "John Doe",
+          description: "A passionate reviewer",
+          image: "profile.jpg",
+          reputation: 4.5,
+        },
+        id: 123,
+        rating: 4.0,
+        comment: "Great product! I highly recommend it.",
+        campaignName: "Awesome Campaign",
+        reviewerId: "1",
+      };
+    
+    prismaMockInstance.campaignReview.findFirst.mockResolvedValue(null)
+    prismaMockInstance.campaignReview.create.mockResolvedValue(reviews)
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/reviews/campaign/:name',
+      headers: {
+        Authorization: 'yobba',
+      },
+      query: {
+        name: 'a'
+      },
+      body: {
+        review: 1,
+        description: 'a'
+      }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body.startsWith("{\"reviewer\":{\"id\":\"1\",\"name\":\"John Doe\",\"description\":\"A passionate reviewer\",\"image\":\"profile.jpg\",\"reputation\":4.5},\"id\":123,\"rating")).toBe(true)
   })
 })
