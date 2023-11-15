@@ -4,7 +4,8 @@ import { LucideIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
-// General button framework for redirect buttons: takes in a Lucide Icon and the url to redirect to
+// General button framework for redirect buttons: takes in a Lucide Icon and the url to redirect to, with options for text
+// and the associated params
 export function RedirectButton({
   url,
   Icon,
