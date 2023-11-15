@@ -64,29 +64,7 @@ describe('/trade/buy - GET', () => {
 
 describe('/trade/history - GET', () => {
   it('Successfully retrieve history - return 200', async () => {
-    const trades: ({
-      collectable: {
-          name: string;
-          image: string | null;
-          tags: string[];
-      };
-      seller: {
-          id: string;
-          name: string;
-          description: string | null;
-          image: string | null;
-          reputation: number;
-      };
-      buyer: {
-          id: string;
-          name: string;
-          description: string | null;
-          image: string | null;
-          reputation: number;
-      };
-  } & {
-      [key: string]: any; // Additional properties
-  })[] = [
+    const trades= [
       {
           collectable: {
               name: "Rare Coin",
@@ -107,8 +85,6 @@ describe('/trade/history - GET', () => {
               image: "alice_buyer.jpg",
               reputation: 4.5,
           },
-          additionalProperty: "Additional data",
-          // Add more additional properties as needed
       },
       {
           collectable: {
@@ -130,9 +106,7 @@ describe('/trade/history - GET', () => {
               image: "bob_buyer.jpg",
               reputation: 4.0,
           },
-          // No additional properties in this example
       },
-      // Add more trades as needed
   ];
   // @ts-expect-error: testing only necessary fields
     prismaMockInstance.trade.findMany.mockResolvedValue(trades)
