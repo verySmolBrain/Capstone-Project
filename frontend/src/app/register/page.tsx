@@ -2,10 +2,11 @@ import React from 'react'
 
 import { UserAuthForm } from '@/components/ui/form/signup-form'
 import { IconLogo } from '@/components/ui/assets/IconLogo'
-import { BackButton } from '@/components/ui/button/back-button'
 import Link from 'next/link'
 
 import Image from 'next/image'
+import { RedirectButton } from '@/components/ui/button/redirect-button'
+import { ArrowLeft } from 'lucide-react'
 
 export default function SignupPage() {
   return (
@@ -22,7 +23,17 @@ export default function SignupPage() {
       </div>
 
       <div className="mx-auto flex flex-col justify-center space-y-3 w-[350px]">
-        <BackButton />
+        <RedirectButton
+          Icon={ArrowLeft}
+          url="/"
+          text={{
+            variant: 'outline',
+            content: 'Back',
+            params: 'absolute left-4 top-4 md:left-8 md:top-4',
+            size: 'sm',
+            includeIcon: true,
+          }}
+        />
         <div className="flex flex-col text-center">
           <IconLogo className="w-16 h-16 mx-auto" />
           <h1 className="text-2xl font-semibold tracking-tight">

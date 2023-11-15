@@ -16,6 +16,7 @@ export function DefaultNavBar() {
               size: 'sm',
               params:
                 'transition-transform duration-300 transform active:translate-y-3',
+              includeIcon: false,
             }}
             Icon={LogIn}
           />

@@ -27,20 +27,40 @@ export function RedirectButton({
         content: string
         size: 'sm' | 'lg' | 'default' | 'icon' | null | undefined
         params: string
+        includeIcon: boolean
       }
     | undefined
 }) {
+  if (text) {
+    return (
+      <Link href={url}>
+        {text.includeIcon ? (
+          <Button
+            variant={text.variant}
+            size={text.size}
+            className={text.params}
+          >
+            <Icon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all mr-2 h-4 w-4" />
+            {text.content}
+          </Button>
+        ) : (
+          <Button
+            variant={text.variant}
+            size={text.size}
+            className={text.params}
+          >
+            {text.content}
+          </Button>
+        )}
+      </Link>
+    )
+  }
+
   return (
     <Link href={url}>
-      {text ? (
-        <Button variant={text.variant} size={text.size} className={text.params}>
-          {text.content}
-        </Button>
-      ) : (
-        <Button variant="outline" size="icon">
-          <Icon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
-        </Button>
-      )}
+      <Button variant="outline" size="icon">
+        <Icon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+      </Button>
     </Link>
   )
 }
