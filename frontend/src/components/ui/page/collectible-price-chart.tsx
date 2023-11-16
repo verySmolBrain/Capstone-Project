@@ -1,7 +1,6 @@
 'use client'
 import * as React from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-
 import {
   LineChart,
   Line,
@@ -13,10 +12,10 @@ import {
 } from 'recharts'
 import { Database } from '@/lib/database.types'
 import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import useSWR from 'swr'
 
-dayjs.extend(duration)
+dayjs.extend(relativeTime)
 
 export function CollectiblePriceChart(props: { slug: string }) {
   const [priceData, setPriceData] = React.useState<PriceData>()
@@ -49,13 +48,12 @@ export function CollectiblePriceChart(props: { slug: string }) {
       const now = dayjs()
       const currIntervalPrices = priceResult.filter(
         (x: { date: number; price: number }) =>
-          dayjs(x.date).hour() === now.hour()
+          dayjs(x.date).year() === now.year()
       )
 
       const currPriceData = currIntervalPrices.map(
         (x: { date: number; price: number }) => ({
-          date:
-            dayjs.duration(now.diff(dayjs(x.date))).minutes() + ' minutes ago',
+          date: dayjs(x.date).fromNow(),
           Price: x.price,
         })
       )
