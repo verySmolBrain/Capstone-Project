@@ -73,6 +73,10 @@ As an explanation for the variables:
 
 (**You can setup your own Supabase and Cloudinary account. Alternatively, we have included our secrets in our Report.**)
 
+### Requirements Without Docker
+
+If you don't have Docker installed you will have to ensure `npm` and `node` are installed. For `npm` we recommend a version above 9 and for `node` we recommend a version above 18. Our personal recommendation for installing a manager for this is [Volta](https://volta.sh/). Simply follow the link and instructions for your platform and it will install the latest `node` and `npm` versions for you.
+
 ### Local Production
 
 Install dependencies using install script in `package.json` in root folder:
@@ -97,7 +101,7 @@ in the backend folder. This will generate the types for the Database schema auto
 
 ### Docker Compose
 
-Run the following command to start the project:
+Docker is not strictly necessary but it makes running the application very easy as it is platform agnostic. Simply install [Docker Desktop](https://www.docker.com/products/docker-desktop/) here then open your terminal in the project root directory and run the following command to start the project:
 
 ```sh
 docker compose up
