@@ -3,7 +3,7 @@ import { requestHandler, extractId, rawPrisma } from '@Source/utils/supabaseUtil
 import { throwInvalidActionError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    * GET /trade/sell
    * returns all sell offer trades of a user
    * @param {string} query
@@ -30,7 +30,7 @@ export default async function (fastify: FastifyInstance) {
     return trades
   })
 
-  /*
+  /**
    * GET /trade/buy
    * returns all sell offer trades of a user
    * @param {string} query
@@ -57,7 +57,7 @@ export default async function (fastify: FastifyInstance) {
     return trades
   })
 
-  /*
+  /**
    * GET /trade/history
    * returns all sell offer trades of a user
    * @param {string} query
@@ -91,7 +91,7 @@ export default async function (fastify: FastifyInstance) {
     return trades
   })
 
-  /*
+  /**
    * POST /trade
    * creates a trade
    * @param {string} buyerId
@@ -154,7 +154,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * PUT /trade/status/:id/:status
    * updates a trade's status by id
    * @param {string} id
@@ -359,7 +359,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * GET /trade/:collectableName
    * returns all trades of a collectable
    * @param {string} query
@@ -394,20 +394,4 @@ export default async function (fastify: FastifyInstance) {
 
     return tradeList
   })
-
-  /*
-   * PUT /trade/collectable/:id
-   * updates a trade's collectable by id
-   * @param {string} id
-   * @param {string} collectableId
-   * @returns {object} trade
-   */
-
-  /*
-   * PUT /trade/price/:id
-   * updates a trade's price by id
-   * @param {string} id
-   * @param {number} price
-   * @returns {object} trade
-   */
 }

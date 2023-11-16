@@ -47,6 +47,7 @@ describe('/achievement - get', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe("[{\"users\":[{\"id\":\"3\",\"name\":\"Bob Johnson\",\"description\":\"Contributed to a project\",\"image\":\"user3.jpg\",\"reputation\":8},{\"id\":\"4\",\"name\":\"Alice Brown\",\"description\":\"Helped others in the community\",\"image\":\"user4.jpg\",\"reputation\":12}],\"id\":\"achievement2\",\"name\":\"Community Hero\",\"description\":\"Recognizing outstanding contributions to the community\",\"image\":\"achievement2.jpg\"}]")
+    await app.close()
   })
 })
 /*
@@ -97,6 +98,7 @@ describe('/achievement/:id - get', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe("{\"users\":[{\"id\":\"3\",\"name\":\"Bob Johnson\",\"description\":\"Contributed to a project\",\"image\":\"user3.jpg\",\"reputation\":8},{\"id\":\"4\",\"name\":\"Alice Brown\",\"description\":\"Helped others in the community\",\"image\":\"user4.jpg\",\"reputation\":12}],\"id\":\"achievement2\",\"name\":\"Community Hero\",\"description\":\"Recognizing outstanding contributions to the community\",\"image\":\"achievement2.jpg\"}")
+    await app.close()
   })
 })
 
@@ -157,6 +159,7 @@ describe('/achievement/:id - PUT', () => {
       expect(response.statusCode).toBe(200)
       expect(response.statusMessage).toBe('OK')
       expect(response.body).toBe("{\"users\":[{\"id\":\"3\",\"name\":\"Bob Johnson\",\"description\":\"Contributed to a project\",\"image\":\"user3.jpg\",\"reputation\":8},{\"id\":\"4\",\"name\":\"Alice Brown\",\"description\":\"Helped others in the community\",\"image\":\"user4.jpg\",\"reputation\":12}],\"id\":\"achievement2\",\"name\":\"Community Hero\",\"description\":\"Recognizing outstanding contributions to the community\",\"image\":\"achievement2.jpg\"}")
+      await app.close()
     })
   })
 
@@ -198,7 +201,7 @@ describe('/achievement/:id - PUT', () => {
   
       expect(response.statusCode).toBe(200)
       expect(response.statusMessage).toBe('OK')
-      expect(response.body).toBe("{\"id\":\"achievement2\",\"name\":\"Community Hero\",\"description\":\"Recognizing outstanding contributions to the community\",\"image\":\"achievement2.jpg\"}"
-      )
+      expect(response.body).toBe("{\"id\":\"achievement2\",\"name\":\"Community Hero\",\"description\":\"Recognizing outstanding contributions to the community\",\"image\":\"achievement2.jpg\"}")
+      await app.close()
     })
   })

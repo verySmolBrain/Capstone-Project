@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    *  GET /collectable
    *  Returns all collectables
    *  @returns {object} collectables
@@ -14,7 +14,7 @@ export default async function (fastify: FastifyInstance) {
     return collectables
   })
 
-  /*
+  /**
    *  GET /collectable/:name
    *  Returns a collectable by name
    *  @returns {object} collectable
@@ -32,8 +32,8 @@ export default async function (fastify: FastifyInstance) {
     return collectable
   })
 
-  /*
-   *  POST
+  /**
+   *  POST /collectable
    *  Creates a collectable
    *  @param {string} name
    *  @param {string} image
@@ -57,8 +57,8 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
-   *  PUT
+  /**
+   *  PUT /collectable/:name
    *  Updates a collectable
    *  @param {string} name
    *  @param {string} image
@@ -85,8 +85,8 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
-   *  DELETE
+  /**
+   *  DELETE /collectable/:name
    *  Deletes a collectable
    *  @param {string} name
    */

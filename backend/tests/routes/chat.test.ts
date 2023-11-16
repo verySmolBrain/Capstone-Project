@@ -36,6 +36,7 @@ describe('/chat:receiverName', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe('{"id":3}')
+    await app.close()
   })
 
   it('Successful chat creation (empty old chat) - return 200', async () => {
@@ -66,6 +67,7 @@ describe('/chat:receiverName', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe('{"id":4}')
+    await app.close()
   })
 
   it('Chat creation message Oneself Error - return 400', async () => {
@@ -98,6 +100,7 @@ describe('/chat:receiverName', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -180,6 +183,7 @@ describe('/chat:receiverName', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"messages":[{"type":1,"content":"Hello",')).toBe(true)
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -197,6 +201,7 @@ describe('/chat:receiverName', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 
@@ -234,6 +239,7 @@ describe('/chat', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toBe('{"chats":[{"id":1,"receiver":{"sender":1}}]}')
+    await app.close()
   })
 
   it('Empty token - 401', async () => {
@@ -265,6 +271,7 @@ describe('/chat', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 
@@ -332,6 +339,7 @@ describe('/chat/send/:receiverName', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.body.startsWith('{"id":1,"messages":[{"id":1,"chatId":1,"senderId":"yabba"')).toBe(true)
+    await app.close()
   })
 
   it('Empty token - 401', async () => {
@@ -346,9 +354,10 @@ describe('/chat/send/:receiverName', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 
-  it('Aending and empty message - 400', async () => {
+  it('Ending and empty message - 400', async () => {
     const app = await build({})
     const response = await app.inject({
       method: 'PUT',
@@ -366,5 +375,6 @@ describe('/chat/send/:receiverName', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 })
