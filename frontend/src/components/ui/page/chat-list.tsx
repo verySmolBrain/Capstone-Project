@@ -2,12 +2,12 @@
 
 import Image from 'next/image'
 import * as React from 'react'
-import { format } from 'date-fns'
 import useSWR from 'swr'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/lib/database.types'
 import { Loader2 } from 'lucide-react'
 import * as emoji from 'node-emoji'
+import dayjs from 'dayjs'
 
 export default function ChatList() {
   const [chats, setChats] = React.useState<FormattedChat[]>()
@@ -76,15 +76,11 @@ export default function ChatList() {
                       </p>
                       <div className="text-xs text-gray-400	-mt-3 truncate">
                         {chat?.latestMessage?.updatedAt
-                          ? format(
-                              new Date(chat.latestMessage.updatedAt),
+                          ? dayjs(chat.latestMessage.updatedAt).format(
                               'h:mm a'
                             ) +
                             ' on ' +
-                            format(
-                              new Date(chat.latestMessage.updatedAt),
-                              'd/M/y'
-                            )
+                            dayjs(chat.latestMessage.updatedAt).format('D/M/YY')
                           : ''}
                       </div>
                       <div className="text-500 truncate">
