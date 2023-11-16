@@ -2,8 +2,8 @@ import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
-  /*
-   *  POST /forum/:campaignName/post
+  /**
+   *  POST /:campaignName/forum
    *  Creates a post in the campaign forum
    *  @returns {object} chat
    */
@@ -57,9 +57,9 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
-   *  GET /forum/:campaignName
-   *  Returns all posts in the campaign forum
+  /**
+   *  GET /:campaignName/forum
+   *  Returns all posts in the given campaign forum
    *  @returns {object} chat
    */
 
@@ -90,8 +90,8 @@ export default async function (fastify: FastifyInstance) {
     return posts
   })
 
-  /*
-   *  GET /forum/:campaignName/post/:postName
+  /**
+   *  GET /forum/:postId
    *  Returns a post in the campaign forum
    *  @returns {object} chat
    */
@@ -128,8 +128,8 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
-   *  PUT /forum/:campaignName/post/:postName
+  /**
+   *  POST /forum/:postId
    *  Sends a message to the campaign forum
    *  @returns {object} chat
    */
@@ -175,7 +175,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    *  POST /forum/report/:commentId
    *  Reports a comment on a post
    *  @returns {object} report
@@ -224,7 +224,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    *  GET /forum/reports/:commentId
    *  Gets the number of reports on a comment
    *  @returns {object} report
@@ -257,7 +257,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    *  GET /comment/reports
    *  Gets a list of reported comments
    *  @returns {object}[] report array

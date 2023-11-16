@@ -1,4 +1,5 @@
-import { GetStartedButton } from '../button/signup-button'
+import { LogInIcon } from 'lucide-react'
+import { RedirectButton } from '../button/redirect-button'
 
 export function WelcomePage() {
   return (
@@ -10,7 +11,18 @@ export function WelcomePage() {
         <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
           Unlock the World of Collectibles - Where Passion Meets Possibility
         </p>
-        <GetStartedButton />
+        <RedirectButton
+          Icon={LogInIcon}
+          text={{
+            variant: 'default',
+            content: 'Get Started',
+            size: 'lg',
+            params:
+              'transition-transform duration-300 transform active:translate-y-3',
+            includeIcon: false,
+          }}
+          url={'/register'}
+        />
       </div>
     </section>
   )

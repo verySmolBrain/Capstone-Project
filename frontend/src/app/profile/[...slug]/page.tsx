@@ -6,12 +6,10 @@ import { Database } from '@/lib/database.types'
 import useSWR from 'swr'
 import { GeneralNavBar } from '@/components/ui/navbar/general-navbar'
 import Image from 'next/image'
-import { ProfileEditButton } from '@/components/ui/button/profile-edit-button'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/carousel'
 import { useRouter } from 'next/navigation'
 import { AddCollectionProfileButton } from '@/components/ui/button/add-collection-profile-button'
-import { ChatButton } from '@/components/ui/button/chat-button'
 import { RemoveCollectableFromProfileButton } from '@/components/ui/button/remove-collectable-from-profile-button'
 import { Role } from '@/lib/utils'
 import { ReviewProfileRating } from '@/components/ui/button/review-profile-rating'
@@ -24,8 +22,9 @@ import {
 } from '@/components/ui/tooltip'
 import { ProfileCollectionCarousel } from '@/components/ui/carousel/profile-collections-carousel'
 import { PersonalProfileRating } from '@/components/ui/button/personal-profile-rating'
-import { TradeButton } from '@/components/ui/button/trade-button'
 import { BanUserButton } from '@/components/ui/button/ban-user-button'
+import { RedirectButton } from '@/components/ui/button/redirect-button'
+import { MessageSquarePlus, Pencil, WalletCards } from 'lucide-react'
 
 enum profileCollection {
   INVENTORY,
@@ -222,11 +221,19 @@ export default function ProfilePage({ params }: { params: { slug: string } }) {
                 )}
               </div>
               {isOwnProfile ? (
-                <ProfileEditButton />
+                <RedirectButton url={'/settings'} Icon={Pencil} />
               ) : (
-                <ChatButton user={profile?.name} />
+                <RedirectButton
+                  url={`/chat/${profile?.name}`}
+                  Icon={MessageSquarePlus}
+                />
               )}
-              {role === Role.USER && <TradeButton user={profile?.name} />}
+              {role === Role.USER && (
+                <RedirectButton
+                  url={`/profile/trade/${profile?.name}`}
+                  Icon={WalletCards}
+                />
+              )}
               {viewerRole === Role.ADMIN && !profile.banned && (
                 <BanUserButton user={profile?.id} />
               )}

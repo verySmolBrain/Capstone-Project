@@ -38,6 +38,7 @@ describe('/image/profile/upload - post', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
+    await app.close()
   })
 
   it('Unsuccessful profile upload - return 400', async () => {
@@ -68,6 +69,7 @@ describe('/image/profile/upload - post', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -82,6 +84,7 @@ describe('/image/profile/upload - post', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 
@@ -114,6 +117,7 @@ describe('/image/collectable/upload - post (+name as param)', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
+    await app.close()
   })
 
   it('Unsuccessful profile upload - return 400', async () => {
@@ -136,6 +140,7 @@ describe('/image/collectable/upload - post (+name as param)', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -154,6 +159,7 @@ describe('/image/collectable/upload - post (+name as param)', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 
@@ -187,6 +193,7 @@ describe('/image/collection/upload - post', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe('{"image":"okiedogi"}')
+    await app.close()
   })
 
   it('Unsuccessful collection image upload - return 400', async () => {
@@ -209,6 +216,7 @@ describe('/image/collection/upload - post', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 })
 
@@ -241,6 +249,7 @@ describe('/image/campaign/upload - post', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe('{"image":"okiedogi"}')
+    await app.close()
   })
 
   it('Unsuccessful campaign image upload - return 400', async () => {
@@ -263,5 +272,6 @@ describe('/image/campaign/upload - post', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 })

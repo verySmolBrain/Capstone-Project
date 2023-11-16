@@ -69,6 +69,7 @@ describe('/wares - GET', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
   })
 })
 
@@ -143,6 +144,7 @@ describe('/wares/:name - GET', () => {
     expect(
       response.body.startsWith('[{"collectable":{"collection":[{"name":"Collection A","image":"collectionA.jpg"},')
     ).toBe(true)
+    await app.close()
   })
 })
 
@@ -262,6 +264,7 @@ describe('/wares - PUT', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
   })
   it('Update wares (Collectable not found in inventory)- return 400', async () => {
     const inventory = [
@@ -327,6 +330,7 @@ describe('/wares - PUT', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 
   it('Update wares (Not enough collectables in inventory) - return 400', async () => {
@@ -371,6 +375,7 @@ describe('/wares - PUT', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 })
 
@@ -381,89 +386,80 @@ describe('/wares - PUT', () => {
  * @param {number} count
  * @returns {object} wares
  */
-// describe('/wares/:collectable - PUT', () => {
-//   it('Successful collectable update - return 200', async () => {
-//     const inventory = [
-//       {
-//         collectable: {
-//           collection: [
-//             {
-//               name: 'stringadsf',
-//               image: 'collectionA.jpg',
-//             },
-//           ],
-//           image: 'collectableImage.jpg',
-//           tags: ['tag1', 'tag2'],
-//         },
-//         count: 1,
-//         id: 1,
-//         name: 'stringadsf',
-//       },
-//     ]
-//     // @ts-expect-error inventory throws as it is not required in profile but is required for testing
-//     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-//       id: 'double',
-//       name: 'stringadsf',
-//       description: null,
-//       image: null,
-//       reputation: 1,
-//       inventory: inventory,
-//     })
-//     prismaMockInstance.collectableCount.findFirst.mockResolvedValueOnce({
-//       id: 1,
-//       name: 'stringadsf',
-//       count: 1,
-//       inventoryId: '',
-//       wishlistId: '',
-//       waresId: '',
-//     })
+describe('/wares/:collectable - PUT', () => {
+  it('Successful collectable update - return 200', async () => {
+    const inventory = [
+      {
+        collectable: {
+          collection: [
+            {
+              name: 'stringadsf',
+              image: 'collectionA.jpg',
+            },
+          ],
+          image: 'collectableImage.jpg',
+          tags: ['tag1', 'tag2'],
+        },
+        count: 1,
+        id: 1,
+        name: 'stringadsf',
+      },
+    ]
+    // @ts-expect-error inventory throws as it is not required in profile but is required for testing
+    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      name: 'stringadsf',
+      description: null,
+      image: null,
+      reputation: 1,
+      inventory: inventory,
+    })
 
-//     const app = await build({})
-//     const response = await app.inject({
-//       method: 'PUT',
-//       url: '/wares/:collectable',
-//       headers: {
-//         Authorization: 'yobba',
-//       },
-//       body: {
-//         count: 1,
-//       },
-//     })
+    prismaMockInstance.collectableCount.findFirst.mockResolvedValueOnce({
+      id: 1,
+      name: 'stringadsf',
+      count: 1,
+      inventoryId: '',
+      wishlistId: '',
+      waresId: '',
+    })
+    prismaMockInstance.collectableCount.create.mockResolvedValueOnce({
+      id: 1,
+      name: 'stringadsf',
+      count: 1,
+      inventoryId: '',
+      wishlistId: '',
+      waresId: '',
+    })
+    prismaMockInstance.collectableCount.update.mockResolvedValueOnce({
+      id: 1,
+      name: 'stringadsf',
+      count: 1,
+      inventoryId: '',
+      wishlistId: '',
+      waresId: '',
+    })
 
-//     expect(response.statusCode).toBe(200)
-//     expect(response.statusMessage).toBe('OK')
-//     expect(response.body.startsWith('')).toBe(true)
-//   })
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/wares/:collectable',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        count: 1,
+      },
+      query: {
+        collectable: 'a'
+      }
+    })
 
-//   it('Successful collectable update (collectable not prior existing) - return 200', async () => {
-//     prismaMockInstance.collectableCount.findFirst.mockResolvedValueOnce(null)
+    expect(response.statusCode).toBe(400)
+    await app.close()
+  })
 
-//     prismaMockInstance.collectableCount.create.mockResolvedValueOnce({
-//       id: 1,
-//       name: 'stringadsf',
-//       count: 1,
-//       inventoryId: '',
-//       wishlistId: '',
-//       waresId: '',
-//     })
-
-//     const app = await build({})
-//     const response = await app.inject({
-//       method: 'PUT',
-//       url: '/wares/:collectable',
-//       headers: {
-//         Authorization: 'yobba',
-//       },
-//       body: {
-//         count: 1,
-//       },
-//     })
-
-//     expect(response.statusCode).toBe(200)
-//     expect(response.statusMessage).toBe('OK')
-//     expect(response.body.startsWith('')).toBe(true)
-//   })
-// })
+})
 /*
  * DELETE /wares/:collectable
  * Update the user's wares
@@ -505,6 +501,7 @@ describe('/wares/:collectable - DELETE', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
   })
 
   it('Successful collectable DELETE (collectable not prior existing) - return 200', async () => {
@@ -533,5 +530,6 @@ describe('/wares/:collectable - DELETE', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 })

@@ -3,7 +3,7 @@ import { requestHandler, extractId } from '@Source/utils/supabaseUtils'
 import { collectionConnect } from '@Source/utils/types'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    * POST /campaign
    * Creates a campaign
    * @param {string} name
@@ -51,7 +51,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * GET /campaign
    * Returns all campaigns
    * @returns {object} campaigns
@@ -64,7 +64,7 @@ export default async function (fastify: FastifyInstance) {
     return campaigns
   })
 
-  /*
+  /** 
    * GET /campaign/:name
    * Returns a campaign by name
    * @returns {object} campaign
@@ -86,7 +86,7 @@ export default async function (fastify: FastifyInstance) {
     return campaign
   })
 
-  /*
+  /** 
    * PUT /campaign/:name
    * Updates a campaign by name
    * @param {string} name
@@ -130,7 +130,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /** 
    * PUT /campaign/:name/view
    * Increments campaign view count by 1
    * @returns void
@@ -158,8 +158,8 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
-   * PUT /collection/:collectionName/:collectableName
+  /** 
+   * PUT /campaign/:campaignName/:collectionName
    * Adds a collection to a campaign by name
    * @param {string} name
    * @param {string} image
@@ -188,7 +188,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /** 
    * DELETE /campaign/:name
    * Deletes a campaign by name
    * @param {string} name
@@ -207,8 +207,8 @@ export default async function (fastify: FastifyInstance) {
     return campaign
   })
 
-  /*
-   * DELETE /collection/:collectionName/:collectableName
+  /**
+   * DELETE /campaign/:campaignName/:collectionName
    * Removes a collection from a campaign
    * @param {string} collection
    * @param {string} collectable
@@ -236,11 +236,11 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
-   *  GET /campaign/reviews/:name
-   *  Gets the campaigns reviews
+  /** 
+   *  GET /reviews/campaign/:name
+   *  Gets the campaigns reviews by name
    *  @param {float} review
-   *  @returns a list of {campaign: Campaign, review: float, description: string}
+   *  @returns a list of {reviewer: Reviewer, review: float, description: string}
    */
 
   fastify.get('/reviews/campaign/:name', async (req: FastifyRequest<{ Params: { name: string } }>) => {
@@ -271,7 +271,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /**
-   * POST /campaign/reviews/:name
+   * PUT /reviews/campaign/:name
    * Creates a review for a campaign
    * @param {float} review
    * @param {string} description
@@ -329,7 +329,7 @@ export default async function (fastify: FastifyInstance) {
       return campaignReview
     }
   )
-  /*
+  /**
    * GET /campaign/metrics/post/:name
    * Returns a campaign's post metrics by name
    * @returns {object} {string, int}
@@ -368,7 +368,7 @@ export default async function (fastify: FastifyInstance) {
     return occurrencesMap
   })
 
-  /*
+  /**
    * GET /campaign/metrics/posters/:name
    * Returns a campaign's post metrics by name
    * @returns {object} {string, int}
@@ -390,7 +390,7 @@ export default async function (fastify: FastifyInstance) {
       })
       const existingMetricIndex = occurrencesMap.findIndex((metric) => metric.Poster === authorName?.name);
 
-      // If the time exists, update its price
+      // If the user exists, update its post no
       if (existingMetricIndex !== -1) {
         occurrencesMap.at(existingMetricIndex)!.Posts += 1;
       } else {
@@ -401,8 +401,8 @@ export default async function (fastify: FastifyInstance) {
     return occurrencesMap;
   })
 
-  /*
-   * GET /campaign/metrics/review/:name
+  /**
+   * GET /campaign/metrics/reviews/:name
    * Returns a campaign's average reviews
    * @returns number
   */

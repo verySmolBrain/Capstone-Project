@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    * GET /search/:name
    * Returns all users, collectibles, collections, campaigns matching the name or exact tag
    * @param {string} name
@@ -97,8 +97,8 @@ export default async function (fastify: FastifyInstance) {
     }
   })
 
-  /*
-   * GET /search/collectible/:name
+  /**
+   * GET /search/collectadoes ble/:name
    * Returns all collectibles matching the name
    * @param {string} name
    * @returns {object} collectibles
@@ -133,7 +133,7 @@ export default async function (fastify: FastifyInstance) {
     return collectibles
   })
 
-  /*
+  /**
    * GET /search/collection/:name
    * Returns all collections matching the name
    * @returns {object} collections
@@ -168,7 +168,7 @@ export default async function (fastify: FastifyInstance) {
     return collections
   })
 
-  /*
+  /**
    * GET /search/user/:name
    * Returns all users matching the name
    * @returns {object} users
@@ -198,7 +198,7 @@ export default async function (fastify: FastifyInstance) {
     return users
   })
 
-  /*
+  /**
    * GET /search/campaign/:name
    * Returns all campaigns matching the name
    * @returns {object} users
@@ -233,7 +233,7 @@ export default async function (fastify: FastifyInstance) {
     return campaigns
   })
 
-  /*
+  /**
    * GET /search/collectable/tag/:tag
    * Returns all collectables with the matching tag
    * @param {string} tag
@@ -253,7 +253,7 @@ export default async function (fastify: FastifyInstance) {
     return collectibles
   })
 
-  /*
+  /**
    * GET /search/collection/tag/:tag
    * Returns all collections with the matching tag
    * @param {string} tag
@@ -273,7 +273,7 @@ export default async function (fastify: FastifyInstance) {
     return collections
   })
 
-  /*
+  /**
    * GET /search/campaign/tag/:tag
    * Returns all campaigns with the matching tag
    * @param {string} tag
@@ -293,7 +293,7 @@ export default async function (fastify: FastifyInstance) {
     return campaigns
   })
 
-  /*
+  /**
    * GET /search/users/wares/:collectableName
    * Returns all user profiles who have the given collectable in their wares
    * @param {string} collectableName

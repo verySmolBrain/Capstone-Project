@@ -425,122 +425,161 @@ describe('/profile/review - PUT', () => {
   })
 })
 
-/*
- *  GET /profile/reviews
- *  Gets the user's review scores
- *  @param {float} review
- *  @returns a list of {review: float, description: string}
- */
-// describe('/profile/reviews - GET', () => {
-//   it('Gets the users review scores - return 200', async () => {
-//     const app = await build({})
+  /*
+   *  GET /reviews/profile/:name
+   *  Gets the user's reviews
+   *  @param {float} review
+   *  @returns a list of {profile: Profile, review: float, description: string}
+   */
+  describe('/reviews/profile/:name - GET', () => {
+    it('Successfully gets user reviews - return 200', async () => {
+      const reviews: ({
+        reviewer: {
+            id: string;
+            name: string;
+            description: string | null;
+            image: string | null;
+            reputation: number;
+        };
+    } & {
+        id: number;
+        rating: number;
+        comment: string;
+        revieweeId: string;
+        reviewerId: string;
+    })[] = [
+        {
+            reviewer: {
+                id: "user1",
+                name: "John Doe",
+                description: "A seasoned reviewer",
+                image: "john_doe.jpg",
+                reputation: 4.7,
+            },
+            id: 1,
+            rating: 4.5,
+            comment: "Excellent product!",
+            revieweeId: "product123",
+            reviewerId: "user1",
+        },
+        {
+            reviewer: {
+                id: "user2",
+                name: "Jane Smith",
+                description: "New to reviewing",
+                image: null,
+                reputation: 3.2,
+            },
+            id: 2,
+            rating: 3.0,
+            comment: "Could be better.",
+            revieweeId: "product456",
+            reviewerId: "user2",
+        },
+        // Add more reviews as needed
+    ];
+    prismaMockInstance.userReview.findMany.mockResolvedValue(reviews)
 
-//     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-//       id: 'double',
-//       // @ts-expect-error findMany generates type based on query so it will error
-//       receivedReviews: [
-//         {
-//           id: 69,
-//           rating: 1,
-//           comment: 'Its kinda wack',
-//           revieweeId: 'YouPhone 15 +',
-//           reviewerId: 'Mr whostheboss',
-//         },
-//       ],
-//     })
+      const app = await build({})
+  
+      const response1 = await app.inject({
+        method: 'GET',
+        url: '/reviews/profile/:name',
+        headers: {
+          Authorization: 'double',
+        },
+        body: {
+          image: 'Dont this.',
+        },
+      })
+  
+      expect(response1.statusCode).toBe(200)
+      expect(response1.statusMessage).toBe('OK')
+      await app.close()
+    })
+  })
 
-//     const response1 = await app.inject({
-//       method: 'GET',
-//       url: '/profile/reviews',
-//       headers: {
-//         Authorization: 'double',
-//       },
-//     })
+  /**
+   *  PUT /reviews/profile/:name
+   *  Creates a new review for the user
+   *  @param {float} review
+   *  @param {string} description
+   *  @returns a list of {review: float, description: string}
+   */
+  describe('/reviews/profile/:name - PUT', () => {
+    it('Successfully updates user review - return 200', async () => {
+      const findReview = {
+        id: 1,
+        rating: 4.5,
+        comment: "Excellent product!",
+        revieweeId: "product123",
+        reviewerId: "user1",
+    };
+    const spy = jest.spyOn(utils, 'getUserId')
+    spy.mockReturnValue(Promise.resolve('double'))
 
-//     expect(response1.statusCode).toBe(200)
-//     expect(response1.statusMessage).toBe('OK')
-//     expect(response1.body).toBe('[{"review":1,"description":"Its kinda wack"}]')
-//     await app.close()
-//   })
+    prismaMockInstance.userReview.findFirst.mockResolvedValue(findReview)
+    prismaMockInstance.userReview.update.mockResolvedValue(findReview)
+    prismaMockInstance.userReview.create.mockResolvedValue(findReview)
 
-//   it('Empty token - return 401', async () => {
-//     const app = await build({})
+      const app = await build({})
+  
+      const response1 = await app.inject({
+        method: 'PUT',
+        url: '/reviews/profile/:name',
+        headers: {
+          Authorization: 'double',
+        },
+        query: {
+          name: 'a'
+        },
+        body: {
+          review: 1,
+          description: 'a'
+        }
+      })
+  
+      expect(response1.statusCode).toBe(200)
+      expect(response1.statusMessage).toBe('OK')
+      await app.close()
+    })
+    
+    it('Successfully creates user review - return 200', async () => {
+      const findReview = {
+        id: 1,
+        rating: 4.5,
+        comment: "Excellent product!",
+        revieweeId: "product123",
+        reviewerId: "user1",
+    };
+    const spy = jest.spyOn(utils, 'getUserId')
+    spy.mockReturnValue(Promise.resolve('double'))
 
-//     const response1 = await app.inject({
-//       method: 'GET',
-//       url: '/profile/reviews',
-//       headers: {
-//         Authorization: '',
-//       },
-//     })
+    prismaMockInstance.userReview.findFirst.mockResolvedValue(null)
+    prismaMockInstance.userReview.create.mockResolvedValue(findReview)
 
-//     expect(response1.statusCode).toBe(401)
-//     expect(response1.statusMessage).toBe('Unauthorized')
-//     await app.close()
-//   })
-// })
+    const app = await build({})
 
-/*
- *  PUT /profile/review
- *  Updates the user's review score
- *  @param {float} review
- *  @returns a {review: float, description: string}
- */
-// describe('/profile/review - PUT', () => {
-//   it('Updates the users review score- return 200', async () => {
-//     const app = await build({})
-//     prismaMockInstance.userReview.create.mockResolvedValueOnce({
-//       id: 69,
-//       rating: 1,
-//       comment: 'Its kinda wack',
-//       revieweeId: 'YouPhone 15 +',
-//       reviewerId: 'Mr whostheboss',
-//     })
+    const response1 = await app.inject({
+      method: 'PUT',
+      url: '/reviews/profile/:name',
+      headers: {
+        Authorization: 'double',
+      },
+      query: {
+        name: 'a'
+      },
+      body: {
+        review: 1,
+        description: 'a'
+      }
+    })
 
-//     const response1 = await app.inject({
-//       method: 'PUT',
-//       url: '/profile/review',
-//       headers: {
-//         Authorization: 'double',
-//       },
-//       body: {
-//         rating: 1,
-//         comment: 'Its kinda wack',
-//         revieweeId: 'YouPhone 15 +',
-//         reviewerId: 'Mr whostheboss',
-//       },
-//     })
-
-//     expect(response1.statusCode).toBe(200)
-//     expect(response1.statusMessage).toBe('OK')
-//     expect(response1.body).toBe(
-//       '{"id":69,"rating":1,"comment":"Its kinda wack","revieweeId":"YouPhone 15 +","reviewerId":"Mr whostheboss"}'
-//     )
-//     await app.close()
-//   })
-
-//   it('Empty token - return 401', async () => {
-//     const app = await build({})
-
-//     const response1 = await app.inject({
-//       method: 'PUT',
-//       url: '/profile/review',
-//       headers: {
-//         Authorization: '',
-//       },
-//       body: {
-//         rating: 1,
-//         comment: 'Its kinda wack',
-//         revieweeId: 'YouPhone 15 +',
-//         reviewerId: 'Mr whostheboss',
-//       },
-//     })
-
-//     expect(response1.statusCode).toBe(401)
-//     expect(response1.statusMessage).toBe('Unauthorized')
-//     await app.close()
-//   })
-// })
+    expect(response1.statusCode).toBe(200)
+    expect(response1.statusMessage).toBe('OK')
+    await app.close()
+    })
+})
 
 /*
  *  GET /role
@@ -703,3 +742,40 @@ describe('/role/:name - GET', () => {
     await app.close()
   })
 })
+
+
+  /*
+   *  GET /banned
+   *  Returns the if the user is banned or not
+   *  @returns {boolean} banned status
+   */
+   describe('GET /banned/:id', () => {
+    it("Successfully gets user's role - return 200", async () => {
+      const app = await build({})
+  
+      prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
+        id: 'double',
+        name: 'stringadsf',
+        description: null,
+        image: null,
+        reputation: 1,
+        banned: false,
+      })
+  
+      const response1 = await app.inject({
+        method: 'GET',
+        url: '/banned/:id',
+        headers: {
+          Authorization: 'double',
+        },
+        query: {
+          id: 'okidogi',
+        },
+      })
+  
+      expect(response1.statusCode).toBe(200)
+      expect(response1.statusMessage).toBe('OK')
+      expect(response1.body).toBe("{\"banned\":false}")
+      await app.close()
+    })
+  })
