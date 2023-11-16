@@ -14,6 +14,8 @@ import { AvatarFallback } from '@radix-ui/react-avatar'
 import Link from 'next/link'
 import { ReportCommentButton } from '@/components/ui/button/report-comment-button'
 import { Role } from '@/lib/utils'
+import * as emoji from 'node-emoji'
+import LinkParser from 'react-link-parser'
 
 dayjs.extend(relativeTime)
 
@@ -50,6 +52,34 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
     }
   }, [forumPostData])
 
+  // Array of watchers which specify how to render certain string types (i.e links)
+  const linkWatcher = [
+    {
+      watchFor: 'http',
+      render: (url: string) => (
+        <u>
+          <a href={url} target="_blank" rel="noreferrer noopener nofollow">
+            {url}
+          </a>
+        </u>
+      ),
+    },
+    {
+      watchFor: 'www.',
+      render: (url: string) => (
+        <u>
+          <a
+            href={'http://' + url.slice(url.lastIndexOf('w') + 2)}
+            target="_blank"
+            rel="noreferrer noopener nofollow"
+          >
+            {url}
+          </a>
+        </u>
+      ),
+    },
+  ]
+
   function MainTopic(forumPost: ForumPost) {
     return (
       <div className="container w-[400px] md:w-[600px] lg:w-[800px] flex flex-col gap-2 border rounded-2xl justify-start items-start pr-4 pl-4 pb-4 pt-4 mt-4 mb-2">
@@ -82,8 +112,11 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
-
-        <p>{forumPost.description}</p>
+        <p>
+          <LinkParser watchers={linkWatcher}>
+            {emoji.emojify(forumPost.description)}
+          </LinkParser>
+        </p>
         <p className="text-xs pt-4">
           {forumPost.comments?.length ?? 0} Comments
         </p>
@@ -157,8 +190,11 @@ export default function ForumPost({ params }: { params: { slug: string } }) {
                       </div>
                     </div>
                   </div>
-
-                  <p className="text-base">{c.content}</p>
+                  <p>
+                    <LinkParser watchers={linkWatcher}>
+                      {emoji.emojify(c.content)}
+                    </LinkParser>
+                  </p>
                   <ReportCommentButton comment={c.id} />
                 </div>
               ))}

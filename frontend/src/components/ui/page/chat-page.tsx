@@ -193,6 +193,7 @@ export function ChatPage({ receiver }: Props) {
           <SendMessageButton />
         </div>
       </form>
+
       <div className="bg-primary-foreground fixed inset-x-1 bottom-0 h-20 z-0"></div>
     </div>
   )
