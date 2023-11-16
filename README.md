@@ -19,8 +19,6 @@ Real-Time Chat: Communicate with other collectors in real-time through our integ
 
 Collections and Profiles: Showcase your collection with customizable profiles. Connect with other collectors who share your interests and track the value of your collectibles over time.
 
-Auction System: Engage in exciting auctions to acquire highly sought-after items. Set reserve prices, participate in bidding wars, and experience the thrill of winning rare collectibles.
-
 ## Running Locally
 
 There are two options for setting up the project. If you have Docker installed, you can use the provided Docker Compose configuration to run the project. Otherwise, you can run the project locally. For both, you'll have to ensure you have `.env` variables setup correctly.
