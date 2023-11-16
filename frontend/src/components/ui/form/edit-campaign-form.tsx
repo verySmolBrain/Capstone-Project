@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { addDays, format } from 'date-fns'
 import { CalendarIcon, Loader2Icon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -46,6 +45,7 @@ import { Database } from '@/lib/database.types'
 import { Tag, TagInput } from '../tags'
 import { Switch } from '@/components/ui/switch'
 import useSWR from 'swr'
+import dayjs from 'dayjs'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -104,7 +104,7 @@ const FormSchema = z.object({
     .custom<DateRange>(isDateRange, 'Please select a valid date range')
     .default({
       from: new Date(),
-      to: addDays(new Date(), 14),
+      to: dayjs().add(14, 'day').toDate(),
     }),
   tags: z.array(
     z.object({
@@ -297,16 +297,16 @@ export function EditCampaignForm(props: {
                           {field.value?.from ? (
                             field.value?.to ? (
                               <>
-                                {format(field.value.from, 'LLL dd, y')} -{' '}
-                                {format(field.value.to, 'LLL dd, y')}
+                                {dayjs(field.value.from).format('MMM D, YYYY')}{' '}
+                                - {dayjs(field.value.to).format('MMM D, YYYY')}
                               </>
                             ) : (
-                              format(field.value.from, 'LLL dd, y')
+                              dayjs(field.value.from).format('MMM D, YYYY')
                             )
                           ) : (
                             <>
-                              {format(new Date(), 'LLL dd, y')} -{' '}
-                              {format(addDays(new Date(), 7), 'LLL dd, y')}
+                              {dayjs().format('MMM D, YYYY')} -{' '}
+                              {dayjs().add(7, 'days').format('MMM D, YYYY')}
                             </>
                           )}
                         </Button>
