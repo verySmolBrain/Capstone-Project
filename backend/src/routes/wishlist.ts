@@ -4,7 +4,7 @@ import { collectableCountCreate, collectableCountSelect } from '@Source/utils/ty
 import { throwInvalidActionError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    *  GET /wishlist
    *  Returns the user's wishlist
    *  @returns {object} wishlist
@@ -23,7 +23,7 @@ export default async function (fastify: FastifyInstance) {
     return profile.wishlist
   })
 
-  /*
+  /**
    *  GET /wishlist/:name
    *  Returns the given users wishlist
    *  @param {string} name
@@ -43,7 +43,7 @@ export default async function (fastify: FastifyInstance) {
     return profile.wishlist
   })
 
-  /*
+  /**
    *  PUT /wishlist
    *  Update the user's wishlist
    *  @param {collectableCount[]} collectables
@@ -64,7 +64,7 @@ export default async function (fastify: FastifyInstance) {
     return profile.wishlist
   })
 
-  /*
+  /**
    * PUT /wishlist/:collectable
    * Update the user's wishlist
    * @param {string} collectable
@@ -107,7 +107,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * DELETE /wishlist/:collectable
    * Update the user's wishlist
    * @param {string} collectable

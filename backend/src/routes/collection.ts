@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify'
 import { requestHandler } from '@Source/utils/supabaseUtils'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    * POST /collection
    * Creates a collection
    * @param {string} name
@@ -35,7 +35,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * GET /collection
    * Returns all collections
    * @returns {object} collections
@@ -48,7 +48,7 @@ export default async function (fastify: FastifyInstance) {
     return collections
   })
 
-  /*
+  /**
    * GET /collection/:name
    * Returns a collection by name
    * @returns {object} collection
@@ -68,8 +68,8 @@ export default async function (fastify: FastifyInstance) {
     return collection
   })
 
-  /*
-   *  PUT
+  /**
+   *  PUT /collection/:name
    *  Updates a collection
    *  @param {string} name
    *  @param {string} newName
@@ -97,7 +97,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * PUT /collection/:collectionName/:collectableName
    * Adds a collectable to a collection by name
    * @param {string} name
@@ -125,7 +125,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * DELETE /collection/:collectionName/:collectableName
    * Removes a collectable from a collection by name
    * @param {string} collection
@@ -153,7 +153,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    * DELETE /collection/:name
    * Deletes a collection by name
    * @param {string} name

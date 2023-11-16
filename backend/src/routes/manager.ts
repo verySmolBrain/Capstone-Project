@@ -4,7 +4,7 @@ import { generateUsername } from '@Source/utils/utils'
 import { FastifyInstance, FastifyRequest } from 'fastify'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    * POST /manager
    * Creates a campaign manager user
    */
@@ -28,7 +28,7 @@ export default async function (fastify: FastifyInstance) {
     })
   })
 
-  /*
+  /**
    * GET /manager
    * Returns all campaign managers
    */
@@ -46,13 +46,8 @@ export default async function (fastify: FastifyInstance) {
     return managers
   })
 
-  /*
-   * GET /manager/:name
-   * Returns a campaign manager by name
-   */
-
-  /*
-   * DELETE /manager/:name
+  /**
+   * DELETE /manager/:id
    * Deletes a campaign manager by id
    * @param {string} id
    * @returns nothing on success

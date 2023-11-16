@@ -42,6 +42,7 @@ describe('/campaign - post', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"name":"yabba","image":"a","tags":[],"start":"')).toBe(true)
+    await app.close()
   })
 })
 
@@ -78,6 +79,7 @@ describe('/campaign - get', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('[{"name":"yabba","image":"a","tags":[],"start":"')).toBe(true)
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -98,6 +100,7 @@ describe('/campaign - get', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 
@@ -134,6 +137,7 @@ describe('/campaign/:name - get', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"name":"yabba","image":"a","tags":[],"start":"')).toBe(true)
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -154,6 +158,7 @@ describe('/campaign/:name - get', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 
@@ -199,6 +204,7 @@ describe('/campaign/:name - put', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"name":"yabba","image":"a","tags":[],"start":"')).toBe(true)
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -221,6 +227,7 @@ describe('/campaign/:name - put', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 /*
@@ -257,6 +264,7 @@ describe('/campaign/:name - delete', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"name":"yabba","image":"a","tags":[],"start":"')).toBe(true)
+    await app.close()
   })
 
   it('Empty token error - return 401', async () => {
@@ -277,6 +285,7 @@ describe('/campaign/:name - delete', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
   })
 })
 
@@ -317,6 +326,7 @@ describe('/campaign/:collectionName/:collectableName - PUT', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"name":"gobby","image":"a","tags":[],"start":"')).toBe(true)
+    await app.close()
   })
 })
 
@@ -357,6 +367,7 @@ describe('/campaign/:campaignName/:collectionName - DELETE', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('{"name":"gobby","image":"a","tags":[],"start":"')).toBe(true)
+    await app.close()
   })
 })
 
@@ -399,6 +410,7 @@ describe('GET /campaign/metrics/post/:name', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe(  "[{\"date\":\"01/01/70\",\"Posts\":3}]" )
+    await app.close()
   })
 })
 
@@ -450,6 +462,7 @@ describe('GET /campaign/metrics/posters/:name', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe("[{\"Poster\":\"yabba\",\"Posts\":3}]")
+    await app.close()
   })
 })
 
@@ -499,6 +512,7 @@ describe('GET /campaign/metrics/reviews/:name', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe('2')
+    await app.close()
   })
   it('Correctly retrieves avg rating value (division by 0 case) - return 200', async () => {
     //@ts-expect-error testing post without unnececary fields
@@ -536,6 +550,7 @@ describe('GET /campaign/metrics/reviews/:name', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body).toBe('0')
+    await app.close()
   })
 })
 
@@ -574,6 +589,7 @@ describe('/campaign/:name/view - put', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
+    await app.close()
   })
 })
 
@@ -633,6 +649,7 @@ describe('/reviews/campaign/:name - get', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith("[{\"reviewer\":{\"id\":\"1\",\"name\":\"John Doe\",\"description\":\"A ")).toBe(true)
+    await app.close()
   })
 })
 
@@ -687,6 +704,7 @@ describe('/reviews/campaign/:name - get', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith("{\"reviewer\":{\"id\":\"1\",\"name\":\"John Doe\",\"description\":\"A passionate reviewer\",\"image\":\"profile.jpg\",\"reputation\":4.5},\"id\":123,\"rating")).toBe(true)
+    await app.close()
   })
 
   it('Successfully creates campaign reviews  - return 200', async () => {
@@ -728,5 +746,6 @@ describe('/reviews/campaign/:name - get', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith("{\"reviewer\":{\"id\":\"1\",\"name\":\"John Doe\",\"description\":\"A passionate reviewer\",\"image\":\"profile.jpg\",\"reputation\":4.5},\"id\":123,\"rating")).toBe(true)
+    await app.close()
   })
 })

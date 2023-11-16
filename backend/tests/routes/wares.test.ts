@@ -69,6 +69,7 @@ describe('/wares - GET', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
   })
 })
 
@@ -143,6 +144,7 @@ describe('/wares/:name - GET', () => {
     expect(
       response.body.startsWith('[{"collectable":{"collection":[{"name":"Collection A","image":"collectionA.jpg"},')
     ).toBe(true)
+    await app.close()
   })
 })
 
@@ -262,6 +264,7 @@ describe('/wares - PUT', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
   })
   it('Update wares (Collectable not found in inventory)- return 400', async () => {
     const inventory = [
@@ -327,6 +330,7 @@ describe('/wares - PUT', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 
   it('Update wares (Not enough collectables in inventory) - return 400', async () => {
@@ -371,6 +375,7 @@ describe('/wares - PUT', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 })
 
@@ -451,6 +456,7 @@ describe('/wares/:collectable - PUT', () => {
     })
 
     expect(response.statusCode).toBe(400)
+    await app.close()
   })
 
 })
@@ -495,6 +501,7 @@ describe('/wares/:collectable - DELETE', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
   })
 
   it('Successful collectable DELETE (collectable not prior existing) - return 200', async () => {
@@ -523,5 +530,6 @@ describe('/wares/:collectable - DELETE', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
   })
 })

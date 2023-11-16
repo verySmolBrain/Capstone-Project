@@ -32,6 +32,8 @@ describe('/wishlist - GET', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
+
   })
 
   it('Empty token error - return 401', async () => {
@@ -46,6 +48,8 @@ describe('/wishlist - GET', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
+
   })
 })
 /*
@@ -80,6 +84,8 @@ describe('/wishlist:name - GET', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
+
   })
 
   it('Empty token error - return 401', async () => {
@@ -94,6 +100,8 @@ describe('/wishlist:name - GET', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
+
   })
 })
 
@@ -130,6 +138,8 @@ describe('/wishlist - POST', () => {
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
     expect(response.body.startsWith('')).toBe(true)
+    await app.close()
+
   })
 
   it('Empty token error - return 401', async () => {
@@ -144,6 +154,8 @@ describe('/wishlist - POST', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
+
   })
 })
 /*
@@ -191,6 +203,8 @@ describe('/wishlist/:collectable - PUT', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
+    await app.close()
+
   })
 
   it('Successful Wishlist update (no prior existing collectable) - return 200', async () => {
@@ -222,6 +236,8 @@ describe('/wishlist/:collectable - PUT', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
+    await app.close()
+
   })
 
   it('Empty token error - return 401', async () => {
@@ -236,6 +252,8 @@ describe('/wishlist/:collectable - PUT', () => {
 
     expect(response.statusCode).toBe(401)
     expect(response.statusMessage).toBe('Unauthorized')
+    await app.close()
+
   })
 })
 /*
@@ -279,6 +297,8 @@ describe('/wishlist/:collectable - DELETE', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.statusMessage).toBe('OK')
+    await app.close()
+
   })
 
   it('Successful Wishlist delete (no prior existing collectable) - return 200', async () => {
@@ -298,5 +318,7 @@ describe('/wishlist/:collectable - DELETE', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.statusMessage).toBe('Bad Request')
+    await app.close()
+
   })
 })

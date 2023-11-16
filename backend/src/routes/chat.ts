@@ -4,7 +4,7 @@ import { getUserId } from '@Source/utils/utils'
 import { throwInvalidFieldError, throwMissingFieldError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    *  POST /chat/:receiverName
    *  Creates a chat between current user and user with receiverName
    *  @returns {object} chat
@@ -15,7 +15,7 @@ export default async function (fastify: FastifyInstance) {
     return await createChat(token, extractId(token), receiverName)
   })
 
-  /*
+  /**
    *  GET /chat/:receiverName
    *  Returns a chat between current user and user with receiverName
    *  @returns {object} chat
@@ -26,7 +26,7 @@ export default async function (fastify: FastifyInstance) {
     return await getMessages(token, extractId(token), receiverName)
   })
 
-  /*
+  /**
    *  GET /chat
    *  Returns all chats
    *  @returns {object} chats
@@ -36,7 +36,7 @@ export default async function (fastify: FastifyInstance) {
     return await getChats(token, extractId(token))
   })
 
-  /*
+  /**
    *  PUT /chat/send/:receiverName
    *  Sends a message to user with receiverName
    *  @returns {object} message

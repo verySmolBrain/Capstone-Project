@@ -6,7 +6,7 @@ import { Role } from '@prisma/client'
 import { createClient } from '@supabase/supabase-js'
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    *  POST /user
    *  Creates a user and profile
    *  @returns {object} user
@@ -39,7 +39,7 @@ export default async function (fastify: FastifyInstance) {
     return user
   })
 
-  /*
+  /**
    *  GET /role
    *  Returns the current user's role
    *  @returns {string} role
@@ -56,7 +56,7 @@ export default async function (fastify: FastifyInstance) {
     return { role: user.role }
   })
 
-  /*
+  /**
    *  GET /role/:name
    *  Returns the given user's role
    *  @returns {string} role
@@ -76,7 +76,7 @@ export default async function (fastify: FastifyInstance) {
     return { role: user.role }
   })
 
-  /*
+  /**
    *  GET /profile
    *  Returns the current user's profile
    *  @returns {object} user
@@ -98,8 +98,8 @@ export default async function (fastify: FastifyInstance) {
     return profile
   })
 
-  /*
-   *  GET /profile
+  /**
+   *  GET /profile/role/:role
    *  Returns a; user profiles that match role
    *  @returns {object} user
    */
@@ -127,7 +127,7 @@ export default async function (fastify: FastifyInstance) {
     return profiles
   })
 
-  /*
+  /**
    *  GET /profile/:name
    *  Returns the user's profile by name
    *  @param {string} name
@@ -151,7 +151,7 @@ export default async function (fastify: FastifyInstance) {
     return profile
   })
 
-  /*
+  /**
    *  PUT /profile/name
    *  Updates the user's name
    *  @param {string} name
@@ -181,7 +181,7 @@ export default async function (fastify: FastifyInstance) {
     return profile
   })
 
-  /*
+  /**
    *  PUT /profile/description
    *  Updates the user's description
    *  @param {string} description
@@ -203,7 +203,7 @@ export default async function (fastify: FastifyInstance) {
     return changedDescription
   })
 
-  /*
+  /**
    *  PUT /profile/image
    *  Updates the user's image url
    *  @param {string} image url
@@ -226,7 +226,7 @@ export default async function (fastify: FastifyInstance) {
     return changedImage
   })
 
-  /*
+  /**
    *  /reviews/profile/:name
    *  Gets the user's reviews
    *  @param {float} review
@@ -260,7 +260,7 @@ export default async function (fastify: FastifyInstance) {
     return extractedReviews
   })
 
-  /**
+  /***
    *  PUT /reviews/profile/:name
    *  Creates a new review for the user
    *  @param {float} review
@@ -319,7 +319,7 @@ export default async function (fastify: FastifyInstance) {
     }
   )
 
-  /*
+  /**
    *  DELETE /ban/:id
    *  Bans a user by removing their details
    *  @returns {object} user
@@ -346,8 +346,8 @@ export default async function (fastify: FastifyInstance) {
       await supabase.auth.admin.deleteUser(id)
     }
   })
-  /*
-   *  GET /banned
+  /**
+   *  GET /banned/:id
    *  Returns the if the user is banned or not
    *  @returns {boolean} banned status
    */

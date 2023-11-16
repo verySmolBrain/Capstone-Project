@@ -8,7 +8,7 @@ cloudinary.config({
 })
 
 export default async function (fastify: FastifyInstance) {
-  /*
+  /**
    * POST /image/profile/upload
    * Uploads a profile picture
    * @param {Base64} image
@@ -48,7 +48,7 @@ export default async function (fastify: FastifyInstance) {
     return changedImage
   })
 
-  /*
+  /**
    * POST /image/collectable/upload
    * Uploads a collectable image
    * @param {string} name
@@ -70,7 +70,7 @@ export default async function (fastify: FastifyInstance) {
     return { image: upload_res.url }
   })
 
-  /*
+  /**
    * POST /image/collection/upload
    * Uploads a collection image
    * @param {string} name
@@ -92,7 +92,7 @@ export default async function (fastify: FastifyInstance) {
     return { image: upload_res.url }
   })
 
-  /*
+  /**
    * POST /image/campaign/upload
    * Uploads a campaign image
    * @param {string} name
