@@ -13,11 +13,9 @@ Our Collectable Trading Platform is a cutting-edge marketplace where collectors 
 
 Listing and Discovery: Easily list your collectibles with detailed descriptions, images, and set your asking price. Discover unique items from other collectors around the world.
 
-Secure Transactions: Our platform ensures secure transactions with built-in payment processing and escrow services, providing peace of mind for both buyers and sellers.
-
 Real-Time Chat: Communicate with other collectors in real-time through our integrated chat system. Negotiate deals, ask questions, and connect with a global community.
 
-Collections and Profiles: Showcase your collection with customizable profiles. Connect with other collectors who share your interests and track the value of your collectibles over time.
+Collections and Profiles: Showcase your collection with customizable profiles. Connect with other collectors who share your interests and track the value of your collectables over time.
 
 ## Running Locally
 
