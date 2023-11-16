@@ -72,6 +72,8 @@ As an explanation for the variables:
 - `NEXT_PUBLIC_BACKEND_HOSTNAME` is the hostname of the backend server.
 - `NEXT_PUBLIC_FRONTEND_HOSTNAME` is the hostname of the frontend server.
 
+(You can setup your own Supabase and Cloudinary account. Alternatively, we have included our secrets in our Report.)
+
 ### Local Production
 
 Install dependencies using install script in `package.json` in root folder:
