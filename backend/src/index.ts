@@ -8,7 +8,9 @@ const start = async () => {
   })
 
   try {
-    await app.listen({ port: 3001 })
+    const host = process.env.HOST || 'localhost'
+
+    await app.listen({ port: 3001, host: host })
     console.log('Server started')
   } catch (error) {
     console.error('Error starting server:', error)
