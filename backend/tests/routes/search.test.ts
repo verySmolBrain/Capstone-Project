@@ -284,6 +284,42 @@ describe('/search/collection/:name', () => {
   })
 })
 
+  /*
+   * GET /search/users/wares/:collectableName
+   * Returns all user profiles who have the given collectable in their wares
+   * @param {string} collectableName
+   * @returns {object} profiles
+   */
+describe('/search/users/wares/:collectableName - GET', () => {
+  it('Successfully search all user profiles who have the given collectable in their wares - return 200', async () => {
+    prismaMockInstance.profile.findMany.mockResolvedValueOnce([{
+      id: 'double',
+      name: 'stringadsf',
+      description: null,
+      image: null,
+      reputation: 1,
+      banned: false,
+    }])
+
+    const app = await build({})
+    const response = await app.inject({
+      method: 'GET',
+      url: '/search/users/wares/:collectableName',
+      headers: {
+        Authorization: 'Bearer your-token-here',
+      },
+      query: {
+        collectableName: '',
+      },
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.statusMessage).toBe('OK')
+    expect(response.body).toBe("[{\"id\":\"double\",\"name\":\"stringadsf\",\"description\":null,\"image\":null,\"reputation\":1,\"banned\":false}]")
+    await app.close()
+  })
+})
+
 /*
  * GET /search/user/:name
  * Returns all users matching the name

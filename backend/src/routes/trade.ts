@@ -4,7 +4,7 @@ import { throwInvalidActionError } from '@Source/utils/error'
 
 export default async function (fastify: FastifyInstance) {
   /*
-   * GET /trade
+   * GET /trade/sell
    * returns all sell offer trades of a user
    * @param {string} query
    * @returns {object} trades
@@ -31,7 +31,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   * GET /trade
+   * GET /trade/buy
    * returns all sell offer trades of a user
    * @param {string} query
    * @returns {object} trades
@@ -58,7 +58,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   * GET /trade
+   * GET /trade/history
    * returns all sell offer trades of a user
    * @param {string} query
    * @returns {object} trades
@@ -90,19 +90,6 @@ export default async function (fastify: FastifyInstance) {
 
     return trades
   })
-
-  /*
-   * GET /trade/:username
-   * returns a trade by id
-   * @param {string} id
-   * @returns {object} trade
-   */
-
-  /*
-   * GET /trade/pending
-   * returns all pending trades of a user
-   * @returns {object} trades
-   */
 
   /*
    * POST /trade

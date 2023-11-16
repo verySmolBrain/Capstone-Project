@@ -100,7 +100,7 @@ export default async function (fastify: FastifyInstance) {
 
   /*
    *  GET /profile
-   *  Returns a;; user profiles that match role
+   *  Returns a; user profiles that match role
    *  @returns {object} user
    */
   fastify.get('/profile/role/:role', async (req: FastifyRequest<{ Params: { role: string } }>) => {
@@ -227,7 +227,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /*
-   *  GET /profile/reviews/:name
+   *  /reviews/profile/:name
    *  Gets the user's reviews
    *  @param {float} review
    *  @returns a list of {profile: Profile, review: float, description: string}
@@ -261,7 +261,7 @@ export default async function (fastify: FastifyInstance) {
   })
 
   /**
-   *  PUT /profile/reviews/:name
+   *  PUT /reviews/profile/:name
    *  Creates a new review for the user
    *  @param {float} review
    *  @param {string} description

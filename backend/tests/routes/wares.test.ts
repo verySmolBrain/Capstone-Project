@@ -381,89 +381,79 @@ describe('/wares - PUT', () => {
  * @param {number} count
  * @returns {object} wares
  */
-// describe('/wares/:collectable - PUT', () => {
-//   it('Successful collectable update - return 200', async () => {
-//     const inventory = [
-//       {
-//         collectable: {
-//           collection: [
-//             {
-//               name: 'stringadsf',
-//               image: 'collectionA.jpg',
-//             },
-//           ],
-//           image: 'collectableImage.jpg',
-//           tags: ['tag1', 'tag2'],
-//         },
-//         count: 1,
-//         id: 1,
-//         name: 'stringadsf',
-//       },
-//     ]
-//     // @ts-expect-error inventory throws as it is not required in profile but is required for testing
-//     prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
-//       id: 'double',
-//       name: 'stringadsf',
-//       description: null,
-//       image: null,
-//       reputation: 1,
-//       inventory: inventory,
-//     })
-//     prismaMockInstance.collectableCount.findFirst.mockResolvedValueOnce({
-//       id: 1,
-//       name: 'stringadsf',
-//       count: 1,
-//       inventoryId: '',
-//       wishlistId: '',
-//       waresId: '',
-//     })
+describe('/wares/:collectable - PUT', () => {
+  it('Successful collectable update - return 200', async () => {
+    const inventory = [
+      {
+        collectable: {
+          collection: [
+            {
+              name: 'stringadsf',
+              image: 'collectionA.jpg',
+            },
+          ],
+          image: 'collectableImage.jpg',
+          tags: ['tag1', 'tag2'],
+        },
+        count: 1,
+        id: 1,
+        name: 'stringadsf',
+      },
+    ]
+    // @ts-expect-error inventory throws as it is not required in profile but is required for testing
+    prismaMockInstance.profile.findUniqueOrThrow.mockResolvedValueOnce({
+      id: 'double',
+      name: 'stringadsf',
+      description: null,
+      image: null,
+      reputation: 1,
+      inventory: inventory,
+    })
 
-//     const app = await build({})
-//     const response = await app.inject({
-//       method: 'PUT',
-//       url: '/wares/:collectable',
-//       headers: {
-//         Authorization: 'yobba',
-//       },
-//       body: {
-//         count: 1,
-//       },
-//     })
+    prismaMockInstance.collectableCount.findFirst.mockResolvedValueOnce({
+      id: 1,
+      name: 'stringadsf',
+      count: 1,
+      inventoryId: '',
+      wishlistId: '',
+      waresId: '',
+    })
+    prismaMockInstance.collectableCount.create.mockResolvedValueOnce({
+      id: 1,
+      name: 'stringadsf',
+      count: 1,
+      inventoryId: '',
+      wishlistId: '',
+      waresId: '',
+    })
+    prismaMockInstance.collectableCount.update.mockResolvedValueOnce({
+      id: 1,
+      name: 'stringadsf',
+      count: 1,
+      inventoryId: '',
+      wishlistId: '',
+      waresId: '',
+    })
 
-//     expect(response.statusCode).toBe(200)
-//     expect(response.statusMessage).toBe('OK')
-//     expect(response.body.startsWith('')).toBe(true)
-//   })
+    const app = await build({})
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/wares/:collectable',
+      headers: {
+        Authorization: 'yobba',
+      },
+      body: {
+        count: 1,
+      },
+      query: {
+        collectable: 'a'
+      }
+    })
 
-//   it('Successful collectable update (collectable not prior existing) - return 200', async () => {
-//     prismaMockInstance.collectableCount.findFirst.mockResolvedValueOnce(null)
+    expect(response.statusCode).toBe(400)
+  })
 
-//     prismaMockInstance.collectableCount.create.mockResolvedValueOnce({
-//       id: 1,
-//       name: 'stringadsf',
-//       count: 1,
-//       inventoryId: '',
-//       wishlistId: '',
-//       waresId: '',
-//     })
-
-//     const app = await build({})
-//     const response = await app.inject({
-//       method: 'PUT',
-//       url: '/wares/:collectable',
-//       headers: {
-//         Authorization: 'yobba',
-//       },
-//       body: {
-//         count: 1,
-//       },
-//     })
-
-//     expect(response.statusCode).toBe(200)
-//     expect(response.statusMessage).toBe('OK')
-//     expect(response.body.startsWith('')).toBe(true)
-//   })
-// })
+})
 /*
  * DELETE /wares/:collectable
  * Update the user's wares
