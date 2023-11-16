@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      - HOST=0.0.0.0
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
