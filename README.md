@@ -1,5 +1,8 @@
 # Goomba Market
 
+[![Build Status](https://img.shields.io/github/actions/workflow/status/docker/compose/ci.yml?label=ci&logo=github&style=flat-square)](https://github.com/unsw-cse-comp3900-9900-23T3/capstone-project-3900m16amanymen/actions?query=workflow%3Aci)
+<img src="icon.png" width="200" height="200" />
+
 An open source collectables trading platform built with Next.js 13 and Fastify.
 
 ## About this project
