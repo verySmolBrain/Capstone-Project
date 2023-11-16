@@ -89,13 +89,13 @@ Run production builds of both the frontend and backend:
 npm run start:backend && npm run start:frontend
 ```
 
-Note you may also get type errors if this is the first time you're running the project. You can fix this by running:
+Note you may also get type errors if this is the first time you're running the backend. You can fix this by running:
 
 ```sh
 npx zenstack generate
 ```
 
-This will generate the types for the Database schema automatically.
+in the backend folder. This will generate the types for the Database schema automatically.
 
 ### Docker Compose
 
@@ -127,13 +127,13 @@ Run development build for the backend:
 npm run dev:backend
 ```
 
-Note you may also get type errors if this is the first time you're running the project. You can fix this by running:
+Note you may also get type errors if this is the first time you're running the backend. You can fix this by running:
 
 ```sh
 npx zenstack generate
 ```
 
-This will generate the types for the Database schema automatically.
+in the backend folder. This will generate the types for the Database schema automatically.
 
 Run development build for the frontend:
 
